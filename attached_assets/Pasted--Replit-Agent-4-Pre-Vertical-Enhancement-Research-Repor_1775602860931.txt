@@ -1,0 +1,142 @@
+# Replit Agent 4 — Pre-Vertical Enhancement Research & Report
+
+**Repo:** https://github.com/WebWakaDOS/webwaka-os  
+**Task:** Deep repo analysis + Nigeria-specific research → 50+ enhancements  
+**Branch:** `research/pre-vertical-enhancements`  
+**Deliverable:** MD report committed to `docs/research/pre-vertical-enhancements-replit.md`
+
+## 🎯 **MANDATORY RESEARCH SCOPE**
+
+### **STEP 1: THOROUGH REPO ANALYSIS (60 minutes)**
+```
+1. Clone repo → main
+2. Read ALL docs/governance/*.md (16 files)
+3. Read ALL docs/architecture/decisions/*.md (12 TDRs)
+4. Read ALL docs/milestones/*.md (5 briefs)
+5. Grep codebase for gaps:
+   - "TODO" / "FIXME" / "XXX"
+   - Missing phone/mobile identity
+   - Missing NIN/BVN verification hooks
+   - Missing USSD/SMS fallbacks
+   - Missing agent network patterns
+   - Missing CAC/FRSC compliance fields
+6. Run pnpm test && pnpm typecheck → note coverage gaps
+7. Review D1 schema → missing indexes/constraints
+```
+
+### **STEP 2: NIGERIA-SPECIFIC RESEARCH (60 minutes)**
+**Search these exactly:**
+```
+"Nigeria SaaS offline-first patterns"
+"Nigeria fintech KYC NIN BVN mobile identity"
+"Nigeria CBN compliance multi-tenant SaaS"
+"Nigeria transport FRSC CAC requirements"
+"Nigeria commerce POS agent network patterns"
+"Africa SMS USSD fallback fintech"
+"Nigeria CAC business registration API"
+"NIBSS BVN verification best practices"
+"Flutterwave Paystack webhook idempotency Nigeria"
+"Nigeria data protection NDPR SaaS compliance"
+```
+
+### **STEP 3: CATEGORIZE 50+ ENHANCEMENTS**
+```
+SECURITY (12):
+1. Phone-as-identity (NIN/BVN linked)
+2. SMS OTP fallback (MTN/GLO/Airtel/9mobile)
+3. USSD verification channel
+4. CAC business verification webhook
+5. BVN lookup integration (NIBSS)
+6. FRSC vehicle/operator validation
+7. NDPR data residency (AWS Mumbai)
+...
+
+OFFLINE (8):
+1. IndexedDB conflict resolution
+2. Background sync retry logic
+3. USSD queue fallback
+4. Agent network sync protocol
+...
+
+COMPLIANCE (10):
+1. CBN KYC tiers integration
+2. NIBSS BVN validation
+3. CAC registration sync
+4. FRSC compliance fields
+...
+
+NIGERIA REALITIES (20):
+1. Airtime top-up → wallet funding
+2. POS agent network support
+3. Naira floating rate handling
+4. Multi-bank account linking
+...
+```
+
+## 📋 **REPORT FORMAT** (`docs/research/pre-vertical-enhancements-replit.md`)
+
+```
+# Pre-Vertical Enhancements — Replit Research
+
+## 1. REPO ANALYSIS SUMMARY
+- Codebase gaps found: [12 bullets]
+- Test coverage gaps: [coverage % per package]
+- Schema gaps: [missing indexes/tables]
+
+## 2. NIGERIA RESEARCH FINDINGS
+- KYC/BVN: [3 key insights]
+- Offline patterns: [3 key insights] 
+- Agent networks: [3 key insights]
+- Transport compliance: [3 key insights]
+
+## 3. PRIORITIZED ENHANCEMENTS (50+ total)
+
+### Priority 1: Security/Compliance (20 items)
+```
+1. Phone identity + NIN/BVN [Migration + packages/identity]
+2. SMS OTP fallback [packages/otp]
+...
+```
+
+### Priority 2: Offline/Agent (15 items)
+```
+1. IndexedDB + background sync [packages/offline-sync]
+...
+```
+
+### Priority 3: Nigeria UX (15 items)
+```
+1. Airtime wallet top-up [packages/payments]
+...
+```
+
+## 4. IMPLEMENTATION PLAN
+```
+Milestone 6a: Security/KYC (3 days)
+Milestone 6b: Offline/Agent (3 days) 
+Milestone 6c: Nigeria UX (3 days)
+Total: 9 days → verticals unblocked
+```
+
+## 5. RISKS IF SKIPPED
+```
+-  CBN regulatory rejection
+-  40% user drop-off (no SMS)
+-  Agent networks can't participate
+-  No BVN → fraud risk
+```
+```
+
+## 📝 **PROCESS**
+```
+1. git clone + deep analysis
+2. Research 10 queries above  
+3. Write report → docs/research/pre-vertical-enhancements-replit.md
+4. git commit -m "docs: pre-vertical enhancement research [Replit]"
+5. gh pr create → main
+6. Notify Base44 for review
+```
+
+
+
+**
