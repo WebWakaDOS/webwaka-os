@@ -34,7 +34,7 @@ function makeMockDb() {
           }
           if (sql.startsWith('UPDATE profiles')) {
             const [nextState, verifiedBy, id] = boundArgs;
-            const row = store.find((r) => r['id'] === id) as Record<string, unknown> | undefined;
+            const row = store.find((r) => r['id'] === id);
             if (row) { row['claim_state'] = nextState; row['verified_by'] = verifiedBy; }
           }
           return Promise.resolve({});
@@ -47,7 +47,7 @@ function makeMockDb() {
           const [id] = boundArgs;
           return Promise.resolve((store.find((r) => r['id'] === id) ?? null) as T | null);
         },
-        all: <T>(): Promise<{ results: T[] }> => ({ results: store as unknown as T[] }),
+        all: <T>(): Promise<{ results: T[] }> => Promise.resolve({ results: store as unknown as T[] }),
       };
       return stmt;
     },
