@@ -140,7 +140,8 @@
 | Typecheck all packages (11) | DONE | Zero errors |
 | Test all packages (154 tests) | DONE | All passing |
 | Update milestone tracker + replit.md | DONE | 2026-04-07 |
-| Retrospective PR: feat/milestone-3 → staging (formalise audit trail) | DONE | Replit — PR #13 opened 2026-04-07, labels: milestone-3, review-needed, base44 |
+| Retrospective PR: feat/milestone-3 → staging (formalise audit trail) | DONE | Replit — PR #13 opened 2026-04-07, labels: milestone-3, review-needed, base44. Base=staging (per M2 PR #10 precedent; main at same commit as feat/milestone-3 — zero diff). Closes #8, #11, #12. |
+| CI evidence on PR #13 | DONE | 146 tests passing (13 files, 8 packages); 11 packages typecheck zero errors. Comment: PR #13#issuecomment-4201450890 |
 | Founder approval — Milestone 3 | PENDING | Awaiting review |
 
 ---
