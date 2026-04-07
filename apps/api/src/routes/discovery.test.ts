@@ -7,7 +7,7 @@
  * Milestone 4 — Discovery Layer MVP — 20 tests
  */
 
-import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
 import app from '../index.js';
 import { issueJwt } from '@webwaka/auth';
 import { Role, SubscriptionPlan, SubscriptionStatus } from '@webwaka/types';

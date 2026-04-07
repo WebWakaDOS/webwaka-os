@@ -16,7 +16,7 @@
 
 import { Hono } from 'hono';
 import { Role } from '@webwaka/types';
-import type { WorkspaceId, TenantId, UserId } from '@webwaka/types';
+import type { WorkspaceId, UserId } from '@webwaka/types';
 import { asId } from '@webwaka/types';
 import { getWorkspaceById, addMember } from '@webwaka/entities';
 import type { Env } from '../env.js';
@@ -50,7 +50,7 @@ workspaceRoutes.post('/:id/activate', async (c) => {
   const workspaceId = c.req.param('id') as WorkspaceId;
   const db = c.env.DB as unknown as D1Like;
 
-  const workspace = await getWorkspaceById(db as Parameters<typeof getWorkspaceById>[0], auth.tenantId as TenantId, workspaceId);
+  const workspace = await getWorkspaceById(db as Parameters<typeof getWorkspaceById>[0], auth.tenantId, workspaceId);
 
   if (!workspace) {
     return c.json({ error: 'Workspace not found' }, 404);
@@ -108,7 +108,7 @@ workspaceRoutes.patch('/:id', async (c) => {
     return c.json({ error: 'Admin role required' }, 403);
   }
 
-  const workspace = await getWorkspaceById(db as Parameters<typeof getWorkspaceById>[0], auth.tenantId as TenantId, workspaceId);
+  const workspace = await getWorkspaceById(db as Parameters<typeof getWorkspaceById>[0], auth.tenantId, workspaceId);
 
   if (!workspace) {
     return c.json({ error: 'Workspace not found' }, 404);
@@ -158,7 +158,7 @@ workspaceRoutes.post('/:id/invite', async (c) => {
   const workspaceId = c.req.param('id') as WorkspaceId;
   const db = c.env.DB as unknown as D1Like;
 
-  const workspace = await getWorkspaceById(db as Parameters<typeof getWorkspaceById>[0], auth.tenantId as TenantId, workspaceId);
+  const workspace = await getWorkspaceById(db as Parameters<typeof getWorkspaceById>[0], auth.tenantId, workspaceId);
   if (!workspace) {
     return c.json({ error: 'Workspace not found' }, 404);
   }
@@ -188,7 +188,7 @@ workspaceRoutes.post('/:id/invite', async (c) => {
 
   await addMember(
     db as Parameters<typeof addMember>[0],
-    auth.tenantId as TenantId,
+    auth.tenantId,
     workspaceId,
     asId<UserId>(userId),
     roleValue as Role,
@@ -212,7 +212,7 @@ workspaceRoutes.get('/:id/analytics', async (c) => {
   const workspaceId = c.req.param('id') as WorkspaceId;
   const db = c.env.DB as unknown as D1Like;
 
-  const workspace = await getWorkspaceById(db as Parameters<typeof getWorkspaceById>[0], auth.tenantId as TenantId, workspaceId);
+  const workspace = await getWorkspaceById(db as Parameters<typeof getWorkspaceById>[0], auth.tenantId, workspaceId);
   if (!workspace) {
     return c.json({ error: 'Workspace not found' }, 404);
   }

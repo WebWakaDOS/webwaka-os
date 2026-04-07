@@ -189,14 +189,14 @@ discoveryRoutes.get('/profiles/:subjectType/:subjectId', async (c) => {
     const ind = await getIndividualById(db, 'any' as never, subjectId as never);
     if (ind) {
       const row = (ind as unknown) as Record<string, unknown>;
-      const { tenantId: _t, tenant_id: _ti, ...rest } = row;
+      const { tenantId: _t, tenant_id: _ti, ...rest } = row; // eslint-disable-line @typescript-eslint/no-unused-vars
       subject = rest;
     }
   } else if (subjectType === EntityType.Organization) {
     const org = await getOrganizationById(db, 'any' as never, subjectId as never);
     if (org) {
       const row = (org as unknown) as Record<string, unknown>;
-      const { tenantId: _t, tenant_id: _ti, ...rest } = row;
+      const { tenantId: _t, tenant_id: _ti, ...rest } = row; // eslint-disable-line @typescript-eslint/no-unused-vars
       subject = rest;
     }
   }

@@ -36,11 +36,13 @@ function makeDb(handlers: Record<string, SqlHandler> = {}): { prepare: (q: strin
     const args: unknown[] = [];
     const stmt: D1Stmt = {
       bind: (...a: unknown[]) => { args.push(...a); return stmt; },
+      // eslint-disable-next-line @typescript-eslint/require-await
       run: async () => ({ success: true }),
       first: async <T>() => {
         const fn = resolve(sql);
         return fn ? (await fn(sql, ...args)) as T : null;
       },
+      // eslint-disable-next-line @typescript-eslint/require-await
       all: async <T>() => ({ results: [] as T[] }),
     };
     return stmt;
@@ -84,26 +86,27 @@ describe('GET /claim/status/:profileId', () => {
 
   it('returns claim state and null pendingRequest for unclaimed profile', async () => {
     const db = makeDb({
-      'FROM profiles WHERE id': async () => ({ id: 'prof_abc', claim_state: 'seeded' }),
+      'FROM profiles WHERE id': () => ({ id: 'prof_abc', claim_state: 'seeded' }),
     });
     const app = makeApp(db);
     const res = await app.request('/claim/status/prof_abc');
     expect(res.status).toBe(200);
-    const json = await res.json() as { claimState: string; pendingRequest: unknown };
+    const json = await res.json();
     expect(json.claimState).toBe('seeded');
     expect(json.pendingRequest).toBeNull();
   });
 
   it('returns checklist in response', async () => {
     const db = makeDb({
-      'FROM profiles WHERE id': async () => ({ id: 'prof_abc', claim_state: 'claimable' }),
+      'FROM profiles WHERE id': () => ({ id: 'prof_abc', claim_state: 'claimable' }),
     });
     const app = makeApp(db);
     const res = await app.request('/claim/status/prof_abc');
     expect(res.status).toBe(200);
-    const json = await res.json() as { checklist?: { items: unknown[] } };
+    const json = await res.json();
     expect(json.checklist).toBeDefined();
-    expect(Array.isArray(json.checklist?.items)).toBe(true);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    expect(Array.isArray((json as Record<string, unknown> & { checklist?: { items: unknown[] } }).checklist?.items)).toBe(true);
   });
 });
 
@@ -134,7 +137,7 @@ describe('POST /claim/intent', () => {
 
   it('returns 409 when profile is already managed', async () => {
     const db = makeDb({
-      'FROM profiles WHERE id': async () => ({ id: 'prof_m', claim_state: 'managed' }),
+      'FROM profiles WHERE id': () => ({ id: 'prof_m', claim_state: 'managed' }),
     });
     const app = makeApp(db);
     const res = await app.request('/claim/intent', {
@@ -148,12 +151,12 @@ describe('POST /claim/intent', () => {
   it('returns 409 when pending claim request exists', async () => {
     let callCount = 0;
     const db = makeDb({
-      'FROM profiles WHERE id': async () => {
+      'FROM profiles WHERE id': () => {
         callCount++;
         if (callCount === 1) return { id: 'prof_c', claim_state: 'claimable' };
         return null;
       },
-      "status = 'pending'": async () => ({ id: 'clm_existing' }),
+      "status = 'pending'": () => ({ id: 'clm_existing' }),
     });
     const app = makeApp(db);
     const res = await app.request('/claim/intent', {
@@ -166,7 +169,7 @@ describe('POST /claim/intent', () => {
 
   it('returns 400 for invalid verificationMethod', async () => {
     const db = makeDb({
-      'FROM profiles WHERE id': async () => ({ id: 'prof_s', claim_state: 'seeded' }),
+      'FROM profiles WHERE id': () => ({ id: 'prof_s', claim_state: 'seeded' }),
     });
     const app = makeApp(db);
     const res = await app.request('/claim/intent', {
@@ -225,7 +228,7 @@ describe('POST /claim/advance', () => {
 
   it('returns 409 when claim is already approved', async () => {
     const db = makeDb({
-      'claim_requests cr': async () => ({
+      'claim_requests cr': () => ({
         id: 'clm_done',
         profile_id: 'prof_1',
         status: 'approved',
@@ -270,7 +273,7 @@ describe('POST /claim/verify', () => {
   it('returns 422 for invalid token', async () => {
     const validUntil = Math.floor(Date.now() / 1000) + 3600;
     const db = makeDb({
-      'FROM claim_requests WHERE id': async () => ({
+      'FROM claim_requests WHERE id': () => ({
         id: 'clm_1',
         profile_id: 'prof_1',
         status: 'pending',

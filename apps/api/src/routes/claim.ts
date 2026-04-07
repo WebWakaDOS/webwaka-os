@@ -45,9 +45,6 @@ interface D1Like {
   };
 }
 
-function isValidEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
 
 function generateClaimId(): string {
   return `clm_${crypto.randomUUID().replace(/-/g, '')}`;
@@ -188,7 +185,7 @@ claimRoutes.post('/advance', async (c) => {
   const newProfileState = action === 'approve' ? ClaimLifecycleState.Verified : ClaimLifecycleState.Claimable;
 
   // Validate the state transition
-  const currentProfileState = claimRow.claim_state as string;
+  const currentProfileState = claimRow.claim_state;
   const pendingState = ClaimLifecycleState.ClaimPending;
 
   // Ensure profile is in claim_pending before approving

@@ -99,7 +99,7 @@ entityRoutes.post('/individuals', async (c) => {
   });
 
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
     await indexIndividual(c.env.DB as any, individual as any, auth.tenantId);
   } catch (err) {
     console.error('[entities] search index failed for individual:', err);
@@ -159,7 +159,7 @@ entityRoutes.post('/organizations', async (c) => {
   });
 
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
     await indexOrganization(c.env.DB as any, org as any, auth.tenantId);
   } catch (err) {
     console.error('[entities] search index failed for organization:', err);

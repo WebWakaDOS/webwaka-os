@@ -8,7 +8,7 @@
  */
 
 import { Hono } from 'hono';
-import { issueJwt, verifyJwt, extractAuthContext, extractBearerToken } from '@webwaka/auth';
+import { issueJwt, verifyJwt, extractAuthContext } from '@webwaka/auth';
 import { Role } from '@webwaka/types';
 import type { UserId, WorkspaceId, TenantId } from '@webwaka/types';
 import { asId } from '@webwaka/types';
@@ -107,7 +107,7 @@ authRoutes.post('/refresh', async (c) => {
 
 // GET /auth/me — return the caller's decoded AuthContext
 // Note: authMiddleware must be applied before this route in the app entry
-authRoutes.get('/me', async (c) => {
+authRoutes.get('/me', (c) => {
   const auth = c.get('auth');
   if (!auth) {
     return c.json({ error: 'Not authenticated.' }, 401);
