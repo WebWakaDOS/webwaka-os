@@ -1,7 +1,7 @@
 # WebWaka OS — Milestone Progress Tracker
 
-**Last updated:** 2026-04-07 16:52 WAT
-**Updated by:** Base44 Super Agent
+**Last updated:** 2026-04-07 17:30 WAT
+**Updated by:** Replit Agent (Milestone 3 progress)
 
 ---
 
@@ -118,13 +118,36 @@
 
 ---
 
-## Milestones 3–12
+## Milestone 3 — API Worker + Database Layer
 
-Detailed breakdown to be added as each milestone approaches.
+**Goal:** Scaffold all vertical support packages, wire the Hono API Worker, implement geography-driven discovery, and produce full Nigeria LGA + ward seed data.
+**Owner:** Replit Agent
+**Overall status:** 🔵 IN PROGRESS — Packages complete, API wired, 154 tests passing; ward CSV import ready (user must supply INEC CSV)
+
+| Task | Status | Notes |
+|---|---|---|
+| Install @cloudflare/workers-types, hono, wrangler | DONE | Added to apps/api |
+| buildIndexFromD1 in @webwaka/geography | DONE | D1 → GeographyIndex map, KV-cached in API |
+| CandidateRecord.id + migration 0007a | DONE | Political constraint migration |
+| packages/offline-sync — scaffold (pure types) | DONE | SyncEnvelope + 4 type tests |
+| packages/ai-abstraction — scaffold (pure types) | DONE | AiProvider interface |
+| packages/relationships — types + D1 migration 0007 + repository + tests | DONE | 5 tests, typed link graph |
+| packages/entitlements — plan config + evaluate + guards + tests | DONE | 27 tests |
+| packages/entities — ID gen + repositories + pagination + tests | DONE | 30 tests |
+| apps/api — Hono Worker + routes + middleware + tests | DONE | 9 tests, 11 routes |
+| Issue #8 — 774 LGAs seed | DONE | `infra/db/seed/0002_lgas.sql` |
+| Issue #8 — Ward importer script | DONE | `pnpm seed:wards <csv>` — user must supply INEC CSV |
+| Typecheck all packages (11) | DONE | Zero errors |
+| Test all packages (154 tests) | DONE | All passing |
+| Update milestone tracker + replit.md | DONE | 2026-04-07 |
+| Founder approval — Milestone 3 | PENDING | Awaiting review |
+
+---
+
+## Milestones 4–13
 
 | Milestone | Title | Status |
 |---|---|---|
-| 3 | API Worker + Database Layer | NOT STARTED |
 | 4 | Discovery & Public Profiles | NOT STARTED |
 | 5 | Claim-First Onboarding | NOT STARTED |
 | 6 | Commerce Module | NOT STARTED |

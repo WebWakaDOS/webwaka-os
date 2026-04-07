@@ -28,7 +28,7 @@ async function getGeographyIndex(env: Env) {
   const cached = await env.GEOGRAPHY_CACHE.get(CACHE_KEY, 'json') as null | Record<string, unknown>;
   if (cached) {
     // Rebuild GeographyIndex Map from cached plain object
-    return new Map(Object.entries(cached)) as ReturnType<typeof buildIndexFromD1> extends Promise<infer R> ? R : never;
+    return new Map(Object.entries(cached)) as unknown as Awaited<ReturnType<typeof buildIndexFromD1>>;
   }
 
   const index = await buildIndexFromD1(env.DB);

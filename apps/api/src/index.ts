@@ -56,13 +56,11 @@ app.use('*', logger());
 app.route('/health', healthRoutes);
 app.route('/geography', geographyRoutes);
 
-// Auth routes: login is public, refresh requires auth
-app.post('/auth/login', authRoutes as unknown as Parameters<typeof app.post>[1]);
-
 // ---------------------------------------------------------------------------
 // Authenticated routes
 // ---------------------------------------------------------------------------
 
+// /auth/login is public; /auth/refresh requires a valid JWT
 app.use('/auth/refresh', authMiddleware);
 app.route('/auth', authRoutes);
 

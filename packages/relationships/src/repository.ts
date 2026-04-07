@@ -41,7 +41,7 @@ function rowToRelationship(row: RelationshipRow): Relationship {
     objectType: row.object_type as Relationship['objectType'],
     objectId: row.object_id,
     tenantId: row.tenant_id as TenantId,
-    metadata: row.metadata ? (JSON.parse(row.metadata) as Record<string, unknown>) : undefined,
+    ...(row.metadata ? { metadata: JSON.parse(row.metadata) as Record<string, unknown> } : {}),
     createdAt: row.created_at,
   };
 }
@@ -86,7 +86,7 @@ export async function createRelationship(
     objectType: input.objectType,
     objectId: input.objectId,
     tenantId,
-    metadata: input.metadata,
+    ...(input.metadata ? { metadata: input.metadata } : {}),
     createdAt: now,
   };
 }

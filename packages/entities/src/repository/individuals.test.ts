@@ -12,6 +12,13 @@ const TENANT_ID = 'tenant_test_001' as TenantId;
 // In-memory D1 mock
 // ---------------------------------------------------------------------------
 
+interface D1Stmt {
+  bind(...args: unknown[]): D1Stmt;
+  run(): Promise<unknown>;
+  first<T>(): Promise<T | null>;
+  all<T>(): Promise<{ results: T[] }>;
+}
+
 function makeMockDb() {
   const store: Record<string, unknown>[] = [];
 
@@ -21,9 +28,9 @@ function makeMockDb() {
 
   return {
     _store: store,
-    prepare: (sql: string) => {
+    prepare: (sql: string): D1Stmt => {
       let boundArgs: unknown[] = [];
-      const stmt: ReturnType<ReturnType<typeof makeMockDb>['prepare']> = {
+      const stmt: D1Stmt = {
         bind: (...args: unknown[]) => { boundArgs = args; return stmt; },
         run: vi.fn(async () => {
           if (sql.startsWith('INSERT INTO individuals')) {
@@ -40,17 +47,17 @@ function makeMockDb() {
           }
           return {};
         }),
-        first: vi.fn(async () => {
+        first: async <T>(): Promise<T | null> => {
           const id = boundArgs[0];
           const tenantId = boundArgs[1];
-          return store.find((r) => r['id'] === id && r['tenant_id'] === tenantId) ?? null;
-        }),
-        all: vi.fn(async () => {
+          return (store.find((r) => r['id'] === id && r['tenant_id'] === tenantId) ?? null) as T | null;
+        },
+        all: async <T>(): Promise<{ results: T[] }> => {
           const tenantId = boundArgs[0];
           const limit = boundArgs[boundArgs.length - 1] as number;
           const results = store.filter((r) => r['tenant_id'] === tenantId).slice(0, limit);
-          return { results };
-        }),
+          return { results: results as unknown as T[] };
+        },
       };
       return stmt;
     },

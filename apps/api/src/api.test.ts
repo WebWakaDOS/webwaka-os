@@ -134,7 +134,7 @@ async function makeRequest(
   const request = new Request(`http://localhost${path}`, {
     method,
     headers,
-    body: options.body ? JSON.stringify(options.body) : undefined,
+    body: options.body ? JSON.stringify(options.body) : null,
   });
 
   return app.fetch(request, makeEnv() as unknown as { DB: D1Database; GEOGRAPHY_CACHE: KVNamespace; JWT_SECRET: string; ENVIRONMENT: 'development' });

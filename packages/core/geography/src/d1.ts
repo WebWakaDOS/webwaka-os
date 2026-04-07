@@ -10,7 +10,7 @@
  */
 
 import { asId } from '@webwaka/types';
-import type { PlaceId } from '@webwaka/types';
+import type { PlaceId, TenantId } from '@webwaka/types';
 import { buildIndex } from './hierarchy.js';
 import type { GeographyIndex } from './hierarchy.js';
 import type { GeographyNode } from './types.js';
@@ -27,6 +27,7 @@ interface PlaceRow {
   level: number;
   parent_id: string | null;
   ancestry_path: string; // JSON-encoded PlaceId[]
+  tenant_id: string | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -46,7 +47,7 @@ export async function buildIndexFromD1(
 ): Promise<GeographyIndex> {
   const { results } = await db
     .prepare(
-      'SELECT id, name, geography_type, level, parent_id, ancestry_path FROM places ORDER BY level ASC',
+      'SELECT id, name, geography_type, level, parent_id, ancestry_path, tenant_id FROM places ORDER BY level ASC',
     )
     .all<PlaceRow>();
 
@@ -57,6 +58,7 @@ export async function buildIndexFromD1(
     geographyType: row.geography_type as GeographyType,
     parentId: row.parent_id ? asId<PlaceId>(row.parent_id) : null,
     ancestryPath: (JSON.parse(row.ancestry_path) as string[]).map((p) => asId<PlaceId>(p)),
+    tenantId: row.tenant_id ? asId<TenantId>(row.tenant_id) : null,
   }));
 
   return buildIndex(nodes);

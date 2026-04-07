@@ -4,21 +4,28 @@
 
 import { describe, it, expect, vi } from 'vitest';
 import { EntityType, ClaimLifecycleState } from '@webwaka/types';
-import type { ProfileId } from '@webwaka/types';
+import type { ProfileId, PlaceId } from '@webwaka/types';
 import { seedProfile, advanceClaimState, getProfileBySubject, InvalidClaimTransitionError } from './profiles.js';
 
 // ---------------------------------------------------------------------------
 // In-memory D1 mock
 // ---------------------------------------------------------------------------
 
+interface D1Stmt {
+  bind(...args: unknown[]): D1Stmt;
+  run(): Promise<unknown>;
+  first<T>(): Promise<T | null>;
+  all<T>(): Promise<{ results: T[] }>;
+}
+
 function makeMockDb() {
   const store: Record<string, unknown>[] = [];
 
   return {
     _store: store,
-    prepare: (sql: string) => {
+    prepare: (sql: string): D1Stmt => {
       let boundArgs: unknown[] = [];
-      const stmt: ReturnType<ReturnType<typeof makeMockDb>['prepare']> = {
+      const stmt: D1Stmt = {
         bind: (...args: unknown[]) => { boundArgs = args; return stmt; },
         run: vi.fn(async () => {
           if (sql.startsWith('INSERT INTO profiles')) {
@@ -32,15 +39,15 @@ function makeMockDb() {
           }
           return {};
         }),
-        first: vi.fn(async () => {
-          if (sql.includes('subject_type')) {
+        first: async <T>(): Promise<T | null> => {
+          if (sql.includes('subject_type = ?')) {
             const [subjectType, subjectId] = boundArgs;
-            return store.find((r) => r['subject_type'] === subjectType && r['subject_id'] === subjectId) ?? null;
+            return (store.find((r) => r['subject_type'] === subjectType && r['subject_id'] === subjectId) ?? null) as T | null;
           }
           const [id] = boundArgs;
-          return store.find((r) => r['id'] === id) ?? null;
-        }),
-        all: vi.fn(async () => ({ results: store })),
+          return (store.find((r) => r['id'] === id) ?? null) as T | null;
+        },
+        all: async <T>(): Promise<{ results: T[] }> => ({ results: store as unknown as T[] }),
       };
       return stmt;
     },
@@ -62,7 +69,7 @@ describe('seedProfile', () => {
 
   it('accepts an optional primaryPlaceId', async () => {
     const db = makeMockDb();
-    const profile = await seedProfile(db, EntityType.Organization, 'org_001', 'plc_001' as ProfileId);
+    const profile = await seedProfile(db, EntityType.Organization, 'org_001', 'plc_001' as unknown as PlaceId);
     expect((profile as unknown as Record<string, unknown>)['primaryPlaceId']).toBe('plc_001');
   });
 });

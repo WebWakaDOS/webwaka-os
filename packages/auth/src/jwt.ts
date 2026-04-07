@@ -78,6 +78,48 @@ function isValidJwtPayload(payload: unknown): payload is JwtPayload {
 // ---------------------------------------------------------------------------
 
 /**
+ * Issues a signed JWT for testing and internal service calls.
+ *
+ * @param payload - Claims to embed (iat and exp are added automatically)
+ * @param secret  - HMAC-SHA256 signing secret
+ * @param expiresInSeconds - Token lifetime (default 1 hour)
+ */
+export async function issueJwt(
+  payload: Omit<JwtPayload, 'iat' | 'exp'>,
+  secret: string,
+  expiresInSeconds = 3600,
+): Promise<string> {
+  const now = Math.floor(Date.now() / 1000);
+  const fullPayload: JwtPayload = { ...payload, iat: now, exp: now + expiresInSeconds };
+
+  const encode = (obj: unknown): string =>
+    btoa(JSON.stringify(obj))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/g, '');
+
+  const header = { alg: 'HS256', typ: 'JWT' };
+  const signingInput = `${encode(header)}.${encode(fullPayload)}`;
+
+  const encoder = new TextEncoder();
+  const cryptoKey = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  );
+
+  const sigBytes = await crypto.subtle.sign('HMAC', cryptoKey, encoder.encode(signingInput));
+  const sigB64 = btoa(String.fromCharCode(...new Uint8Array(sigBytes)))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/g, '');
+
+  return `${signingInput}.${sigB64}`;
+}
+
+/**
  * Verifies a JWT using HMAC-SHA256 and returns the typed payload.
  *
  * @param token - Raw JWT string from Authorization header

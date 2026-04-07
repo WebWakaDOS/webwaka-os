@@ -15,6 +15,8 @@
  */
 
 import { Hono } from 'hono';
+import type { Context } from 'hono';
+import type { AuthContext } from '@webwaka/types';
 import {
   createIndividual,
   getIndividualById,
@@ -30,7 +32,7 @@ import { asId } from '@webwaka/types';
 import { EntitlementError } from '@webwaka/entitlements';
 import type { Env } from '../env.js';
 
-const entityRoutes = new Hono<{ Bindings: Env }>();
+const entityRoutes = new Hono<{ Bindings: Env; Variables: { auth: AuthContext } }>();
 
 // ---------------------------------------------------------------------------
 // Helper: build an EntitlementContext from the AuthContext + subscription info.
@@ -38,8 +40,10 @@ const entityRoutes = new Hono<{ Bindings: Env }>();
 // For the initial API wiring we read it from the workspace's subscription record.
 // ---------------------------------------------------------------------------
 
+type EntityContext = Context<{ Bindings: Env; Variables: { auth: AuthContext } }>;
+
 async function getEntitlementContext(
-  c: Parameters<Parameters<typeof entityRoutes.get>[1]>[0],
+  c: EntityContext,
 ): Promise<EntitlementContext> {
   const auth = c.get('auth');
 
@@ -89,8 +93,8 @@ entityRoutes.post('/individuals', async (c) => {
 
   const individual = await createIndividual(c.env.DB, auth.tenantId, {
     name: body.name,
-    placeId: body.placeId,
-    metadata: body.metadata,
+    ...(body.placeId !== undefined ? { placeId: body.placeId } : {}),
+    ...(body.metadata !== undefined ? { metadata: body.metadata } : {}),
   });
 
   return c.json({ data: individual }, 201);
@@ -100,8 +104,9 @@ entityRoutes.get('/individuals', async (c) => {
   const auth = c.get('auth');
   const limit = Math.min(parseInt(c.req.query('limit') ?? '20', 10), 100);
   const cursor = c.req.query('cursor');
+  const listOpts = { limit, ...(cursor !== undefined ? { cursor } : {}) };
 
-  const result = await listIndividualsByTenant(c.env.DB, auth.tenantId, { limit, cursor });
+  const result = await listIndividualsByTenant(c.env.DB, auth.tenantId, listOpts);
   return c.json({ data: result.items, nextCursor: result.nextCursor });
 });
 
@@ -141,8 +146,8 @@ entityRoutes.post('/organizations', async (c) => {
 
   const org = await createOrganization(c.env.DB, auth.tenantId, {
     name: body.name,
-    placeId: body.placeId,
-    metadata: body.metadata,
+    ...(body.placeId !== undefined ? { placeId: body.placeId } : {}),
+    ...(body.metadata !== undefined ? { metadata: body.metadata } : {}),
   });
 
   return c.json({ data: org }, 201);
@@ -152,8 +157,9 @@ entityRoutes.get('/organizations', async (c) => {
   const auth = c.get('auth');
   const limit = Math.min(parseInt(c.req.query('limit') ?? '20', 10), 100);
   const cursor = c.req.query('cursor');
+  const listOpts = { limit, ...(cursor !== undefined ? { cursor } : {}) };
 
-  const result = await listOrganizationsByTenant(c.env.DB, auth.tenantId, { limit, cursor });
+  const result = await listOrganizationsByTenant(c.env.DB, auth.tenantId, listOpts);
   return c.json({ data: result.items, nextCursor: result.nextCursor });
 });
 

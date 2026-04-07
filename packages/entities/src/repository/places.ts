@@ -70,7 +70,7 @@ export async function createPlace(
       throw new Error(`Parent place '${input.parentId}' not found.`);
     }
     const parentNode = parent as unknown as GeographyNode;
-    ancestryPath = [...(parentNode.ancestryPath as string[] ?? []), input.parentId as string];
+    ancestryPath = [...(Array.from(parentNode.ancestryPath as readonly string[]) ?? []), input.parentId as string];
   }
 
   await db
