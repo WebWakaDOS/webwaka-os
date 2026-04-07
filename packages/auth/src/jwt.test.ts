@@ -7,7 +7,7 @@
  * Uses Web Crypto API (globalThis.crypto) — available in Node 18+, Cloudflare Workers, browsers.
  */
 
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { Role } from '@webwaka/types';
 import {
   verifyJwt,
