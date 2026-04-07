@@ -13,7 +13,7 @@ WebWaka OS is a multi-tenant, multi-vertical, white-label SaaS platform operatin
 | 0 — Program Setup | ✅ DONE |
 | 1 — Governance Baseline | ✅ DONE |
 | 2 — Monorepo Scaffolding | ✅ DONE — Founder approved 2026-04-07 |
-| 3 — API Worker + Database Layer | 🔵 IN PROGRESS — packages scaffolded, API wired, 154 tests passing |
+| 3 — API Worker + Database Layer | 🟡 READY FOR REVIEW — packages complete, API wired, 154 tests passing, 8,810 ward seed committed |
 
 ## Tech Stack (Target Production)
 
@@ -148,15 +148,18 @@ interface D1Stmt {
 | File | Description |
 |---|---|
 | `infra/db/seed/0001_geography.sql` | 1 country + 6 zones + 37 states |
-| `infra/db/seed/0002_lgas.sql` | 774 LGAs (all Nigeria LGAs) |
-| `infra/db/seed/0003_wards.sql` | **User must generate** — run `pnpm seed:wards <inec-csv>` |
+| `infra/db/seed/0002_lgas.sql` | 775 LGAs (all Nigeria LGAs + Imeko-Afon Ogun, previously missing) |
+| `infra/db/seed/0003_wards.sql` | 8,810 wards — all Nigeria wards from INEC data (committed) |
 
-To generate ward data: download the official INEC ward CSV from `https://www.inec.gov.ng` and run:
+Ward seed is pre-committed. Source: `nielvid/states-lga-wards-polling-units` (GitHub, INEC data).
+8,810 / 8,810 wards matched — zero unmatched. 767 INSERT batches (≤50 rows each).
+LGA alias resolution covered all spelling variants; Imeko-Afon LGA added to `0002_lgas.sql` (775 total).
+
+To re-generate (not normally needed):
 ```bash
-pnpm seed:wards <path-to-csv>
+pnpm seed:wards <path-to-inec-csv>
 # or: npx tsx infra/db/seed/scripts/generate_wards_sql.ts <path-to-csv>
 ```
-This generates `infra/db/seed/0003_wards.sql` with 8,814+ ward records.
 
 ## API Routes (apps/api — Hono Worker)
 

@@ -122,7 +122,7 @@
 
 **Goal:** Scaffold all vertical support packages, wire the Hono API Worker, implement geography-driven discovery, and produce full Nigeria LGA + ward seed data.
 **Owner:** Replit Agent
-**Overall status:** 🔵 IN PROGRESS — Packages complete, API wired, 154 tests passing; ward CSV import ready (user must supply INEC CSV)
+**Overall status:** 🟡 READY FOR REVIEW — All tasks complete: packages, API, 154 tests passing, 8,810 ward seed committed
 
 | Task | Status | Notes |
 |---|---|---|
@@ -135,8 +135,8 @@
 | packages/entitlements — plan config + evaluate + guards + tests | DONE | 27 tests |
 | packages/entities — ID gen + repositories + pagination + tests | DONE | 30 tests |
 | apps/api — Hono Worker + routes + middleware + tests | DONE | 9 tests, 11 routes |
-| Issue #8 — 774 LGAs seed | DONE | `infra/db/seed/0002_lgas.sql` |
-| Issue #8 — Ward importer script | DONE | `pnpm seed:wards <csv>` — user must supply INEC CSV |
+| Issue #8 — 775 LGAs seed | DONE | `infra/db/seed/0002_lgas.sql` (775 total; Imeko-Afon LGA added) |
+| Issue #8 — 8,810 ward seed | DONE | `infra/db/seed/0003_wards.sql` — 8,810/8,810 wards, zero unmatched |
 | Typecheck all packages (11) | DONE | Zero errors |
 | Test all packages (154 tests) | DONE | All passing |
 | Update milestone tracker + replit.md | DONE | 2026-04-07 |

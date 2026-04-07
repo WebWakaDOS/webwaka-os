@@ -813,6 +813,7 @@ INSERT OR IGNORE INTO places (id, name, geography_type, level, parent_id, ancest
   ('place_lga_ogun_ado_odo_ota',       'Ado-Odo/Ota',      'local_government_area', 4, 'place_state_ogun', '["place_nigeria_001","place_zone_south_west","place_state_ogun"]', NULL),
   ('place_lga_ogun_ewekoro',           'Ewekoro',          'local_government_area', 4, 'place_state_ogun', '["place_nigeria_001","place_zone_south_west","place_state_ogun"]', NULL),
   ('place_lga_ogun_ifo',               'Ifo',              'local_government_area', 4, 'place_state_ogun', '["place_nigeria_001","place_zone_south_west","place_state_ogun"]', NULL),
+  ('place_lga_ogun_imeko_afon',        'Imeko-Afon',       'local_government_area', 4, 'place_state_ogun', '["place_nigeria_001","place_zone_south_west","place_state_ogun"]', NULL),
   ('place_lga_ogun_ijebu_east',        'Ijebu East',       'local_government_area', 4, 'place_state_ogun', '["place_nigeria_001","place_zone_south_west","place_state_ogun"]', NULL),
   ('place_lga_ogun_ijebu_north',       'Ijebu North',      'local_government_area', 4, 'place_state_ogun', '["place_nigeria_001","place_zone_south_west","place_state_ogun"]', NULL),
   ('place_lga_ogun_ijebu_north_east',  'Ijebu North East', 'local_government_area', 4, 'place_state_ogun', '["place_nigeria_001","place_zone_south_west","place_state_ogun"]', NULL),
