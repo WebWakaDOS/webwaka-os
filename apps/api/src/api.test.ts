@@ -149,7 +149,7 @@ describe('GET /health', () => {
   it('returns 200 with status ok', async () => {
     const res = await makeRequest('/health');
     expect(res.status).toBe(200);
-    const body = (await res.json()) as unknown as Record<string, unknown>;
+    const body = await res.json() as Record<string, unknown>;
     expect(body['status']).toBe('ok');
     expect(body['service']).toBe('webwaka-api');
   });
@@ -183,7 +183,7 @@ describe('GET /entities/individuals — authenticated', () => {
   it('returns 200 with empty list', async () => {
     const res = await makeRequest('/entities/individuals', { token: validToken });
     expect(res.status).toBe(200);
-    const body = (await res.json()) as unknown as Record<string, unknown>;
+    const body = await res.json() as Record<string, unknown>;
     expect(Array.isArray(body['data'])).toBe(true);
   });
 });
@@ -196,8 +196,8 @@ describe('POST /entities/individuals — create', () => {
       body: { name: 'Ngozi Adeyemi' },
     });
     expect(res.status).toBe(201);
-    const body = (await res.json()) as unknown as Record<string, unknown>;
-    const data = body['data'] as unknown as Record<string, unknown>;
+    const body = await res.json() as Record<string, unknown>;
+    const data = body['data'] as Record<string, unknown>;
     expect(data['name']).toBe('Ngozi Adeyemi');
     expect(typeof data['id']).toBe('string');
   });
