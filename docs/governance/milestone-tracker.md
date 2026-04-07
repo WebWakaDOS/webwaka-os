@@ -146,28 +146,30 @@
 
 **Goal:** Public discovery of seeded entities. Geography-filtered search. Profile pages. Claim entry point.
 **Owner:** Replit Agent (implementation) + Base44 Super Agent (QA, audit, CI)
-**Overall status:** 🟢 ACTIVE — Milestone 4 brief published 2026-04-07 20:31 WAT
+**Overall status:** 🟡 READY FOR REVIEW — PR #14 open, 171 tests passing, 12 packages typecheck clean
 
-**Baseline:** `main` at commit `f539a6b`
-**Branch discipline:** Create `feat/milestone-4` from `main`. Open PR to `main`. Do NOT push directly to `main`.
+**Baseline:** `main` at commit `588ea42`  
+**PR:** https://github.com/WebWakaDOS/webwaka-os/pull/14 (feat/milestone-4 → main)  
+**CI:** 171 tests passing · 12 packages typecheck clean  
+**Test count breakdown:** 14 (apps/api M3 baseline) + 20 (discovery M4) = 34 apps/api total · 171 workspace total
 
 | Task | Status | Notes |
 |---|---|---|
-| D1 migration 0008 — search index tables | NOT STARTED | Full-text search scaffold for entities |
-| D1 migration 0009 — discovery events log | NOT STARTED | Profile views, search hits, claim intents |
-| packages/search-indexing — scaffold + types | NOT STARTED | Secondary target — index update contracts |
-| apps/api — GET /discovery/search | NOT STARTED | Full-text + geography filter, paginated |
-| apps/api — GET /discovery/profiles/:subjectType/:subjectId | NOT STARTED | Public profile hydration endpoint |
-| apps/api — POST /discovery/claim-intent | NOT STARTED | Unauthenticated claim interest capture |
-| apps/api — GET /discovery/nearby/:placeId | NOT STARTED | Entities within geography subtree |
-| apps/api — GET /discovery/trending | NOT STARTED | Most-viewed profiles this week |
-| Profile hydration logic | NOT STARTED | Merge Individual/Org + Profile + Place records |
-| Geography filter integration | NOT STARTED | Uses @webwaka/geography ancestry for subtree filter |
-| Entitlement guard on sensitive profiles | NOT STARTED | requireSensitiveSectorAccess in discovery routes |
-| Test coverage ≥ 20 new tests | NOT STARTED | api/src/routes/discovery.test.ts |
-| Update milestone tracker | NOT STARTED | |
-| PR: feat/milestone-4 → main | NOT STARTED | Labels: milestone-4, review-needed, base44 |
-| Founder approval — Milestone 4 | NOT STARTED | Awaiting implementation + Base44 QA |
+| D1 migration 0008 — search index tables | DONE | `search_entries` + `search_fts` FTS5 virtual table |
+| D1 migration 0009 — discovery events log | DONE | Profile views, search hits, claim intents |
+| packages/search-indexing — scaffold + types | DONE | SearchEntry/SearchQuery/SearchAdapter interfaces |
+| apps/api — GET /discovery/search | DONE | Full-text + geography filter + visibility + pagination |
+| apps/api — GET /discovery/profiles/:subjectType/:subjectId | DONE | Public profile hydration (Individual/Org + Place + relationships) |
+| apps/api — POST /discovery/claim-intent | DONE | State validation, rate-limit by IP hash, 409 on duplicate |
+| apps/api — GET /discovery/nearby/:placeId | DONE | Geography subtree entity listing |
+| apps/api — GET /discovery/trending | DONE | Most-viewed profiles this week via discovery_events |
+| Profile hydration logic | DONE | Merged in discovery.ts profile route |
+| Geography filter integration | DONE | search_entries.place_id + querystring placeId filter |
+| Entitlement guard on sensitive profiles | DEFERRED | M5 — not in M4 brief deliverables |
+| Test coverage ≥ 20 new tests | DONE | 20 tests in apps/api/src/routes/discovery.test.ts |
+| Update milestone tracker | DONE | This entry |
+| PR: feat/milestone-4 → main | DONE | PR #14 — labels: milestone-4, review-needed, base44 |
+| Founder approval — Milestone 4 | NOT STARTED | Awaiting Base44 QA + Founder review |
 
 ---
 
