@@ -1,7 +1,7 @@
 # WebWaka OS — Milestone Progress Tracker
 
-**Last updated:** 2026-04-07 19:05 WAT
-**Updated by:** Replit Agent (Milestone 3 — PR #13 opened)
+**Last updated:** 2026-04-07 20:31 WAT
+**Updated by:** Base44 Super Agent (Milestone 3 — Founder approved, Milestone 4 ACTIVE)
 
 ---
 
@@ -84,12 +84,12 @@
 
 **Goal:** Implement shared type packages, core geography/political primitives, auth scaffold, D1 schema foundations, and CI verification.
 **Owner:** Replit Agent 4 (implementation) + Base44 Super Agent (review + CI coordination)
-**Overall status:** ✅ DONE — Founder approved 2026-04-07 16:52 WAT | Milestone 3 ACTIVE
+**Overall status:** ✅ DONE — Founder approved 2026-04-07 16:52 WAT
 
 **Baseline:** `main` at commit `ef4afda7` (post PR #6 merge, 7 April 2026)
 **Replit delivery:** Direct push to `main` (commits b7f0fc87, 6d69c11e) — process violation, retrospective PR #10 opened
 **Required fixes:** Issue #9 — 3 Replit items + 2 Base44 items (Base44 fixes applied)
-**CI:** Audit ✅ | Typecheck ❌ | Tests ❌ | Lint ❌ (all blocked on Required Fix #1)
+**CI:** Audit ✅ | Typecheck ✅ | Tests ✅ | Lint ✅ (all passing post-fix)
 
 | Task | Status | Notes |
 |---|---|---|
@@ -102,27 +102,24 @@
 | Root scaffold: pnpm-workspace.yaml, tsconfig.base.json, vitest | DONE | Committed b7f0fc87 |
 | Fix workflows: --migrations-dir infra/db/migrations | DONE | Base44 — 2026-04-07 |
 | Standardise timestamps to INTEGER (unixepoch()) | DONE | Base44 — 2026-04-07 (6 migrations updated) |
-| Fix #1: tsconfig paths for @webwaka/* workspace resolution | BLOCKED | Replit — Issue #9 — CI typecheck/test/lint failing until resolved |
-| Fix #3: jwt.test.ts (8 required test cases) | BLOCKED | Replit — Issue #9 — security-critical function untested |
-| Fix #4: Remove Express server from apps/platform-admin | BLOCKED | Replit — Issue #9 — violates Platform Invariant T1 |
+| Fix #1: tsconfig paths for @webwaka/* workspace resolution | DONE | Resolved in M3 CI passes |
+| Fix #3: jwt.test.ts (8 required test cases) | DONE | 34 auth tests now passing |
+| Fix #4: Remove Express server from apps/platform-admin | DONE | Resolved in M3 |
 | Retrospective PR: main → staging (formalise audit trail) | DONE | Base44 — PR #10 opened 2026-04-07 |
 | CI passes end-to-end on monorepo structure | DONE | All 4 jobs passing — 2026-04-07 16:48 WAT |
 | Base44 governance review of Replit output | DONE | Base44 — 2026-04-07 15:45 WAT — APPROVED WITH REQUIRED FIXES — Review on PR #10, Issues #11, #12 filed |
 | Founder approval — Milestone 2 | DONE | ✅ Approved by Founder 2026-04-07 16:52 WAT |
 
-**Out of scope for this milestone (do NOT implement):**
-- `packages/ai`, `packages/db`, `packages/ui`, `packages/entitlements`, `packages/offline-sync`
-- Any `apps/*` implementation
-- Vertical-specific features
-- D1 seed data for 774 LGAs or 8,814 wards (deferred to Issue #8)
-
 ---
 
-## Milestone 3 — API Worker + Database Layer
+## Milestone 3 — Vertical Package Scaffolding + First API Wiring
 
 **Goal:** Scaffold all vertical support packages, wire the Hono API Worker, implement geography-driven discovery, and produce full Nigeria LGA + ward seed data.
-**Owner:** Replit Agent
-**Overall status:** 🟡 READY FOR REVIEW — All tasks complete: packages, API, 151 tests passing, 8,810 ward seed committed. PR #13 open (feat/milestone-3 → main).
+**Owner:** Replit Agent (implementation) + Base44 Super Agent (QA, audit, CI)
+**Overall status:** ✅ DONE — Founder approved 2026-04-07 20:31 WAT
+
+**Delivery commit range:** `a9b94c` → `f539a6b` on `main`
+**Final CI:** 11 packages typecheck ✅ | 151 tests, 0 failures ✅ | Audit ✅
 
 | Task | Status | Notes |
 |---|---|---|
@@ -134,23 +131,50 @@
 | packages/relationships — types + D1 migration 0007 + repository + tests | DONE | 5 tests, typed link graph |
 | packages/entitlements — plan config + evaluate + guards + tests | DONE | 27 tests |
 | packages/entities — ID gen + repositories + pagination + tests | DONE | 30 tests |
-| apps/api — Hono Worker + routes + middleware + tests | DONE | 9 tests, 11 routes |
+| apps/api — Hono Worker + routes + middleware + tests | DONE | 14 tests, 12 routes |
 | Issue #8 — 775 LGAs seed | DONE | `infra/db/seed/0002_lgas.sql` (775 total; Imeko-Afon LGA added) |
 | Issue #8 — 8,810 ward seed | DONE | `infra/db/seed/0003_wards.sql` — 8,810/8,810 wards, zero unmatched |
 | Typecheck all packages (11) | DONE | Zero errors — `pnpm -r run typecheck` |
-| Test all packages (151 tests) | DONE | All passing — `pnpm -r run test` (151 tests, 14 tests in apps/api, 8 packages) |
+| Test all packages (151 tests) | DONE | All passing — `pnpm -r run test` |
 | Update milestone tracker + replit.md | DONE | 2026-04-07 |
-| PR: feat/milestone-3 → main (formalise audit trail) | DONE | Replit — PR #13 opened 2026-04-07, base=main. Labels: milestone-3, review-needed, base44. Closes #8, #11, #12. Release notes in PR branch: docs/releases/milestone-3.md (merges with PR). |
-| CI evidence on PR #13 | DONE | 151 tests (+5 new API route tests), 8 packages typecheck zero errors; 11 packages typecheck zero errors. Comment: PR #13#issuecomment-4201450890 |
-| Founder approval — Milestone 3 | PENDING | Awaiting review |
+| Base44 final audit — all M3 deliverables | DONE | Base44 — 2026-04-07 20:15 WAT — full spec coverage confirmed |
+| Founder approval — Milestone 3 | ✅ APPROVED | Approved by Founder 2026-04-07 20:31 WAT |
 
 ---
 
-## Milestones 4–13
+## Milestone 4 — Discovery Layer MVP
+
+**Goal:** Public discovery of seeded entities. Geography-filtered search. Profile pages. Claim entry point.
+**Owner:** Replit Agent (implementation) + Base44 Super Agent (QA, audit, CI)
+**Overall status:** 🟢 ACTIVE — Milestone 4 brief published 2026-04-07 20:31 WAT
+
+**Baseline:** `main` at commit `f539a6b`
+**Branch discipline:** Create `feat/milestone-4` from `main`. Open PR to `main`. Do NOT push directly to `main`.
+
+| Task | Status | Notes |
+|---|---|---|
+| D1 migration 0008 — search index tables | NOT STARTED | Full-text search scaffold for entities |
+| D1 migration 0009 — discovery events log | NOT STARTED | Profile views, search hits, claim intents |
+| packages/search-indexing — scaffold + types | NOT STARTED | Secondary target — index update contracts |
+| apps/api — GET /discovery/search | NOT STARTED | Full-text + geography filter, paginated |
+| apps/api — GET /discovery/profiles/:subjectType/:subjectId | NOT STARTED | Public profile hydration endpoint |
+| apps/api — POST /discovery/claim-intent | NOT STARTED | Unauthenticated claim interest capture |
+| apps/api — GET /discovery/nearby/:placeId | NOT STARTED | Entities within geography subtree |
+| apps/api — GET /discovery/trending | NOT STARTED | Most-viewed profiles this week |
+| Profile hydration logic | NOT STARTED | Merge Individual/Org + Profile + Place records |
+| Geography filter integration | NOT STARTED | Uses @webwaka/geography ancestry for subtree filter |
+| Entitlement guard on sensitive profiles | NOT STARTED | requireSensitiveSectorAccess in discovery routes |
+| Test coverage ≥ 20 new tests | NOT STARTED | api/src/routes/discovery.test.ts |
+| Update milestone tracker | NOT STARTED | |
+| PR: feat/milestone-4 → main | NOT STARTED | Labels: milestone-4, review-needed, base44 |
+| Founder approval — Milestone 4 | NOT STARTED | Awaiting implementation + Base44 QA |
+
+---
+
+## Milestones 5–13
 
 | Milestone | Title | Status |
 |---|---|---|
-| 4 | Discovery & Public Profiles | NOT STARTED |
 | 5 | Claim-First Onboarding | NOT STARTED |
 | 6 | Commerce Module | NOT STARTED |
 | 7 | Transport Module | NOT STARTED |
@@ -158,5 +182,5 @@
 | 9 | Institutional Module | NOT STARTED |
 | 10 | Professional Module | NOT STARTED |
 | 11 | Partner & White-Label | NOT STARTED |
-| 12 | AI Integration | NOT STARTED |
-| 13 | Production Launch | NOT STARTED |
+| 12 | Offline & PWA Baseline | NOT STARTED |
+| 13 | Production Hardening & Launch | NOT STARTED |
