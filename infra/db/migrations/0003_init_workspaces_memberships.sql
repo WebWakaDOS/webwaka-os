@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS workspaces (
   subscription_status TEXT NOT NULL DEFAULT 'active',
   -- Stored as JSON array of PlatformLayer strings
   active_layers       TEXT NOT NULL DEFAULT '["discovery"]',
-  created_at          TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at          TEXT NOT NULL DEFAULT (datetime('now'))
+  created_at          INTEGER NOT NULL DEFAULT (unixepoch()),
+  updated_at          INTEGER NOT NULL DEFAULT (unixepoch())
 );
 
 CREATE INDEX IF NOT EXISTS idx_workspaces_tenant_id ON workspaces(tenant_id);
@@ -29,8 +29,8 @@ CREATE TABLE IF NOT EXISTS memberships (
   user_id      TEXT NOT NULL,
   role         TEXT NOT NULL DEFAULT 'member'
                CHECK (role IN ('super_admin', 'admin', 'manager', 'agent', 'cashier', 'member')),
-  created_at   TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at   TEXT NOT NULL DEFAULT (datetime('now')),
+  created_at   INTEGER NOT NULL DEFAULT (unixepoch()),
+  updated_at   INTEGER NOT NULL DEFAULT (unixepoch()),
   UNIQUE (workspace_id, user_id)
 );
 
