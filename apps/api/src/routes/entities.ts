@@ -26,7 +26,7 @@ import {
   listOrganizationsByTenant,
 } from '@webwaka/entities';
 import { requireLayerAccess } from '@webwaka/entitlements';
-import { PlatformLayer, SubscriptionPlan, SubscriptionStatus, Role } from '@webwaka/types';
+import { PlatformLayer, SubscriptionPlan, SubscriptionStatus } from '@webwaka/types';
 import type { IndividualId, OrganizationId, EntitlementContext } from '@webwaka/types';
 import { asId } from '@webwaka/types';
 import { EntitlementError } from '@webwaka/entitlements';
