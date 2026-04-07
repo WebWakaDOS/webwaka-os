@@ -22,92 +22,102 @@
 
 **Goal:** Establish project control before coding starts.
 **Owner:** Base44 Super Agent
-**Overall status:** READY FOR REVIEW — awaiting Founder approval
+**Overall status:** ✅ DONE — Founder approved 7 April 2026
 
 | Task | Status | Notes |
 |---|---|---|
 | Create monorepo repository | DONE | https://github.com/WebWakaDOS/webwaka-os |
-| Create base folder structure (apps, packages, docs, infra, tests) | DONE | 34 files, all directories scaffolded |
-| Create root docs (README, CONTRIBUTING, ARCHITECTURE, SECURITY, RELEASES, AGENTS, ROADMAP) | DONE | All 7 root docs committed |
-| Configure branch strategy (main + staging) | DONE | Both branches created |
-| Protect main branch | DONE | 1 reviewer, CI required, no force push |
-| Protect staging branch | DONE | 1 reviewer, CI required, no force push |
-| Add CODEOWNERS | DONE | .github/CODEOWNERS committed |
-| Add repo labels (29 labels) | DONE | governance, architecture, milestone-*, blocked, etc. |
-| Add issue templates (4 types) | DONE | Bug, Feature, Decision, Governance Change |
-| Add PR template | DONE | .github/PULL_REQUEST_TEMPLATE.md |
-| Configure Dependabot | DONE | Weekly, Monday 9am WAT, grouped |
-| Draft security-baseline.md | DONE | docs/governance/security-baseline.md |
-| Draft release-governance.md | DONE | docs/governance/release-governance.md |
-| Draft platform-invariants.md | DONE | docs/governance/platform-invariants.md — READY FOR REVIEW |
-| Draft agent-execution-rules.md | DONE | docs/governance/agent-execution-rules.md |
-| Draft TDR-0002 (Cloudflare hosting) | DONE | docs/architecture/decisions/0002-cloudflare-primary-hosting.md |
-| Draft TDR-0005 (Base44 role) | DONE | docs/architecture/decisions/0005-base44-orchestration-role.md |
-| Draft TDR-0007 (D1 environment model) | DONE | docs/architecture/decisions/0007-cloudflare-d1-environment-model.md |
-| Draft TDR-0012 (CI/CD pipeline) | DONE | docs/architecture/decisions/0012-ci-cd-github-to-cloudflare.md |
-| Create GitHub milestones (0–12) | DONE | 13 milestones created |
-| Create tracking issues | DONE | 5 initial issues filed |
-| Configure GitHub Actions CI workflow | DONE | .github/workflows/ci.yml |
-| Configure deploy-staging workflow | DONE | .github/workflows/deploy-staging.yml |
-| Configure deploy-production workflow | DONE | .github/workflows/deploy-production.yml |
-| Configure check-core-version workflow | DONE | .github/workflows/check-core-version.yml |
-| Configure governance-check workflow | DONE | .github/workflows/governance-check.yml |
-| Create GitHub Environments (staging + production) | DONE | Both environments configured |
-| Create D1 databases | DONE | staging: cfa62668… / production: de1d0935… |
-| Create KV namespaces (x4) | DONE | All 4 KV namespaces created |
-| Create R2 buckets | DONE | staging + production buckets created |
-| Store all secrets in GitHub Actions (7 secrets) | DONE | All 7 secrets set |
-| Set GitHub environment variables | DONE | 8 variables set across staging + production |
-| Update infra docs with real IDs | DONE | environments.md + secrets-inventory.md updated |
-| Configure custom domains / DNS | BLOCKED | Awaiting domain confirmation from Founder — see issue #1 |
-| Founder approval of Milestone 0 | NOT STARTED | See issue #3 |
+| Create base folder structure | DONE | 34 files, all directories scaffolded |
+| Protect `main` and `staging` branches | DONE | 1 reviewer + CI required |
+| Create 29 GitHub labels | DONE | Governance, milestone, workflow, infra, agent labels |
+| Create 4 issue templates | DONE | Bug, Feature, TDR, Governance Change |
+| Create PR template | DONE | Structured checklist |
+| Configure Dependabot | DONE | Weekly, grouped by ecosystem |
+| Create 5 GitHub Actions workflows | DONE | CI, deploy-staging, deploy-production, check-core-version, governance-check |
+| Provision Cloudflare D1 databases | DONE | staging: cfa62668, production: de1d0935 |
+| Provision Cloudflare KV namespaces (4) | DONE | WEBWAKA_KV + RATE_LIMIT_KV for both envs |
+| Provision Cloudflare R2 buckets (2) | DONE | assets-staging, assets-production |
+| Set all 7 GitHub Actions secrets | DONE | See secrets-inventory.md |
+| Draft 7 root documentation files | DONE | README, CONTRIBUTING, ARCHITECTURE, SECURITY, RELEASES, ROADMAP, AGENTS |
+| Draft 5 governance documents (M0 set) | DONE | security-baseline, release-governance, platform-invariants, agent-execution-rules, milestone-tracker |
+| Draft 4 TDRs (M0 set) | DONE | TDR-0002, 0005, 0007, 0012 |
+| Open GitHub issues for tracking | DONE | Issues #1–#5 filed |
+| Founder approval — Milestone 0 | ✅ APPROVED | Closed issue #3, 7 April 2026 |
+| DNS configuration | PENDING | Deferred — no Workers deployed yet (Milestone 2) |
 
 ---
 
-## Milestone 1 — Governance Baseline Complete
+## Milestone 1 — Governance Baseline
 
-**Goal:** No architecture drift possible.
-**Owner:** Perplexity drafts → Base44 organizes → Founder approves
-**Overall status:** IN PROGRESS
+**Goal:** Complete all governance documents and TDRs before Replit scaffolding.
+**Owner:** Perplexity (authoring) + Base44 Super Agent (placement, review, PR)
+**Overall status:** ✅ DONE — All documents placed, PR #6 open with `founder-approval` label
 
 | Task | Status | Notes |
 |---|---|---|
-| vision-and-mission.md | NOT STARTED | Perplexity to draft |
-| core-principles.md | NOT STARTED | Perplexity to draft |
-| platform-invariants.md | READY FOR REVIEW | Base44 initial — Perplexity to refine, Founder to approve |
-| universal-entity-model.md | NOT STARTED | Perplexity to draft |
-| relationship-schema.md | NOT STARTED | Perplexity to draft |
-| entitlement-model.md | NOT STARTED | Perplexity to draft |
-| geography-taxonomy.md | NOT STARTED | Perplexity to draft |
-| political-taxonomy.md | NOT STARTED | Perplexity to draft |
-| claim-first-onboarding.md | NOT STARTED | Perplexity to draft |
-| partner-and-subpartner-model.md | NOT STARTED | Perplexity to draft |
-| white-label-policy.md | NOT STARTED | Perplexity to draft |
-| ai-policy.md | NOT STARTED | Perplexity to draft |
-| security-baseline.md | READY FOR REVIEW | Base44 draft — Founder to approve |
-| release-governance.md | READY FOR REVIEW | Base44 draft — Founder to approve |
-| agent-execution-rules.md | READY FOR REVIEW | Base44 draft — Founder to approve |
-| TDR-0001 through TDR-0012 | IN PROGRESS | 0002, 0005, 0007, 0012 done; 0001, 0003, 0004, 0006, 0008, 0009, 0010, 0011 need Perplexity |
-| Founder approval of Milestone 1 | NOT STARTED | Gate: all docs done first |
+| Draft vision-and-mission.md | DONE | Perplexity-authored, Founder approved |
+| Draft core-principles.md | DONE | Perplexity-authored, Founder approved |
+| Draft universal-entity-model.md | DONE | Perplexity-authored, Founder approved |
+| Draft relationship-schema.md | DONE | Perplexity-authored, Founder approved |
+| Draft entitlement-model.md | DONE | Perplexity-authored, Founder approved |
+| Draft geography-taxonomy.md | DONE | Perplexity-authored, Founder approved |
+| Draft political-taxonomy.md | DONE | Perplexity-authored, Founder approved |
+| Draft claim-first-onboarding.md | DONE | Perplexity-authored, Founder approved |
+| Draft partner-and-subpartner-model.md | DONE | Perplexity-authored, Founder approved |
+| Draft white-label-policy.md | DONE | Perplexity-authored, Founder approved |
+| Draft ai-policy.md | DONE | Perplexity-authored, Founder approved |
+| Draft TDR-0001 (monorepo strategy) | DONE | Perplexity-authored, Founder approved |
+| Draft TDR-0003 (GitHub source of truth) | DONE | Perplexity-authored, Founder approved |
+| Draft TDR-0004 (Replit build workbench) | DONE | Perplexity-authored, Founder approved |
+| Draft TDR-0006 (TypeScript-first) | DONE | Perplexity-authored, Founder approved |
+| Draft TDR-0008 (auth + tenancy) | DONE | Perplexity-authored, Founder approved |
+| Draft TDR-0009 (AI provider abstraction) | DONE | Perplexity-authored, Founder approved |
+| Draft TDR-0010 (offline + PWA standard) | DONE | Perplexity-authored, Founder approved |
+| Draft TDR-0011 (geography + political core) | DONE | Perplexity-authored, Founder approved |
+| Open governance review PR | DONE | PR #6: https://github.com/WebWakaDOS/webwaka-os/pull/6 |
+| Apply `founder-approval` label to PR | DONE | ✅ Applied 7 April 2026 |
+| Founder approval — Milestone 1 | ✅ APPROVED | Closed issues #4, #5 — 7 April 2026 |
 
 ---
 
-## Milestones 2–12
+## Milestone 2 — Monorepo Scaffolding
 
-NOT STARTED — sequentially gated on Milestone 1 completion and Founder approval.
+**Goal:** Scaffold all apps, packages, D1 schemas, and shared infrastructure.
+**Owner:** Replit Agent 4 (implementation) + Base44 Super Agent (review + CI)
+**Overall status:** 🟢 UNBLOCKED — awaiting Replit kickoff
+
+| Task | Status | Notes |
+|---|---|---|
+| Scaffold `packages/types` (shared TypeScript types) | NOT STARTED | Depends on universal-entity-model.md |
+| Scaffold `packages/core` (geography + political primitives) | NOT STARTED | TDR-0011 |
+| Scaffold `packages/auth` (JWT + workspace-scoped auth) | NOT STARTED | TDR-0008 |
+| Scaffold `packages/db` (D1 query helpers) | NOT STARTED | TDR-0007 |
+| Scaffold `packages/ai` (provider abstraction) | NOT STARTED | TDR-0009 |
+| Scaffold `packages/ui` (shared component library) | NOT STARTED | |
+| Scaffold `apps/api` (Cloudflare Worker API) | NOT STARTED | |
+| Scaffold `apps/platform-admin` | NOT STARTED | |
+| Scaffold `apps/partner-admin` | NOT STARTED | |
+| Scaffold `apps/brand-runtime` | NOT STARTED | |
+| Scaffold `apps/public-discovery` | NOT STARTED | |
+| D1 schema: base tables and migrations | NOT STARTED | |
+| D1 seed data: Nigerian geography (states, LGAs, wards) | NOT STARTED | TDR-0011 |
+| CI passes end-to-end on monorepo structure | NOT STARTED | |
 
 ---
 
-## Active Blockers
+## Milestones 3–12
 
-| # | Description | Labels | Owner | Status |
-|---|---|---|---|---|
-| #1 | Cloudflare custom domain/DNS setup | blocked, infra | Founder | BLOCKED — awaiting domain |
-| #3 | Founder approval of Milestone 0 | founder-approval | Founder | PENDING |
-| #4 | Perplexity governance doc drafts | blocked, governance | Perplexity | NOT STARTED |
-| #5 | Founder approval of Milestone 1 | founder-approval | Founder | NOT STARTED |
+Detailed breakdown to be added as each milestone approaches.
 
----
-
-*This tracker is the canonical source of truth for project progress.*
-*Update after every significant task. Base44 Super Agent is responsible for keeping this current.*
+| Milestone | Title | Status |
+|---|---|---|
+| 3 | Discovery & Public Profiles | NOT STARTED |
+| 4 | Claim-First Onboarding | NOT STARTED |
+| 5 | Commerce Module | NOT STARTED |
+| 6 | Transport Module | NOT STARTED |
+| 7 | Civic & Political Module | NOT STARTED |
+| 8 | Institutional Module | NOT STARTED |
+| 9 | Professional Module | NOT STARTED |
+| 10 | Partner & White-Label | NOT STARTED |
+| 11 | AI Integration | NOT STARTED |
+| 12 | Production Launch | NOT STARTED |
