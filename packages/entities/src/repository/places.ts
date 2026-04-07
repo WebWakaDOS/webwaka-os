@@ -4,7 +4,6 @@
  * T3: write operations are tenant-scoped where applicable.
  */
 
-import { asId } from '@webwaka/types';
 import type { Place, PlaceId, TenantId } from '@webwaka/types';
 import { GeographyType, GeographyLevel } from '@webwaka/geography';
 import type { GeographyNode } from '@webwaka/geography';
