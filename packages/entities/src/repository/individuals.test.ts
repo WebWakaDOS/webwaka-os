@@ -32,7 +32,7 @@ function makeMockDb() {
       let boundArgs: unknown[] = [];
       const stmt: D1Stmt = {
         bind: (...args: unknown[]) => { boundArgs = args; return stmt; },
-        run: vi.fn(async () => {
+        run: vi.fn(() => {
           if (sql.startsWith('INSERT INTO individuals')) {
             const [id, name, , tenantId, placeId, metadata] = boundArgs;
             store.push(makeRow(id as string, name as string, tenantId as string, placeId as string | null, metadata as string | null));
@@ -45,14 +45,14 @@ function makeMockDb() {
               if (boundArgs[0]) (store[idx] as Record<string, unknown>)['name'] = boundArgs[0];
             }
           }
-          return {};
+          return Promise.resolve({});
         }),
-        first: async <T>(): Promise<T | null> => {
+        first: <T>(): Promise<T | null> => {
           const id = boundArgs[0];
           const tenantId = boundArgs[1];
-          return (store.find((r) => r['id'] === id && r['tenant_id'] === tenantId) ?? null) as T | null;
+          return Promise.resolve((store.find((r) => r['id'] === id && r['tenant_id'] === tenantId) ?? null) as T | null);
         },
-        all: async <T>(): Promise<{ results: T[] }> => {
+        all: <T>(): Promise<{ results: T[] }> => {
           const tenantId = boundArgs[0];
           const limit = boundArgs[boundArgs.length - 1] as number;
           const results = store.filter((r) => r['tenant_id'] === tenantId).slice(0, limit);
@@ -99,7 +99,7 @@ describe('getIndividualById', () => {
   it('returns the individual when found', async () => {
     const db = makeMockDb();
     const created = await createIndividual(db, TENANT_ID, { name: 'Fatima Bello' });
-    const found = await getIndividualById(db, TENANT_ID, created.id as IndividualId);
+    const found = await getIndividualById(db, TENANT_ID, created.id);
     expect(found).not.toBeNull();
   });
 });
