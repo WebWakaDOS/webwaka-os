@@ -1,0 +1,20 @@
+{
+  "name": "@webwaka/admin-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Admin dashboard Cloudflare Worker. WebWaka OS Milestone 6.",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@webwaka/frontend": "workspace:*",
+    "@webwaka/payments": "workspace:*",
+    "hono": "^4.3.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240524.0",
+    "typescript": "^5.4.5"
+  }
+}
