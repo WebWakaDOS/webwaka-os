@@ -1,7 +1,7 @@
 # WebWaka OS — Milestone Progress Tracker
 
-**Last updated:** 2026-04-07 23:00 WAT
-**Updated by:** Replit Agent (Milestone 6 — IN PROGRESS, 294 tests, 0 typecheck errors, feat/milestone-6 branch)
+**Last updated:** 2026-04-07 23:45 WAT
+**Updated by:** Base44 OpenClaw (Milestone 6 — READY FOR REVIEW — security fixes applied, 300 tests, 0 typecheck errors)
 
 ---
 
@@ -222,7 +222,7 @@
 
 **Goal:** Payments (Paystack), Frontend Composition, Event Bus — all infrastructure before first vertical goes live.
 **Owner:** Replit Agent (implementation)
-**Overall status:** 🔄 IN PROGRESS — feat/milestone-6 | 294 tests | 0 typecheck errors
+**Overall status:** ✅ READY FOR REVIEW — feat/milestone-6 | 300 tests | 0 typecheck errors | PR #17 ready to merge
 
 **Baseline:** `main` at commit `24d57cc` — 202 tests, 13 packages typecheck clean
 **Branch:** `feat/milestone-6` → `main`
@@ -270,13 +270,23 @@
 | packages/events — 19 tests | DONE | publisher(6) + subscriber(9) + search(4) |
 | apps/projections | DONE | Event processor Worker (rebuild/search, rebuild/analytics) |
 
+### Security Fixes (Base44 OpenClaw — 2026-04-07)
+
+| Task | Status | Notes |
+|---|---|---|
+| POST /payments/verify — webhook sig validation (W1) | DONE | verifyWebhookSignature() wired; 401 on missing/bad x-paystack-signature |
+| Workspace tenant isolation (T1/T3) | DONE | auth.workspaceId checked in upgrade, verify, billing; 403 on mismatch |
+| +6 security tests for the above | DONE | payments.test.ts now has 17 tests |
+
 ### CI Summary
 
 | Metric | Value |
 |---|---|
-| Total tests passing | 294 |
+| Total tests passing | 300 |
 | Typecheck errors | 0 |
 | New packages | 3 (payments, events, frontend) |
 | New apps | 3 (tenant-public, admin-dashboard, projections) |
 | New migrations | 2 (0011, 0012) |
 | New API routes | 6 (upgrade, verify, billing, public, dashboard, themes) |
+| Security fixes | 2 (W1 webhook sig, T1/T3 tenant isolation) |
+| Final test count | 300 (+6 security tests vs 294 baseline) |
