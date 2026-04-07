@@ -51,7 +51,7 @@
 
 **Goal:** Complete all governance documents and TDRs before Replit scaffolding.
 **Owner:** Perplexity (authoring) + Base44 Super Agent (placement, review, PR)
-**Overall status:** ✅ DONE — All documents placed, PR #6 open with `founder-approval` label
+**Overall status:** ✅ DONE — All documents placed, PR #6 merged 7 April 2026
 
 | Task | Status | Notes |
 |---|---|---|
@@ -75,37 +75,38 @@
 | Draft TDR-0010 (offline + PWA standard) | DONE | Perplexity-authored, Founder approved |
 | Draft TDR-0011 (geography + political core) | DONE | Perplexity-authored, Founder approved |
 | Open governance review PR | DONE | PR #6: https://github.com/WebWakaDOS/webwaka-os/pull/6 |
-| Apply `founder-approval` label to PR | DONE | ✅ Applied 7 April 2026 |
+| Apply `founder-approval` label to PR | DONE | Applied 7 April 2026 |
 | Founder approval — Milestone 1 | ✅ APPROVED | Closed issues #4, #5 — 7 April 2026 |
 
 ---
 
-## Milestone 2 — Monorepo Scaffolding
+## Milestone 2 — Monorepo Scaffolding and Shared Core Foundations
 
-**Goal:** Scaffold all apps, packages, D1 schemas, and shared infrastructure.
-**Owner:** Replit Agent 4 (implementation) + Base44 Super Agent (review + CI)
-**Overall status:** 🟡 IN PROGRESS — Phase A–F complete, awaiting Base44 review
+**Goal:** Implement shared type packages, core geography/political primitives, auth scaffold, D1 schema foundations, and CI verification.
+**Owner:** Replit Agent 4 (implementation) + Base44 Super Agent (review + CI coordination)
+**Overall status:** 🟡 IN PROGRESS — Replit kickoff authorized, awaiting first branch submission
 
-**Last updated:** 2026-04-07 by Replit Agent 4
+**Baseline:** `main` at commit `ef4afda7` (post PR #6 merge, 7 April 2026)
+**Target branch for Replit work:** `feat/milestone-2-scaffold`
+**PR target:** `staging`
 
 | Task | Status | Notes |
 |---|---|---|
-| Scaffold `packages/types` (shared TypeScript types) | ✅ READY FOR REVIEW | 5 source files, 0 TS errors. IDs, enums, entities, auth types, subscription types. |
-| Scaffold `packages/core/geography` | ✅ READY FOR REVIEW | Hierarchy, ancestry, rollup helpers. 21 tests, all passing. |
-| Scaffold `packages/core/politics` | ✅ READY FOR REVIEW | Office-territory map, models. 16 tests, all passing. |
-| Scaffold `packages/auth` (JWT + workspace-scoped auth) | ✅ READY FOR REVIEW | JWT validation, role guards, entitlements, middleware scaffold. 24 tests, all passing. |
-| Scaffold `packages/db` (D1 query helpers) | NOT STARTED | TDR-0007 — Milestone 2 phase 2 |
-| Scaffold `packages/ai` (provider abstraction) | NOT STARTED | TDR-0009 — Milestone 2 phase 2 |
-| Scaffold `packages/ui` (shared component library) | NOT STARTED | Milestone 2 phase 2 |
-| Scaffold `apps/api` (Cloudflare Worker API) | NOT STARTED | Milestone 2 phase 2 |
-| Scaffold `apps/platform-admin` | IN PROGRESS | Status dashboard live on port 5000 |
-| Scaffold `apps/partner-admin` | NOT STARTED | Milestone 2 phase 2 |
-| Scaffold `apps/brand-runtime` | NOT STARTED | Milestone 3 |
-| Scaffold `apps/public-discovery` | NOT STARTED | Milestone 3 |
-| D1 schema: base tables and migrations | ✅ READY FOR REVIEW | 6 migration files: places, entities, workspaces, subscriptions, profiles, political |
-| D1 seed data: Nigerian geography (states, LGAs, wards) | 🟡 PARTIAL | Country + 6 zones + 37 states seeded. LGAs + wards pending INEC data import. |
-| pnpm workspace + TypeScript + Vitest scaffold | ✅ DONE | pnpm-workspace.yaml, tsconfig.base.json, vitest.workspace.ts configured |
-| CI passes end-to-end on monorepo structure | 🟡 LOCAL PASS | All typechecks and tests pass locally. Awaiting GitHub Actions run. |
+| Scaffold `packages/types` (shared TypeScript types) | IN PROGRESS | Replit — depends on universal-entity-model.md |
+| Scaffold `packages/core/geography` (typed hierarchy) | IN PROGRESS | Replit — TDR-0011 |
+| Scaffold `packages/core/politics` (office + territory model) | IN PROGRESS | Replit — political-taxonomy.md |
+| Scaffold `packages/auth` (JWT + workspace-scoped auth) | IN PROGRESS | Replit — TDR-0008 |
+| D1 schema: foundational tables and migrations | IN PROGRESS | Replit — TDR-0007 |
+| D1 seed: pnpm-workspace + tsconfig + eslint setup | IN PROGRESS | Replit |
+| CI passes end-to-end on monorepo structure | NOT STARTED | Blocks milestone completion |
+| Base44 governance review of Replit output | NOT STARTED | Base44 — triggers after PR opened |
+| Founder approval — Milestone 2 | NOT STARTED | Required before Milestone 3 |
+
+**Out of scope for this milestone (do NOT implement):**
+- `packages/ai`, `packages/db`, `packages/ui`, `packages/entitlements`, `packages/offline-sync`
+- Any `apps/*` implementation
+- Vertical-specific features
+- D1 seed data for 774 LGAs or 8,814 wards (framework only; seed script deferred to M2 completion or M3)
 
 ---
 
