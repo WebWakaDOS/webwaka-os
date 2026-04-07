@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+.next/
+out/
+build/
+.wrangler/
+.output/
+
+# Environment files — NEVER commit these
+.env
+.env.local
+.env.staging
+.env.production
+.dev.vars
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Editor
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# TypeScript
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Turbo
+.turbo/
+
+# Cloudflare
+.wrangler/
