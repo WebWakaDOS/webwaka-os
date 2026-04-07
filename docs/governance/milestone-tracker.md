@@ -22,19 +22,45 @@
 
 **Goal:** Establish project control before coding starts.
 **Owner:** Base44 Super Agent
+**Overall status:** READY FOR REVIEW — awaiting Founder approval
 
 | Task | Status | Notes |
 |---|---|---|
 | Create monorepo repository | DONE | https://github.com/WebWakaDOS/webwaka-os |
-| Create governance doc skeleton | IN PROGRESS | security-baseline, release-governance, platform-invariants, agent-execution-rules created |
-| Create initial TDRs (0002, 0005, 0007, 0012) | IN PROGRESS | Base44-owned TDRs pending |
-| Configure GitHub governance rules | DONE | Branch protections, CODEOWNERS, labels set |
-| Configure GitHub issue/PR templates | DONE | 4 issue templates + PR template |
-| Configure Dependabot | DONE | Weekly, Monday 9am WAT |
-| Create project milestone board | IN PROGRESS | |
-| Configure CI/CD skeleton | IN PROGRESS | Workflows pending |
-| Configure Cloudflare environment stubs | NOT STARTED | Awaiting Cloudflare credentials |
-| Founder approval of Milestone 0 | NOT STARTED | |
+| Create base folder structure (apps, packages, docs, infra, tests) | DONE | 34 files, all directories scaffolded |
+| Create root docs (README, CONTRIBUTING, ARCHITECTURE, SECURITY, RELEASES, AGENTS, ROADMAP) | DONE | All 7 root docs committed |
+| Configure branch strategy (main + staging) | DONE | Both branches created |
+| Protect main branch | DONE | 1 reviewer, CI required, no force push |
+| Protect staging branch | DONE | 1 reviewer, CI required, no force push |
+| Add CODEOWNERS | DONE | .github/CODEOWNERS committed |
+| Add repo labels (29 labels) | DONE | governance, architecture, milestone-*, blocked, etc. |
+| Add issue templates (4 types) | DONE | Bug, Feature, Decision, Governance Change |
+| Add PR template | DONE | .github/PULL_REQUEST_TEMPLATE.md |
+| Configure Dependabot | DONE | Weekly, Monday 9am WAT, grouped |
+| Draft security-baseline.md | DONE | docs/governance/security-baseline.md |
+| Draft release-governance.md | DONE | docs/governance/release-governance.md |
+| Draft platform-invariants.md | DONE | docs/governance/platform-invariants.md — READY FOR REVIEW |
+| Draft agent-execution-rules.md | DONE | docs/governance/agent-execution-rules.md |
+| Draft TDR-0002 (Cloudflare hosting) | DONE | docs/architecture/decisions/0002-cloudflare-primary-hosting.md |
+| Draft TDR-0005 (Base44 role) | DONE | docs/architecture/decisions/0005-base44-orchestration-role.md |
+| Draft TDR-0007 (D1 environment model) | DONE | docs/architecture/decisions/0007-cloudflare-d1-environment-model.md |
+| Draft TDR-0012 (CI/CD pipeline) | DONE | docs/architecture/decisions/0012-ci-cd-github-to-cloudflare.md |
+| Create GitHub milestones (0–12) | DONE | 13 milestones created |
+| Create tracking issues | DONE | 5 initial issues filed |
+| Configure GitHub Actions CI workflow | DONE | .github/workflows/ci.yml |
+| Configure deploy-staging workflow | DONE | .github/workflows/deploy-staging.yml |
+| Configure deploy-production workflow | DONE | .github/workflows/deploy-production.yml |
+| Configure check-core-version workflow | DONE | .github/workflows/check-core-version.yml |
+| Configure governance-check workflow | DONE | .github/workflows/governance-check.yml |
+| Create GitHub Environments (staging + production) | DONE | Both environments configured |
+| Create D1 databases | DONE | staging: cfa62668… / production: de1d0935… |
+| Create KV namespaces (x4) | DONE | All 4 KV namespaces created |
+| Create R2 buckets | DONE | staging + production buckets created |
+| Store all secrets in GitHub Actions (7 secrets) | DONE | All 7 secrets set |
+| Set GitHub environment variables | DONE | 8 variables set across staging + production |
+| Update infra docs with real IDs | DONE | environments.md + secrets-inventory.md updated |
+| Configure custom domains / DNS | BLOCKED | Awaiting domain confirmation from Founder — see issue #1 |
+| Founder approval of Milestone 0 | NOT STARTED | See issue #3 |
 
 ---
 
@@ -42,12 +68,13 @@
 
 **Goal:** No architecture drift possible.
 **Owner:** Perplexity drafts → Base44 organizes → Founder approves
+**Overall status:** IN PROGRESS
 
 | Task | Status | Notes |
 |---|---|---|
 | vision-and-mission.md | NOT STARTED | Perplexity to draft |
 | core-principles.md | NOT STARTED | Perplexity to draft |
-| platform-invariants.md | READY FOR REVIEW | Base44 initial draft — Perplexity to refine |
+| platform-invariants.md | READY FOR REVIEW | Base44 initial — Perplexity to refine, Founder to approve |
 | universal-entity-model.md | NOT STARTED | Perplexity to draft |
 | relationship-schema.md | NOT STARTED | Perplexity to draft |
 | entitlement-model.md | NOT STARTED | Perplexity to draft |
@@ -60,39 +87,27 @@
 | security-baseline.md | READY FOR REVIEW | Base44 draft — Founder to approve |
 | release-governance.md | READY FOR REVIEW | Base44 draft — Founder to approve |
 | agent-execution-rules.md | READY FOR REVIEW | Base44 draft — Founder to approve |
-| All TDRs (0001–0012) | IN PROGRESS | Base44 owns 0002, 0005, 0007, 0012 |
-| Founder approval of Milestone 1 | NOT STARTED | |
+| TDR-0001 through TDR-0012 | IN PROGRESS | 0002, 0005, 0007, 0012 done; 0001, 0003, 0004, 0006, 0008, 0009, 0010, 0011 need Perplexity |
+| Founder approval of Milestone 1 | NOT STARTED | Gate: all docs done first |
 
 ---
 
-## Milestone 2 — Monorepo Scaffold Ready
+## Milestones 2–12
 
-**Goal:** Working engineering foundation.
-**Owner:** Replit Agent 4 → Base44 reviews
-
-| Task | Status | Notes |
-|---|---|---|
-| Scaffold pnpm workspaces | NOT STARTED | Awaiting Milestone 1 |
-| apps/ + packages/ structure | NOT STARTED | |
-| Linting / typecheck / test setup | NOT STARTED | |
-| Package boundary enforcement | NOT STARTED | |
-| CI basics wired | NOT STARTED | |
+NOT STARTED — sequentially gated on Milestone 1 completion and Founder approval.
 
 ---
 
-## Milestones 3–12
+## Active Blockers
 
-Not started. Sequentially gated on previous milestone completion.
-
----
-
-## Blockers
-
-| ID | Description | Labels | Owner |
-|---|---|---|---|
-| — | Cloudflare credentials needed for environment setup | blocked, infra | Founder |
-| — | Perplexity governance doc drafts needed before Milestone 1 can complete | blocked, governance | Perplexity |
+| # | Description | Labels | Owner | Status |
+|---|---|---|---|---|
+| #1 | Cloudflare custom domain/DNS setup | blocked, infra | Founder | BLOCKED — awaiting domain |
+| #3 | Founder approval of Milestone 0 | founder-approval | Founder | PENDING |
+| #4 | Perplexity governance doc drafts | blocked, governance | Perplexity | NOT STARTED |
+| #5 | Founder approval of Milestone 1 | founder-approval | Founder | NOT STARTED |
 
 ---
 
-*This tracker is the canonical source of truth for project progress. Update it after every significant task.*
+*This tracker is the canonical source of truth for project progress.*
+*Update after every significant task. Base44 Super Agent is responsible for keeping this current.*
