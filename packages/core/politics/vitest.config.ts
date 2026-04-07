@@ -1,6 +1,13 @@
 import { defineConfig } from 'vitest/config';
+import path from 'path';
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@webwaka/types': path.resolve(__dirname, '../../types/src/index.ts'),
+      '@webwaka/geography': path.resolve(__dirname, '../geography/src/index.ts'),
+    },
+  },
   test: {
     globals: true,
     environment: 'node',
