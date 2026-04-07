@@ -16,8 +16,8 @@ CREATE TABLE IF NOT EXISTS profiles (
   publication_state  TEXT NOT NULL DEFAULT 'published',
   -- Primary place for discovery indexing (T6: geography-driven discovery)
   primary_place_id   TEXT REFERENCES places(id),
-  created_at         TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at         TEXT NOT NULL DEFAULT (datetime('now'))
+  created_at         INTEGER NOT NULL DEFAULT (unixepoch()),
+  updated_at         INTEGER NOT NULL DEFAULT (unixepoch())
 );
 
 CREATE INDEX IF NOT EXISTS idx_profiles_subject ON profiles(subject_type, subject_id);
