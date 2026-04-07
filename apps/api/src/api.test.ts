@@ -32,24 +32,6 @@ const USER_ID = asId<UserId>('usr_test_001');
 // Mock Cloudflare Worker environment bindings
 // ---------------------------------------------------------------------------
 
-const geographyData: Record<string, unknown> = {
-  'plc_nigeria_001': {
-    id: 'plc_nigeria_001',
-    name: 'Nigeria',
-    level: 1,
-    geographyType: 'country',
-    parentId: null,
-    ancestryPath: [],
-  },
-  'plc_lagos_001': {
-    id: 'plc_lagos_001',
-    name: 'Lagos',
-    level: 3,
-    geographyType: 'state',
-    parentId: 'plc_nigeria_001',
-    ancestryPath: ['plc_nigeria_001'],
-  },
-};
 
 const individualStore: Record<string, unknown>[] = [];
 
@@ -59,35 +41,35 @@ function makeD1Mock() {
       let boundArgs: unknown[] = [];
       const stmt = {
         bind: (...args: unknown[]) => { boundArgs = args; return stmt; },
-        run: vi.fn(async () => {
+        run: vi.fn(() => {
           if (sql.startsWith('INSERT INTO individuals')) {
             const [id, name, , tenantId, placeId, metadata] = boundArgs;
             individualStore.push({ id, name, entity_type: 'individual', tenant_id: tenantId, place_id: placeId, metadata, created_at: new Date().toISOString(), updated_at: new Date().toISOString() });
           }
-          return {};
+          return Promise.resolve({});
         }),
-        first: vi.fn(async <T>() => {
+        first: vi.fn(<T>() => {
           // Subscription lookup
           if (sql.includes('FROM subscriptions')) {
-            return { plan: SubscriptionPlan.Growth, status: SubscriptionStatus.Active } as T;
+            return Promise.resolve({ plan: SubscriptionPlan.Growth, status: SubscriptionStatus.Active } as T);
           }
           // Individual by id
           if (sql.includes('FROM individuals WHERE id')) {
             const [id, tenantId] = boundArgs;
-            return (individualStore.find((r) => r['id'] === id && r['tenant_id'] === tenantId) ?? null) as T;
+            return Promise.resolve((individualStore.find((r) => r['id'] === id && r['tenant_id'] === tenantId) ?? null) as T);
           }
           // User login
           if (sql.includes('FROM users')) {
-            return null as T;
+            return Promise.resolve(null as T);
           }
-          return null as T;
+          return Promise.resolve(null as T);
         }),
-        all: vi.fn(async <T>() => {
+        all: vi.fn(<T>() => {
           if (sql.includes('FROM individuals')) {
             const tenantId = boundArgs[0];
-            return { results: individualStore.filter((r) => r['tenant_id'] === tenantId) } as { results: T[] };
+            return Promise.resolve({ results: individualStore.filter((r) => r['tenant_id'] === tenantId) } as { results: T[] });
           }
-          return { results: [] } as { results: T[] };
+          return Promise.resolve({ results: [] } as { results: T[] });
         }),
       };
       return stmt;
@@ -98,14 +80,15 @@ function makeD1Mock() {
 function makeKVMock() {
   const store: Record<string, string> = {};
   return {
-    get: vi.fn(async (key: string, type?: string) => {
+    get: vi.fn((key: string, type?: string) => {
       const raw = store[key];
-      if (!raw) return null;
-      if (type === 'json') return JSON.parse(raw);
-      return raw;
+      if (!raw) return Promise.resolve(null);
+      if (type === 'json') return Promise.resolve(JSON.parse(raw) as unknown);
+      return Promise.resolve(raw);
     }),
-    put: vi.fn(async (key: string, value: string) => {
+    put: vi.fn((key: string, value: string) => {
       store[key] = value;
+      return Promise.resolve();
     }),
   };
 }
@@ -166,7 +149,7 @@ describe('GET /health', () => {
   it('returns 200 with status ok', async () => {
     const res = await makeRequest('/health');
     expect(res.status).toBe(200);
-    const body = await res.json() as Record<string, unknown>;
+    const body = (await res.json()) as unknown as Record<string, unknown>;
     expect(body['status']).toBe('ok');
     expect(body['service']).toBe('webwaka-api');
   });
@@ -200,7 +183,7 @@ describe('GET /entities/individuals — authenticated', () => {
   it('returns 200 with empty list', async () => {
     const res = await makeRequest('/entities/individuals', { token: validToken });
     expect(res.status).toBe(200);
-    const body = await res.json() as Record<string, unknown>;
+    const body = (await res.json()) as unknown as Record<string, unknown>;
     expect(Array.isArray(body['data'])).toBe(true);
   });
 });
@@ -213,8 +196,8 @@ describe('POST /entities/individuals — create', () => {
       body: { name: 'Ngozi Adeyemi' },
     });
     expect(res.status).toBe(201);
-    const body = await res.json() as Record<string, unknown>;
-    const data = body['data'] as Record<string, unknown>;
+    const body = (await res.json()) as unknown as Record<string, unknown>;
+    const data = body['data'] as unknown as Record<string, unknown>;
     expect(data['name']).toBe('Ngozi Adeyemi');
     expect(typeof data['id']).toBe('string');
   });
