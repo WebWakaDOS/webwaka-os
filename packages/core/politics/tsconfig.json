@@ -1,7 +1,12 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "src",
+    "baseUrl": ".",
+    "paths": {
+      "@webwaka/types": ["../../types/src/index.ts"],
+      "@webwaka/geography": ["../geography/src/index.ts"]
+    },
+    "rootDir": "../..",
     "outDir": "dist"
   },
   "include": ["src/**/*"]

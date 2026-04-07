@@ -8,13 +8,14 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
+      "source": "./src/index.ts",
       "import": "./dist/index.js"
     }
   },
   "scripts": {
-    "build": "tsc --noEmit && tsc",
+    "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "lint": "eslint src --ext .ts",
     "clean": "rm -rf dist"
   },

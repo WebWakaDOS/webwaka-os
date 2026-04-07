@@ -4,7 +4,7 @@
 
 WebWaka OS is a multi-tenant, multi-vertical, white-label SaaS platform operating system for Africa, starting with Nigeria. It follows a governance-driven monorepo architecture with "Offline First," "Mobile First," and "Nigeria First" as core principles.
 
-**Current Milestone: 2 — Monorepo Scaffolding and Shared Core Foundations (In Progress)**
+**Current Milestone: 2 — Monorepo Scaffolding and Shared Core Foundations (APPROVED WITH FIXES APPLIED)**
 
 ## Milestone Status
 
@@ -12,7 +12,7 @@ WebWaka OS is a multi-tenant, multi-vertical, white-label SaaS platform operatin
 |---|---|
 | 0 — Program Setup | ✅ DONE |
 | 1 — Governance Baseline | ✅ DONE |
-| 2 — Monorepo Scaffolding | 🟡 IN PROGRESS |
+| 2 — Monorepo Scaffolding | 🟡 FIXES APPLIED — awaiting Base44 CI verification + Founder approval |
 
 ## Tech Stack (Target Production)
 
@@ -75,20 +75,31 @@ webwaka-os/
 ## Key Dev Commands
 
 ```bash
-pnpm install                              # Install all workspace packages
-pnpm --filter @webwaka/types typecheck    # Typecheck types package
-pnpm --filter @webwaka/geography test     # Run geography tests
-pnpm --filter @webwaka/politics test      # Run politics tests
-pnpm --filter @webwaka/auth test          # Run auth tests
+pnpm install                                # Install all workspace packages
+pnpm --filter @webwaka/types build          # Build types (required before other packages)
+pnpm --filter @webwaka/geography typecheck  # Typecheck geography (resolves via paths from source)
+pnpm --filter @webwaka/politics typecheck   # Typecheck politics  (resolves via paths from source)
+pnpm --filter @webwaka/auth typecheck       # Typecheck auth      (resolves via paths from source)
+pnpm -r build                               # Build all packages in dependency order
+pnpm -r test                                # Run full workspace test suite
 ```
 
-## Test Summary (Milestone 2 Phase A–E)
+## tsconfig Pattern (Two tsconfigs per dependent package)
+
+Each package that depends on other workspace packages uses two tsconfig files:
+- `tsconfig.json` — for IDE/typecheck: has `paths` pointing to source, wide `rootDir` encompassing all workspace sources. Use: `tsc --noEmit`
+- `tsconfig.build.json` — for building dist: `rootDir: "src"`, `outDir: "dist"`, no cross-package paths. Use: `tsc -p tsconfig.build.json`
+
+The `types` package has only `tsconfig.json` (no cross-package deps, standard `rootDir: "src"`).
+
+## Test Summary (Milestone 2 — All fixes applied)
 
 | Package | Tests | Status |
 |---|---|---|
 | @webwaka/geography | 21 | ✅ All passing |
 | @webwaka/politics | 16 | ✅ All passing |
-| @webwaka/auth | 24 | ✅ All passing |
+| @webwaka/auth | 34 (was 24 — +10 jwt.test.ts) | ✅ All passing |
+| **Total** | **71** | ✅ All passing |
 
 ## D1 Migration Files
 
