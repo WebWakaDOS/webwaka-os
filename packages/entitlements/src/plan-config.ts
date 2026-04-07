@@ -6,7 +6,8 @@
  * for what each subscription tier can access.
  */
 
-import { SubscriptionPlan, PlatformLayer } from '@webwaka/types'; // eslint-disable-line @typescript-eslint/no-unused-vars -- used as computed enum key in PLAN_CONFIGS
+import type { SubscriptionPlan } from '@webwaka/types';
+import { PlatformLayer } from '@webwaka/types';
 
 // ---------------------------------------------------------------------------
 // Plan config shape
@@ -39,7 +40,7 @@ export interface PlanConfig {
 // ---------------------------------------------------------------------------
 
 export const PLAN_CONFIGS: Readonly<Record<SubscriptionPlan, PlanConfig>> = {
-  [SubscriptionPlan.Free]: {
+  free: {
     maxUsers: 3,
     maxPlaces: 1,
     maxOfferings: 5,
@@ -50,7 +51,7 @@ export const PLAN_CONFIGS: Readonly<Record<SubscriptionPlan, PlanConfig>> = {
     aiRights: false,
     sensitiveSectorRights: false,
   },
-  [SubscriptionPlan.Starter]: {
+  starter: {
     maxUsers: 10,
     maxPlaces: 3,
     maxOfferings: 25,
@@ -61,7 +62,7 @@ export const PLAN_CONFIGS: Readonly<Record<SubscriptionPlan, PlanConfig>> = {
     aiRights: false,
     sensitiveSectorRights: false,
   },
-  [SubscriptionPlan.Growth]: {
+  growth: {
     maxUsers: 50,
     maxPlaces: 10,
     maxOfferings: 100,
@@ -76,7 +77,7 @@ export const PLAN_CONFIGS: Readonly<Record<SubscriptionPlan, PlanConfig>> = {
     aiRights: true,
     sensitiveSectorRights: false,
   },
-  [SubscriptionPlan.Pro]: {
+  pro: {
     maxUsers: 200,
     maxPlaces: 50,
     maxOfferings: -1,
@@ -94,7 +95,7 @@ export const PLAN_CONFIGS: Readonly<Record<SubscriptionPlan, PlanConfig>> = {
     aiRights: true,
     sensitiveSectorRights: false,
   },
-  [SubscriptionPlan.Enterprise]: {
+  enterprise: {
     maxUsers: -1,
     maxPlaces: -1,
     maxOfferings: -1,
@@ -105,7 +106,7 @@ export const PLAN_CONFIGS: Readonly<Record<SubscriptionPlan, PlanConfig>> = {
     aiRights: true,
     sensitiveSectorRights: true,
   },
-  [SubscriptionPlan.Partner]: {
+  partner: {
     maxUsers: -1,
     maxPlaces: -1,
     maxOfferings: -1,
@@ -116,7 +117,7 @@ export const PLAN_CONFIGS: Readonly<Record<SubscriptionPlan, PlanConfig>> = {
     aiRights: true,
     sensitiveSectorRights: true,
   },
-  [SubscriptionPlan.SubPartner]: {
+  sub_partner: {
     maxUsers: -1,
     maxPlaces: 100,
     maxOfferings: -1,
