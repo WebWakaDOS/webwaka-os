@@ -31,12 +31,12 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Apply D1 migrations (skip if none exist)
+      - name: Apply D1 migrations (staging)
         run: |
-          if [ -d "migrations" ] && ls migrations/*.sql 1>/dev/null 2>&1; then
-            npx wrangler d1 migrations apply webwaka-os-staging --env staging
+          if [ -d "infra/db/migrations" ] && ls infra/db/migrations/*.sql 1>/dev/null 2>&1; then
+            npx wrangler d1 migrations apply webwaka-os-staging               --env staging               --migrations-dir infra/db/migrations
           else
-            echo "No migrations directory or .sql files found — skipping (pre-Milestone 2)"
+            echo "No migrations found at infra/db/migrations — skipping"
           fi
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -64,7 +64,7 @@ jobs:
             pnpm --filter api build
             npx wrangler deploy --env staging
           else
-            echo "apps/api/wrangler.toml not found — skipping deploy (pre-Milestone 2)"
+            echo "apps/api/wrangler.toml not found — skipping deploy (pre-Milestone 3)"
           fi
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -90,7 +90,7 @@ jobs:
           if [ -f "tests/smoke/package.json" ]; then
             pnpm --filter smoke run smoke:staging
           else
-            echo "Smoke tests not yet implemented — skipping (pre-Milestone 2)"
+            echo "Smoke tests not yet implemented — skipping (pre-Milestone 3)"
           fi
         env:
           SMOKE_BASE_URL: ${{ vars.STAGING_BASE_URL }}
