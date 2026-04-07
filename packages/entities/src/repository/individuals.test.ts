@@ -56,7 +56,7 @@ function makeMockDb() {
           const tenantId = boundArgs[0];
           const limit = boundArgs[boundArgs.length - 1] as number;
           const results = store.filter((r) => r['tenant_id'] === tenantId).slice(0, limit);
-          return { results: results as unknown as T[] };
+          return Promise.resolve({ results: results as unknown as T[] });
         },
       };
       return stmt;
