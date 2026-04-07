@@ -36,17 +36,17 @@ function makeMockDb() {
           const idx = store.findIndex((r) => r['id'] === deleteId && r['tenant_id'] === tenantId);
           if (idx !== -1) store.splice(idx, 1);
         }
-        return {};
+        return Promise.resolve({});
       }),
-      first: vi.fn(() => null),
-      all: <T>(): { results: T[] } => {
+      first: vi.fn(() => Promise.resolve(null)),
+      all: <T>(): Promise<{ results: T[] }> => {
         const results = store.filter((row) => {
           if (sql.includes('tenant_id = ?') && row['tenant_id'] !== boundArgs[0]) return false;
           if (boundArgs[1] !== undefined && sql.includes('subject_id = ?') && row['subject_id'] !== boundArgs[1]) return false;
           if (boundArgs[1] !== undefined && sql.includes('kind = ?') && row['kind'] !== boundArgs[1]) return false;
           return true;
         });
-        return { results: results as unknown as T[] };
+        return Promise.resolve({ results: results as unknown as T[] });
       },
     };
 
