@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS individuals (
   middle_name        TEXT,
   display_name       TEXT NOT NULL,
   verification_state TEXT NOT NULL DEFAULT 'unverified',
-  created_at         TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at         TEXT NOT NULL DEFAULT (datetime('now'))
+  created_at         INTEGER NOT NULL DEFAULT (unixepoch()),
+  updated_at         INTEGER NOT NULL DEFAULT (unixepoch())
 );
 
 CREATE INDEX IF NOT EXISTS idx_individuals_tenant_id ON individuals(tenant_id);
@@ -24,8 +24,8 @@ CREATE TABLE IF NOT EXISTS organizations (
   name                TEXT NOT NULL,
   registration_number TEXT,
   verification_state  TEXT NOT NULL DEFAULT 'unverified',
-  created_at          TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at          TEXT NOT NULL DEFAULT (datetime('now'))
+  created_at          INTEGER NOT NULL DEFAULT (unixepoch()),
+  updated_at          INTEGER NOT NULL DEFAULT (unixepoch())
 );
 
 CREATE INDEX IF NOT EXISTS idx_organizations_tenant_id ON organizations(tenant_id);
