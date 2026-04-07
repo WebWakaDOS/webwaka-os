@@ -1,0 +1,401 @@
+# WEBWAKA OS — MILESTONE 2 KICKOFF PROMPT FOR REPLIT AGENT 4
+
+You are Replit Agent 4 acting as the primary implementation engine for **Milestone 2 — Monorepo Scaffolding and Shared Core Foundations** for the new WebWaka OS redesign.
+
+Your work must follow the already approved governance and architecture baseline now present in the GitHub repository.
+
+---
+
+## REPOSITORY CONTEXT
+
+Repository:
+`https://github.com/WebWakaDOS/webwaka-os`
+
+Branch to start from:
+`main` — BUT ONLY AFTER PR #6 (`docs(governance): Milestone 1 governance baseline`) HAS BEEN MERGED.
+
+Milestone status:
+- Milestone 0: complete
+- Milestone 1: complete
+- Milestone 2: now starting
+
+---
+
+## YOUR ROLE
+
+You are not here to redesign the platform again.
+You are here to **implement the approved foundation cleanly**.
+
+Your specific responsibility in Milestone 2 is to:
+
+1. scaffold the monorepo implementation structure,
+2. implement the shared platform-core packages first,
+3. align the codebase with the approved governance documents and TDRs,
+4. make the repo buildable, typed, testable, and continuity-friendly,
+5. stop before uncontrolled vertical expansion.
+
+You must work in a staged, commit-friendly, review-friendly manner.
+
+---
+
+## NON-NEGOTIABLE RULES
+
+1. **GitHub is the source of truth.**
+2. **Do not work from memory; read the approved docs in the repo first.**
+3. **Do not skip foundational shared packages.**
+4. **Do not jump into full commerce/transport/civic feature implementation in this milestone.**
+5. **Do not invent architecture that contradicts the TDRs.**
+6. **Respect tenant isolation everywhere.**
+7. **Respect subscription and entitlement-aware design everywhere.**
+8. **Respect Nigeria-first, mobile-first, PWA-first, offline-first principles.**
+9. **Respect vendor-neutral AI and BYOK direction, but do not fully build AI features in this milestone beyond scaffolding contracts if required.**
+10. **Every step must be easy for another agent to continue later.**
+11. **Keep changes small, structured, and reviewable.**
+12. **Follow CONTRIBUTING.md and AGENTS.md exactly.**
+
+---
+
+## REQUIRED DOCUMENTS TO READ FIRST
+
+Before changing code, read and align with these repository documents:
+
+### Governance
+- `docs/governance/vision-and-mission.md`
+- `docs/governance/core-principles.md`
+- `docs/governance/platform-invariants.md`
+- `docs/governance/universal-entity-model.md`
+- `docs/governance/relationship-schema.md`
+- `docs/governance/entitlement-model.md`
+- `docs/governance/geography-taxonomy.md`
+- `docs/governance/political-taxonomy.md`
+- `docs/governance/claim-first-onboarding.md`
+- `docs/governance/partner-and-subpartner-model.md`
+- `docs/governance/white-label-policy.md`
+- `docs/governance/ai-policy.md`
+- `docs/governance/security-baseline.md`
+- `docs/governance/release-governance.md`
+- `docs/governance/agent-execution-rules.md`
+- `docs/governance/milestone-tracker.md`
+
+### Technical decision records
+- `docs/architecture/decisions/0001-monorepo-strategy.md`
+- `docs/architecture/decisions/0002-cloudflare-primary-hosting.md`
+- `docs/architecture/decisions/0003-github-source-of-truth.md`
+- `docs/architecture/decisions/0004-replit-primary-build-workbench.md`
+- `docs/architecture/decisions/0005-base44-orchestration-agent.md`
+- `docs/architecture/decisions/0006-typescript-first-platform.md`
+- `docs/architecture/decisions/0007-cloudflare-d1-environment-model.md`
+- `docs/architecture/decisions/0008-auth-tenancy-strategy.md`
+- `docs/architecture/decisions/0009-ai-provider-abstraction.md`
+- `docs/architecture/decisions/0010-offline-pwa-standard.md`
+- `docs/architecture/decisions/0011-geography-and-political-core.md`
+- `docs/architecture/decisions/0012-ci-cd-github-to-cloudflare.md`
+
+### Root repo rules
+- `README.md`
+- `CONTRIBUTING.md`
+- `AGENTS.md`
+- `ARCHITECTURE.md`
+
+---
+
+## MILESTONE 2 GOAL
+
+Create the first **real technical foundation** of WebWaka OS by implementing the monorepo scaffold and the first shared packages required by all later verticals.
+
+At the end of this milestone, the repo should have:
+- working monorepo scaffolding,
+- installable/buildable/testable TypeScript workspace setup,
+- canonical root entity types,
+- geography core,
+- political core,
+- auth and tenancy scaffold,
+- basic D1 schema direction and seed strategy for geography,
+- CI passing on the scaffold.
+
+---
+
+## THIS MILESTONE’S FIRST-PRIORITY DELIVERABLES
+
+Base44’s Milestone 1 report explicitly identifies these as the first Milestone 2 deliverables:
+
+1. `packages/types`
+2. `packages/core/geography`
+3. `packages/core/politics`
+4. `packages/auth`
+
+These must come first.
+
+---
+
+## REQUIRED IMPLEMENTATION ORDER
+
+Follow this order unless a blocker makes a small reorder necessary:
+
+### Phase A — Verify and scaffold the monorepo runtime
+Implement or complete:
+- workspace/package manager setup
+- TypeScript base config
+- shared linting config
+- formatting config
+- test runner setup
+- build scripts
+- package naming conventions
+- path aliases
+- environment variable strategy compatible with Cloudflare
+- minimal app/package wiring so CI can run cleanly
+
+Expected result:
+the repo installs cleanly and runs baseline checks successfully.
+
+---
+
+### Phase B — Implement `packages/types`
+Create canonical TypeScript interfaces/types for the approved root entities and key shared concepts.
+
+At minimum include:
+- Individual
+- Organization
+- Place
+- Offering
+- Profile
+- Workspace
+- BrandSurface
+
+Also include shared supporting types for:
+- Entity IDs
+- Entity type enums
+- Claim lifecycle states
+- Subscription/entitlement enums or interfaces
+- Geography type enums
+- Political office type enums
+- Territory type enums
+- Verification states
+- Publication states
+
+Important:
+- These types must reflect the approved governance docs, not a generic SaaS model.
+- Geography and political types must align to the approved taxonomy.
+- Subscription must be treated as the final entitlement gate.
+
+Expected result:
+a shared canonical type package that all later packages can depend on.
+
+---
+
+### Phase C — Implement `packages/core/geography`
+Create the shared geography core based on the approved geography taxonomy.
+
+At minimum implement:
+- typed geography hierarchy
+- ancestry model
+- parent/child relationships
+- helper functions for rollups and traversal
+- place type definitions
+- location assignment helpers
+- query helpers for aggregation use cases
+
+Must support future use cases such as:
+- all markets in an LGA
+- all office holders in a state
+- all vendors across the country
+- all motor parks in a senatorial zone
+
+Also prepare the D1 seed-data structure direction for:
+- 36 states
+- 774 LGAs
+- 8,814 wards
+as referenced in Milestone 1 notes.
+
+Expected result:
+a reusable geography core package that can later power discovery, search, listings, and reporting.
+
+---
+
+### Phase D — Implement `packages/core/politics`
+Create the shared political core based on the approved political taxonomy.
+
+At minimum implement:
+- political office types
+- territory types
+- jurisdiction model
+- political assignment model
+- party affiliation model interfaces
+- term model
+- candidate model scaffold if needed
+- helper validation rules linking office types to territory types
+
+Examples that must be representable:
+- Councilor → Ward
+- Local Government Chairman → LGA
+- House of Assembly Member → State Constituency
+- House of Representatives Member → Federal Constituency
+- Senator → Senatorial District / Zone
+- Governor → State
+- President → Country
+
+Expected result:
+a reusable politics package that cleanly overlays geography and individuals/organizations.
+
+---
+
+### Phase E — Implement `packages/auth`
+Create the first auth/tenancy package scaffold aligned with TDR-0008.
+
+At minimum implement:
+- JWT validation structure
+- workspace-scoped access context
+- tenant context model
+- membership and role interfaces
+- authorization guard/middleware scaffold
+- entitlement-aware access evaluation scaffold
+- internal service authentication placeholder structure
+- secure interface boundaries for future expansion
+
+Important:
+- Do not build a sloppy global auth layer.
+- Access must be explicitly tenant/workspace-aware.
+- Roles alone are not enough; design for entitlement checks too.
+
+Expected result:
+a usable auth foundation package ready for future API integration.
+
+---
+
+### Phase F — D1 schema scaffolding
+Create the first schema direction and migration scaffolding for D1.
+
+Do NOT try to model the entire product database yet.
+Only scaffold the foundation needed for:
+- entities
+- places
+- geography hierarchy
+- political office types
+- political assignments
+- workspaces
+- memberships
+- subscriptions / entitlements
+- profiles
+
+Expected result:
+clean schema baseline files or migration stubs aligned with the approved model.
+
+---
+
+### Phase G — CI confirmation
+Ensure the repository passes:
+- typecheck
+- tests
+- lint
+- any required package integrity checks
+
+If CI fails, fix the structure before moving on.
+
+Expected result:
+Milestone 2 scaffold PR can pass the existing GitHub workflows cleanly.
+
+---
+
+## FOLDER TARGETS
+
+Work primarily in or create/refine:
+- `packages/types`
+- `packages/core/geography`
+- `packages/core/politics`
+- `packages/auth`
+- any required shared config directories
+- any required minimal schema/migration directories
+- minimal wiring in `apps/api` only if necessary for package verification
+
+Do not expand further than necessary in this milestone.
+
+---
+
+## IMPLEMENTATION STANDARDS
+
+### Type system
+- Be explicit.
+- Prefer clear interfaces and discriminated unions where useful.
+- Avoid premature overengineering.
+
+### Geography
+- Model ancestry in a way that supports hierarchical queries and aggregation.
+- Keep room for both administrative and facility places.
+
+### Politics
+- Model office assignment as structured data, not loose string labels.
+
+### Auth
+- Design for identity + tenant scope + entitlement, not just login.
+
+### Database
+- Keep migration files clean and reversible.
+- Leave room for staging/production D1 environment separation already approved.
+
+### Testing
+Add at least foundational tests for:
+- geography ancestry helpers,
+- office-to-territory validation rules,
+- basic entitlement-aware auth evaluation scaffolds,
+- canonical type integrity where useful.
+
+---
+
+## DO NOT DO THESE YET
+
+Do not fully implement:
+- commerce flows
+- transport booking flows
+- logistics dispatch
+- civic workflows
+- brand-surface runtime
+- AI provider integrations
+- full PWA experience
+- advanced UI system
+- full discovery app
+
+Only create the foundations those later systems will depend on.
+
+---
+
+## OUTPUT REQUIREMENTS
+
+At the end of your run, provide a structured implementation handoff containing:
+
+1. What you read first
+2. What you implemented
+3. Files/folders added or changed
+4. Package boundaries respected
+5. D1 schema/migration files added
+6. Tests added
+7. CI/build status
+8. Unresolved blockers
+9. Recommended next PR scope
+
+Also prepare work in a branch/PR-friendly way so Base44 can review and coordinate the next step.
+
+---
+
+## SUCCESS CRITERIA
+
+Milestone 2 kickoff work is successful if:
+- the repo remains governance-aligned,
+- the shared foundational packages exist,
+- geography and politics are modeled as platform-level shared capabilities,
+- auth is tenant-aware,
+- the codebase is buildable/testable,
+- CI is passing or very close with clearly documented blockers,
+- and the output is clean enough for Base44 to review and move forward.
+
+---
+
+## FINAL EXECUTION NOTE
+
+Start only after PR #6 has been merged into `main`.
+
+Then:
+1. pull latest `main`,
+2. read the approved docs,
+3. scaffold the foundational packages,
+4. verify CI,
+5. prepare a clean milestone handoff for Base44 review.

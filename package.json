@@ -2,15 +2,24 @@
   "name": "webwaka-os",
   "version": "0.0.0",
   "private": true,
-  "description": "WebWaka OS monorepo — governance and architecture baseline",
+  "description": "WebWaka OS monorepo — governance-driven platform for Africa",
   "scripts": {
-    "typecheck": "echo 'No packages to typecheck yet — Milestone 2 pending' && exit 0",
-    "test": "echo 'No tests yet — Milestone 2 pending' && exit 0",
-    "lint": "echo 'No lint targets yet — Milestone 2 pending' && exit 0",
-    "audit": "echo 'No dependencies to audit yet — Milestone 2 pending' && exit 0"
+    "dev": "node apps/platform-admin/server.js",
+    "typecheck": "pnpm -r run typecheck",
+    "test": "pnpm -r run test",
+    "lint": "pnpm -r run lint",
+    "build": "pnpm -r run build",
+    "clean": "pnpm -r run clean"
   },
   "engines": {
     "node": ">=20",
     "pnpm": ">=9"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0",
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0",
+    "eslint": "^8.57.0"
   }
 }

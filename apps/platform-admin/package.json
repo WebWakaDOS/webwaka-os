@@ -2,9 +2,13 @@
   "name": "@webwaka/platform-admin",
   "version": "0.0.0",
   "private": true,
-  "description": "WebWaka OS Platform Admin Dashboard",
+  "description": "WebWaka OS Platform Admin Dashboard (Milestone 0/1 status page)",
   "scripts": {
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "typecheck": "echo 'No TypeScript in platform-admin yet — Milestone 2 pending'",
+    "test": "echo 'No tests in platform-admin yet — Milestone 2 pending'",
+    "lint": "echo 'No lint in platform-admin yet — Milestone 2 pending'",
+    "clean": "echo 'Nothing to clean in platform-admin yet'"
   },
   "dependencies": {
     "express": "^4.18.2"

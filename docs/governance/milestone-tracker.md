@@ -84,24 +84,28 @@
 
 **Goal:** Scaffold all apps, packages, D1 schemas, and shared infrastructure.
 **Owner:** Replit Agent 4 (implementation) + Base44 Super Agent (review + CI)
-**Overall status:** 🟢 UNBLOCKED — awaiting Replit kickoff
+**Overall status:** 🟡 IN PROGRESS — Phase A–F complete, awaiting Base44 review
+
+**Last updated:** 2026-04-07 by Replit Agent 4
 
 | Task | Status | Notes |
 |---|---|---|
-| Scaffold `packages/types` (shared TypeScript types) | NOT STARTED | Depends on universal-entity-model.md |
-| Scaffold `packages/core` (geography + political primitives) | NOT STARTED | TDR-0011 |
-| Scaffold `packages/auth` (JWT + workspace-scoped auth) | NOT STARTED | TDR-0008 |
-| Scaffold `packages/db` (D1 query helpers) | NOT STARTED | TDR-0007 |
-| Scaffold `packages/ai` (provider abstraction) | NOT STARTED | TDR-0009 |
-| Scaffold `packages/ui` (shared component library) | NOT STARTED | |
-| Scaffold `apps/api` (Cloudflare Worker API) | NOT STARTED | |
-| Scaffold `apps/platform-admin` | NOT STARTED | |
-| Scaffold `apps/partner-admin` | NOT STARTED | |
-| Scaffold `apps/brand-runtime` | NOT STARTED | |
-| Scaffold `apps/public-discovery` | NOT STARTED | |
-| D1 schema: base tables and migrations | NOT STARTED | |
-| D1 seed data: Nigerian geography (states, LGAs, wards) | NOT STARTED | TDR-0011 |
-| CI passes end-to-end on monorepo structure | NOT STARTED | |
+| Scaffold `packages/types` (shared TypeScript types) | ✅ READY FOR REVIEW | 5 source files, 0 TS errors. IDs, enums, entities, auth types, subscription types. |
+| Scaffold `packages/core/geography` | ✅ READY FOR REVIEW | Hierarchy, ancestry, rollup helpers. 21 tests, all passing. |
+| Scaffold `packages/core/politics` | ✅ READY FOR REVIEW | Office-territory map, models. 16 tests, all passing. |
+| Scaffold `packages/auth` (JWT + workspace-scoped auth) | ✅ READY FOR REVIEW | JWT validation, role guards, entitlements, middleware scaffold. 24 tests, all passing. |
+| Scaffold `packages/db` (D1 query helpers) | NOT STARTED | TDR-0007 — Milestone 2 phase 2 |
+| Scaffold `packages/ai` (provider abstraction) | NOT STARTED | TDR-0009 — Milestone 2 phase 2 |
+| Scaffold `packages/ui` (shared component library) | NOT STARTED | Milestone 2 phase 2 |
+| Scaffold `apps/api` (Cloudflare Worker API) | NOT STARTED | Milestone 2 phase 2 |
+| Scaffold `apps/platform-admin` | IN PROGRESS | Status dashboard live on port 5000 |
+| Scaffold `apps/partner-admin` | NOT STARTED | Milestone 2 phase 2 |
+| Scaffold `apps/brand-runtime` | NOT STARTED | Milestone 3 |
+| Scaffold `apps/public-discovery` | NOT STARTED | Milestone 3 |
+| D1 schema: base tables and migrations | ✅ READY FOR REVIEW | 6 migration files: places, entities, workspaces, subscriptions, profiles, political |
+| D1 seed data: Nigerian geography (states, LGAs, wards) | 🟡 PARTIAL | Country + 6 zones + 37 states seeded. LGAs + wards pending INEC data import. |
+| pnpm workspace + TypeScript + Vitest scaffold | ✅ DONE | pnpm-workspace.yaml, tsconfig.base.json, vitest.workspace.ts configured |
+| CI passes end-to-end on monorepo structure | 🟡 LOCAL PASS | All typechecks and tests pass locally. Awaiting GitHub Actions run. |
 
 ---
 
