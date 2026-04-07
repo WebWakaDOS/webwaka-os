@@ -2,16 +2,15 @@
   "name": "webwaka-os",
   "version": "0.0.0",
   "private": true,
-  "description": "WebWaka OS monorepo",
+  "description": "WebWaka OS monorepo — governance and architecture baseline",
   "scripts": {
     "typecheck": "echo 'No packages to typecheck yet — Milestone 2 pending' && exit 0",
     "test": "echo 'No tests yet — Milestone 2 pending' && exit 0",
     "lint": "echo 'No lint targets yet — Milestone 2 pending' && exit 0",
-    "audit": "echo 'No dependencies yet — Milestone 2 pending' && exit 0"
+    "audit": "echo 'No dependencies to audit yet — Milestone 2 pending' && exit 0"
   },
   "engines": {
     "node": ">=20",
     "pnpm": ">=9"
-  },
-  "packageManager": "pnpm@9.0.0"
+  }
 }
