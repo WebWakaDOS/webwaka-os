@@ -1,15 +1,14 @@
 /**
- * Auth routes — login, refresh token.
+ * Auth routes.
  *
  * POST /auth/login   — authenticate with email + password, returns JWT
- * POST /auth/refresh — refresh an expiring JWT
- *
- * Note: WebWaka uses JWTs signed by the platform.
- * In production, credentials are validated against the users table in D1.
+ * POST /auth/refresh — refresh an expiring JWT (auth required)
+ * GET  /auth/me      — return the caller's AuthContext (auth required)
+ * POST /auth/verify  — validate a JWT and return its decoded payload
  */
 
 import { Hono } from 'hono';
-import { issueJwt } from '@webwaka/auth';
+import { issueJwt, verifyJwt, extractAuthContext, extractBearerToken } from '@webwaka/auth';
 import { Role } from '@webwaka/types';
 import type { UserId, WorkspaceId, TenantId } from '@webwaka/types';
 import { asId } from '@webwaka/types';
@@ -85,10 +84,9 @@ authRoutes.post('/login', async (c) => {
   return c.json({ token });
 });
 
-// POST /auth/refresh — simple re-issue if the token is still valid
+// POST /auth/refresh — re-issue a fresh JWT for the authenticated caller
+// Note: authMiddleware must be applied before this route in the app entry
 authRoutes.post('/refresh', async (c) => {
-  // Implemented in apps/api/src/middleware/auth.ts pipeline — token is already validated
-  // We simply re-issue a fresh token for the same context
   const auth = c.get('auth');
   if (!auth) {
     return c.json({ error: 'Not authenticated.' }, 401);
@@ -105,6 +103,33 @@ authRoutes.post('/refresh', async (c) => {
   );
 
   return c.json({ token });
+});
+
+// GET /auth/me — return the caller's decoded AuthContext
+// Note: authMiddleware must be applied before this route in the app entry
+authRoutes.get('/me', async (c) => {
+  const auth = c.get('auth');
+  if (!auth) {
+    return c.json({ error: 'Not authenticated.' }, 401);
+  }
+  return c.json({ data: auth });
+});
+
+// POST /auth/verify — validate a JWT token and return its decoded payload (no secret in response)
+authRoutes.post('/verify', async (c) => {
+  const body = await c.req.json<{ token: string }>().catch(() => null);
+
+  if (!body?.token) {
+    return c.json({ error: 'token is required.' }, 400);
+  }
+
+  try {
+    const payload = await verifyJwt(body.token, c.env.JWT_SECRET);
+    const context = extractAuthContext(payload);
+    return c.json({ valid: true, data: context });
+  } catch {
+    return c.json({ valid: false, error: 'Invalid or expired token.' }, 401);
+  }
 });
 
 export { authRoutes };

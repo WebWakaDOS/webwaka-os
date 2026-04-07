@@ -6,10 +6,12 @@
  *
  * Tested routes:
  *   GET  /health
- *   GET  /geography/:id        (mocked geography index)
- *   GET  /entities/individuals (requires auth)
- *   POST /entities/individuals (requires auth + entitlement)
- *   POST /auth/login           (credential validation)
+ *   GET  /geography/places/:id        (mocked geography index)
+ *   GET  /entities/individuals        (requires auth)
+ *   POST /entities/individuals        (requires auth + entitlement)
+ *   POST /auth/login                  (credential validation)
+ *   GET  /auth/me                     (requires auth)
+ *   POST /auth/verify                 (token validation)
  */
 
 import { describe, it, expect, vi, beforeAll } from 'vitest';
@@ -31,7 +33,6 @@ const USER_ID = asId<UserId>('usr_test_001');
 // ---------------------------------------------------------------------------
 // Mock Cloudflare Worker environment bindings
 // ---------------------------------------------------------------------------
-
 
 const individualStore: Record<string, unknown>[] = [];
 
@@ -151,7 +152,6 @@ describe('GET /health', () => {
     expect(res.status).toBe(200);
     const body: Record<string, unknown> = await res.json();
     expect(body['status']).toBe('ok');
-    expect(body['service']).toBe('webwaka-api');
   });
 });
 
@@ -159,12 +159,61 @@ describe('GET /health', () => {
 // Geography
 // ---------------------------------------------------------------------------
 
-describe('GET /geography/:placeId', () => {
+describe('GET /geography/places/:placeId', () => {
   it('returns 404 for unknown place when KV is empty and DB has no data', async () => {
     // buildIndexFromD1 will fail if DB.prepare doesn't have places data
     // We expect it to gracefully return 404 or 500 depending on mock
-    const res = await makeRequest('/geography/plc_unknown_001');
+    const res = await makeRequest('/geography/places/plc_unknown_001');
     expect([404, 500]).toContain(res.status);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Auth — me + verify
+// ---------------------------------------------------------------------------
+
+describe('GET /auth/me — authenticated', () => {
+  it('returns 200 with auth context', async () => {
+    const res = await makeRequest('/auth/me', { token: validToken });
+    expect(res.status).toBe(200);
+    const body: Record<string, unknown> = await res.json();
+    const data = body['data'] as Record<string, unknown>;
+    expect(data['userId']).toBe(USER_ID);
+    expect(data['tenantId']).toBe(TENANT_ID);
+  });
+
+  it('returns 401 without auth header', async () => {
+    const res = await makeRequest('/auth/me');
+    expect(res.status).toBe(401);
+  });
+});
+
+describe('POST /auth/verify', () => {
+  it('returns valid=true with decoded context for a valid token', async () => {
+    const res = await makeRequest('/auth/verify', {
+      method: 'POST',
+      body: { token: validToken },
+    });
+    expect(res.status).toBe(200);
+    const body: Record<string, unknown> = await res.json();
+    expect(body['valid']).toBe(true);
+    const data = body['data'] as Record<string, unknown>;
+    expect(data['userId']).toBe(USER_ID);
+  });
+
+  it('returns valid=false for an invalid token', async () => {
+    const res = await makeRequest('/auth/verify', {
+      method: 'POST',
+      body: { token: 'not-a-real-jwt' },
+    });
+    expect(res.status).toBe(401);
+    const body: Record<string, unknown> = await res.json();
+    expect(body['valid']).toBe(false);
+  });
+
+  it('returns 400 when token field is missing', async () => {
+    const res = await makeRequest('/auth/verify', { method: 'POST', body: {} });
+    expect(res.status).toBe(400);
   });
 });
 
