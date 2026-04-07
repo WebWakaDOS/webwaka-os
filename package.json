@@ -9,16 +9,19 @@
     "test": "pnpm -r run test",
     "lint": "pnpm -r run lint",
     "build": "pnpm -r run build",
-    "clean": "pnpm -r run clean"
+    "clean": "pnpm -r run clean",
+    "seed:wards": "tsx infra/db/seed/scripts/generate_wards_sql.ts"
   },
   "engines": {
     "node": ">=20",
     "pnpm": ">=9"
   },
   "devDependencies": {
+    "@types/node": "^20.19.39",
     "@typescript-eslint/eslint-plugin": "^7.9.0",
     "@typescript-eslint/parser": "^7.9.0",
     "eslint": "^8.57.0",
+    "tsx": "^4.7.2",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
   },
