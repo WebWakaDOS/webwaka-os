@@ -3,17 +3,20 @@
  * Framework: Hono (https://hono.dev)
  *
  * Route map:
- *   GET  /health               — liveness probe (no auth)
- *   POST /auth/login           — issue JWT
- *   POST /auth/refresh         — refresh JWT (auth required)
- *   GET  /geography/:id        — place node (no auth)
- *   GET  /geography/:id/children — children (no auth)
- *   GET  /entities/individuals  — list (auth required)
- *   POST /entities/individuals  — create (auth + entitlement required)
- *   GET  /entities/individuals/:id  — get by ID (auth required)
- *   GET  /entities/organizations    — list (auth required)
- *   POST /entities/organizations    — create (auth + entitlement required)
- *   GET  /entities/organizations/:id — get by ID (auth required)
+ *   GET  /health                           — liveness probe (no auth)
+ *   POST /auth/login                       — issue JWT
+ *   POST /auth/verify                      — validate a JWT, return decoded payload
+ *   POST /auth/refresh                     — refresh JWT (auth required)
+ *   GET  /auth/me                          — return caller's AuthContext (auth required)
+ *   GET  /geography/places/:id             — place node (no auth)
+ *   GET  /geography/places/:id/children    — direct children (no auth)
+ *   GET  /geography/places/:id/ancestry    — ancestry breadcrumb (no auth)
+ *   GET  /entities/individuals             — list (auth required)
+ *   POST /entities/individuals             — create (auth + entitlement required)
+ *   GET  /entities/individuals/:id         — get by ID (auth required)
+ *   GET  /entities/organizations           — list (auth required)
+ *   POST /entities/organizations           — create (auth + entitlement required)
+ *   GET  /entities/organizations/:id       — get by ID (auth required)
  *
  * Platform Invariants enforced:
  *   T3 — tenant_id on all DB queries (via auth middleware context)
@@ -57,12 +60,17 @@ app.route('/health', healthRoutes);
 app.route('/geography', geographyRoutes);
 
 // ---------------------------------------------------------------------------
-// Authenticated routes
+// Auth routes — /auth/login and /auth/verify are public;
+// /auth/refresh and /auth/me require a valid JWT
 // ---------------------------------------------------------------------------
 
-// /auth/login is public; /auth/refresh requires a valid JWT
 app.use('/auth/refresh', authMiddleware);
+app.use('/auth/me', authMiddleware);
 app.route('/auth', authRoutes);
+
+// ---------------------------------------------------------------------------
+// Authenticated entity routes
+// ---------------------------------------------------------------------------
 
 app.use('/entities/*', authMiddleware);
 app.route('/entities', entityRoutes);
