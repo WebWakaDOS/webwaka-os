@@ -1,0 +1,50 @@
+name: Check @webwaka/core Version
+
+on:
+  pull_request:
+    paths:
+      - "**/package.json"
+  push:
+    branches:
+      - main
+      - staging
+    paths:
+      - "**/package.json"
+
+jobs:
+  check-core-version:
+    name: Verify @webwaka/core is pinned correctly
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for disallowed reference types
+        run: |
+          echo "Checking for github: or file: references to @webwaka/core..."
+          if grep -r '"@webwaka/core"' --include="package.json" . | grep -E 'github:|file:'; then
+            echo "FAIL: @webwaka/core must not use github: or file: references."
+            echo "Use the published npm version e.g. 1.6.1 instead."
+            exit 1
+          else
+            echo "OK: No github: or file: references found."
+          fi
+
+      - name: Verify pinned minor matches latest published
+        run: |
+          LATEST=$(npm view @webwaka/core version 2>/dev/null || echo "unknown")
+          echo "Latest published @webwaka/core: $LATEST"
+          if [ "$LATEST" = "unknown" ]; then
+            echo "Warning: Could not fetch latest version from npm, skipping."
+            exit 0
+          fi
+          MINOR=$(echo "$LATEST" | cut -d. -f1,2)
+          echo "Required minor: ^$MINOR"
+          MISMATCHED=$(grep -r '"@webwaka/core"' --include="package.json" . | \
+            grep -v "\"\\^$MINOR" | grep "@webwaka/core" || true)
+          if [ -n "$MISMATCHED" ]; then
+            echo "FAIL: Mismatched @webwaka/core version:"
+            echo "$MISMATCHED"
+            exit 1
+          else
+            echo "OK: All @webwaka/core references are on ^$MINOR"
+          fi
