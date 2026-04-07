@@ -1,7 +1,7 @@
 # WebWaka OS — Milestone Progress Tracker
 
-**Last updated:** 2026-04-07 22:15 WAT
-**Updated by:** Base44 Super Agent (Milestone 5 — MERGED to main 2026-04-07, 202 tests passing)
+**Last updated:** 2026-04-07 23:00 WAT
+**Updated by:** Replit Agent (Milestone 6 — IN PROGRESS, 294 tests, 0 typecheck errors, feat/milestone-6 branch)
 
 ---
 
@@ -177,8 +177,8 @@
 
 | Milestone | Title | Status |
 |---|---|---|
-| 5 | Claim-First Onboarding | NOT STARTED |
-| 6 | Commerce Module | NOT STARTED |
+| 5 | Claim-First Onboarding | ✅ DONE — PR #16 merged |
+| 6 | Complete Pre-Vertical Platform | IN PROGRESS — feat/milestone-6 |
 | 7 | Transport Module | NOT STARTED |
 | 8 | Civic & Political Module | NOT STARTED |
 | 9 | Institutional Module | NOT STARTED |
@@ -201,19 +201,82 @@
 
 | Task | Status | Notes |
 |---|---|---|
-| Migration 0010 — users table | NOT STARTED | Formalises users table referenced by auth-routes.ts |
-| Migration 0011 — claim_requests table | NOT STARTED | Full claim audit trail |
-| POST /auth/register | NOT STARTED | New registration endpoint |
-| POST /claim/submit | NOT STARTED | Submit claim, advance profile to claim_pending |
-| GET /claim/my-claims | NOT STARTED | List caller's claim requests |
-| POST /claim/withdraw/:id | NOT STARTED | Withdraw pending claim, revert to claimable |
-| POST /claim/approve/:id | NOT STARTED | Admin: approve claim → verified |
-| POST /claim/reject/:id | NOT STARTED | Admin: reject claim → claimable |
-| POST /workspaces | NOT STARTED | Activate workspace gated on verified claim |
-| GET /workspaces/mine | NOT STARTED | Return workspace + subscription + member_count |
-| GET /workspaces/mine/entitlements | NOT STARTED | Return plan config via @webwaka/entitlements |
-| Wire new routes in index.ts | NOT STARTED | /claim/* and /workspaces/* with authMiddleware |
-| 25+ new tests | NOT STARTED | claim-routes.test.ts + workspace-routes.test.ts |
-| replit.md updated | NOT STARTED | New routes + migrations |
-| Governance checklist passed | NOT STARTED | See brief §Governance Compliance Checklist |
-| Founder approval — Milestone 5 | NOT STARTED | Pending QA review |
+| Migration 0010 — users + claim_requests tables | DONE | infra/db/migrations/0010_claims.sql |
+| packages/claims — state machine + verification | DONE | claim-states.ts, state-machine.ts, phone/email/id helpers |
+| POST /claim/intent | DONE | Formal claim request with state machine |
+| POST /claim/advance | DONE | Admin: advance claim state |
+| POST /claim/verify | DONE | Submit verification evidence |
+| GET /claim/status/:profileId | DONE | Public claim status |
+| POST /workspaces/:id/activate | DONE | Activate workspace plan |
+| PATCH /workspaces/:id | DONE | Update plan/layers (admin) |
+| POST /workspaces/:id/invite | DONE | Invite workspace member |
+| GET /workspaces/:id/analytics | DONE | Usage metrics |
+| Wire claim + workspace routes in index.ts | DONE | authMiddleware at app level |
+| 31 new tests (claims 15 + workspaces 16) | DONE | 202 total workspace tests |
+| replit.md updated | DONE | M5 routes + migrations |
+| Governance checklist passed | DONE | T3/T4/T5/T6 compliant |
+| Founder approval — Milestone 5 | ✅ APPROVED — PR #16 merged to main 2026-04-07 |
+---
+
+## Milestone 6 — Complete Pre-Vertical Platform
+
+**Goal:** Payments (Paystack), Frontend Composition, Event Bus — all infrastructure before first vertical goes live.
+**Owner:** Replit Agent (implementation)
+**Overall status:** 🔄 IN PROGRESS — feat/milestone-6 | 294 tests | 0 typecheck errors
+
+**Baseline:** `main` at commit `24d57cc` — 202 tests, 13 packages typecheck clean
+**Branch:** `feat/milestone-6` → `main`
+**Target PR:** #17
+
+### Layer 1 — Payments
+
+| Task | Status | Notes |
+|---|---|---|
+| Migration 0011 — billing_history | DONE | infra/db/migrations/0011_payments.sql |
+| packages/payments — types.ts | DONE | PaymentIntent, BillingRecord, VerifiedPayment |
+| packages/payments — paystack.ts | DONE | initializePayment, verifyPayment, verifyWebhookSignature |
+| packages/payments — subscription-sync.ts | DONE | syncPaymentToSubscription, recordFailedPayment |
+| packages/payments — 16 tests | DONE | paystack.test.ts (10) + subscription-sync.test.ts (6) |
+| POST /workspaces/:id/upgrade | DONE | Paystack checkout initialisation |
+| POST /payments/verify | DONE | Verify + sync Paystack payment to subscription |
+| GET /workspaces/:id/billing | DONE | Billing history list |
+| PAYSTACK_SECRET_KEY added to env.ts | DONE | CF Worker Secret binding |
+
+### Layer 2 — Frontend Composition
+
+| Task | Status | Notes |
+|---|---|---|
+| packages/frontend — tenant-manifest.ts | DONE | getTenantManifestBySlug/ById, buildTenantManifest |
+| packages/frontend — profile-renderer.ts | DONE | renderProfile, renderProfileList |
+| packages/frontend — admin-layout.ts | DONE | buildAdminLayout, plan-gated nav items |
+| packages/frontend — discovery-page.ts | DONE | buildDiscoveryPage, normaliseDiscoveryQuery |
+| packages/frontend — theme.ts | DONE | brandingToCssVars, validateBranding |
+| packages/frontend — 45 tests | DONE | 5 test files covering all modules |
+| GET /public/:tenantSlug | DONE | Tenant manifest + discovery page |
+| GET /admin/:workspaceId/dashboard | DONE | Admin layout model |
+| POST /themes/:tenantId | DONE | Update tenant branding (validated) |
+| apps/tenant-public | DONE | White-label public discovery Worker |
+| apps/admin-dashboard | DONE | Admin dashboard Hono Worker |
+
+### Layer 3 — Event Bus
+
+| Task | Status | Notes |
+|---|---|---|
+| Migration 0012 — event_log | DONE | infra/db/migrations/0012_event_log.sql |
+| packages/events — event-types.ts | DONE | EventType catalogue + typed payloads |
+| packages/events — publisher.ts | DONE | publishEvent, getAggregateEvents |
+| packages/events — subscriber.ts | DONE | subscribe, dispatch, clearSubscriptions |
+| packages/events — projections/search.ts | DONE | rebuildSearchIndexFromEvents |
+| packages/events — 19 tests | DONE | publisher(6) + subscriber(9) + search(4) |
+| apps/projections | DONE | Event processor Worker (rebuild/search, rebuild/analytics) |
+
+### CI Summary
+
+| Metric | Value |
+|---|---|
+| Total tests passing | 294 |
+| Typecheck errors | 0 |
+| New packages | 3 (payments, events, frontend) |
+| New apps | 3 (tenant-public, admin-dashboard, projections) |
+| New migrations | 2 (0011, 0012) |
+| New API routes | 6 (upgrade, verify, billing, public, dashboard, themes) |

@@ -18,4 +18,11 @@ export interface Env {
 
   /** Runtime environment tag */
   ENVIRONMENT: 'development' | 'staging' | 'production';
+
+  /**
+   * Paystack secret key — stored as a CF Worker Secret.
+   * Provisioned via CF Dashboard / wrangler secret put PAYSTACK_SECRET_KEY
+   * Never hardcode or log this value.
+   */
+  PAYSTACK_SECRET_KEY: string;
 }

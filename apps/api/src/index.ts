@@ -30,6 +30,12 @@
  *   PATCH /workspaces/:id                  — update plan/layers (admin only)
  *   POST /workspaces/:id/invite            — invite member (auth required)
  *   GET  /workspaces/:id/analytics         — usage metrics (auth required)
+ *   POST /workspaces/:id/upgrade           — initialise Paystack checkout (auth required, M6)
+ *   GET  /workspaces/:id/billing           — billing history (auth required, M6)
+ *   POST /payments/verify                  — verify + sync Paystack payment (auth required, M6)
+ *   GET  /public/:tenantSlug               — tenant manifest + discovery page (no auth, M6)
+ *   GET  /admin/:workspaceId/dashboard     — admin layout model (no auth, M6)
+ *   POST /themes/:tenantId                 — update tenant branding (auth required, M6)
  *
  * Platform Invariants enforced:
  *   T3 — tenant_id on all DB queries (via auth middleware context)
@@ -51,6 +57,12 @@ import { authRoutes } from './routes/auth-routes.js';
 import { discoveryRoutes } from './routes/discovery.js';
 import { claimRoutes } from './routes/claim.js';
 import { workspaceRoutes } from './routes/workspaces.js';
+import {
+  workspaceUpgradeRoute,
+  workspaceBillingRoute,
+  paymentsVerifyRoute,
+} from './routes/payments.js';
+import { publicRoutes, adminPublicRoutes, themeRoutes } from './routes/public.js';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -107,6 +119,29 @@ app.route('/claim', claimRoutes);
 
 app.use('/workspaces/*', authMiddleware);
 app.route('/workspaces', workspaceRoutes);
+app.route('/workspaces', workspaceUpgradeRoute);
+app.route('/workspaces', workspaceBillingRoute);
+
+// ---------------------------------------------------------------------------
+// M6: Payment verification route — auth required
+// ---------------------------------------------------------------------------
+
+app.use('/payments/*', authMiddleware);
+app.route('/payments', paymentsVerifyRoute);
+
+// ---------------------------------------------------------------------------
+// M6: Public tenant + admin dashboard routes — no auth required
+// ---------------------------------------------------------------------------
+
+app.route('/public', publicRoutes);
+app.route('/admin', adminPublicRoutes);
+
+// ---------------------------------------------------------------------------
+// M6: Theme routes — auth required
+// ---------------------------------------------------------------------------
+
+app.use('/themes/*', authMiddleware);
+app.route('/themes', themeRoutes);
 
 // ---------------------------------------------------------------------------
 // Global error handler

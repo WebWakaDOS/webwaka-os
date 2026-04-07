@@ -9,7 +9,10 @@
       "@webwaka/entities":      ["../../packages/entities/src/index.ts"],
       "@webwaka/entitlements":  ["../../packages/entitlements/src/index.ts"],
       "@webwaka/relationships": ["../../packages/relationships/src/index.ts"],
-      "@webwaka/claims":        ["../../packages/claims/src/index.ts"]
+      "@webwaka/claims":        ["../../packages/claims/src/index.ts"],
+      "@webwaka/payments":      ["../../packages/payments/src/index.ts"],
+      "@webwaka/events":        ["../../packages/events/src/index.ts"],
+      "@webwaka/frontend":      ["../../packages/frontend/src/index.ts"]
     },
     "rootDir": "../..",
     "outDir": "dist",

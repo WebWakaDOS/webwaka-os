@@ -1,0 +1,25 @@
+{
+  "name": "@webwaka/frontend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Frontend composition utilities — tenant manifest, profile renderer, admin layout, theme. WebWaka OS Milestone 6.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "source": "./src/index.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
+  }
+}

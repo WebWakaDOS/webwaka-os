@@ -37,6 +37,25 @@ importers:
         specifier: ^1.6.0
         version: 1.6.1(@types/node@20.19.39)
 
+  apps/admin-dashboard:
+    dependencies:
+      '@webwaka/frontend':
+        specifier: workspace:*
+        version: link:../../packages/frontend
+      '@webwaka/payments':
+        specifier: workspace:*
+        version: link:../../packages/payments
+      hono:
+        specifier: ^4.3.0
+        version: 4.12.12
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20240524.0
+        version: 4.20260405.1
+      typescript:
+        specifier: ^5.4.5
+        version: 5.9.3
+
   apps/api:
     dependencies:
       '@webwaka/auth':
@@ -75,6 +94,38 @@ importers:
         version: 3.114.17(@cloudflare/workers-types@4.20260405.1)
 
   apps/platform-admin: {}
+
+  apps/projections:
+    dependencies:
+      '@webwaka/events':
+        specifier: workspace:*
+        version: link:../../packages/events
+      hono:
+        specifier: ^4.3.0
+        version: 4.12.12
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20240524.0
+        version: 4.20260405.1
+      typescript:
+        specifier: ^5.4.5
+        version: 5.9.3
+
+  apps/tenant-public:
+    dependencies:
+      '@webwaka/frontend':
+        specifier: workspace:*
+        version: link:../../packages/frontend
+      hono:
+        specifier: ^4.3.0
+        version: 4.12.12
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20240524.0
+        version: 4.20260405.1
+      typescript:
+        specifier: ^5.4.5
+        version: 5.9.3
 
   packages/ai-abstraction:
     devDependencies:
@@ -169,7 +220,38 @@ importers:
         specifier: ^1.6.0
         version: 1.6.1(@types/node@20.19.39)
 
+  packages/events:
+    devDependencies:
+      typescript:
+        specifier: ^5.4.5
+        version: 5.9.3
+      vitest:
+        specifier: ^1.6.0
+        version: 1.6.1(@types/node@20.19.39)
+
+  packages/frontend:
+    devDependencies:
+      typescript:
+        specifier: ^5.4.5
+        version: 5.9.3
+      vitest:
+        specifier: ^1.6.0
+        version: 1.6.1(@types/node@20.19.39)
+
   packages/offline-sync:
+    dependencies:
+      '@webwaka/types':
+        specifier: workspace:*
+        version: link:../types
+    devDependencies:
+      typescript:
+        specifier: ^5.4.5
+        version: 5.9.3
+      vitest:
+        specifier: ^1.6.0
+        version: 1.6.1(@types/node@20.19.39)
+
+  packages/payments:
     dependencies:
       '@webwaka/types':
         specifier: workspace:*

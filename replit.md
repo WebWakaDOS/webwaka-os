@@ -4,7 +4,7 @@
 
 WebWaka OS is a multi-tenant, multi-vertical, white-label SaaS platform operating system for Africa, starting with Nigeria. It follows a governance-driven monorepo architecture with "Offline First," "Mobile First," and "Nigeria First" as core principles.
 
-**Current Milestone: 5 — Claim-First Onboarding (READY FOR REVIEW)**
+**Current Milestone: 6 — Complete Pre-Vertical Platform (IN PROGRESS on feat/milestone-6)**
 
 ## Milestone Status
 
@@ -15,7 +15,8 @@ WebWaka OS is a multi-tenant, multi-vertical, white-label SaaS platform operatin
 | 2 — Monorepo Scaffolding | ✅ DONE — Founder approved 2026-04-07 |
 | 3 — Vertical Package Scaffolding + First API Wiring | ✅ DONE — Founder approved 2026-04-07 20:31 WAT |
 | 4 — Discovery Layer MVP | ✅ DONE — Founder approved 2026-04-07 — 171 tests, 12 packages clean |
-| 5 — Claim-First Onboarding | 🟡 READY FOR REVIEW — 8 deliverables, 202 tests, 13 packages clean |
+| 5 — Claim-First Onboarding | ✅ DONE — PR #16 merged — 202 tests, 13 packages clean |
+| 6 — Complete Pre-Vertical Platform | 🔄 IN PROGRESS — feat/milestone-6 — 294 tests, 0 typecheck errors |
 
 ## Tech Stack (Target Production)
 
@@ -26,6 +27,7 @@ WebWaka OS is a multi-tenant, multi-vertical, white-label SaaS platform operatin
 - **Database:** Cloudflare D1 (SQLite at the edge) — shared staging + shared production (TDR-0007)
 - **Cache/Config:** Cloudflare KV
 - **Storage:** Cloudflare R2
+- **Payments:** Paystack (NGN-first, kobo integers)
 - **Offline Sync:** Dexie.js + Service Workers
 - **AI Integration:** Vendor-neutral abstraction (BYOK capable)
 - **Package Manager:** pnpm workspaces
@@ -35,7 +37,10 @@ WebWaka OS is a multi-tenant, multi-vertical, white-label SaaS platform operatin
 ```
 webwaka-os/
   apps/
-    api/                    — Cloudflare Workers API (Hono) ✅ M3 complete
+    api/                    — Cloudflare Workers API (Hono) ✅ M5 complete
+    tenant-public/          — White-label public discovery Worker ✅ M6
+    admin-dashboard/        — Admin dashboard Hono Worker ✅ M6
+    projections/            — Event processor Worker ✅ M6
     platform-admin/         — Super admin dashboard (running on port 5000)
     partner-admin/          — Partner/tenant management portal (future)
     public-discovery/       — Public search and discovery (future)
@@ -53,9 +58,12 @@ webwaka-os/
     ai-abstraction/         — @webwaka/ai-abstraction: AI provider interface (scaffold) ✅
     search-indexing/        — @webwaka/search-indexing: Search adapter types (M4 scaffold)
     claims/                 — @webwaka/claims: Claim state machine + verification helpers (M5) ✅
+    payments/               — @webwaka/payments: Paystack integration + subscription sync (M6) ✅
+    events/                 — @webwaka/events: Domain event bus + projections (M6) ✅
+    frontend/               — @webwaka/frontend: Tenant manifest + profile renderer + admin layout (M6) ✅
   infra/
     db/
-      migrations/           — D1 SQL migration files (0001–0010 after M5) ✅
+      migrations/           — D1 SQL migration files (0001–0012 after M6) ✅
       seed/                 — Nigeria geography seed + LGA data ✅
       seed/scripts/         — INEC CSV → ward SQL importer ✅
     cloudflare/             — Cloudflare infrastructure config
@@ -81,8 +89,15 @@ webwaka-os/
 @webwaka/offline-sync (depends on: types)
 @webwaka/ai-abstraction (no internal deps)
 @webwaka/search-indexing (depends on: types)  ← M4 scaffold
+@webwaka/claims       (depends on: types)     ← M5
+@webwaka/payments     (no internal deps)      ← M6 (Paystack)
+@webwaka/events       (no internal deps)      ← M6 (domain bus)
+@webwaka/frontend     (no internal deps)      ← M6 (tenant manifest, renderer)
   ↑
 apps/api              (depends on: all packages above)
+apps/tenant-public    (depends on: frontend)
+apps/admin-dashboard  (depends on: frontend, payments)
+apps/projections      (depends on: events)
 ```
 
 ## Running Locally (Development)
@@ -111,18 +126,26 @@ The `types` package has only `tsconfig.json` (no cross-package deps, standard `r
 
 ## D1 Mock Pattern (In Tests)
 
-Tests use a local `D1Stmt` interface to type in-memory mocks without `vi.fn()` on generic methods:
+Tests use a local `D1Like` interface defined in each file (not a shared import):
 ```typescript
-interface D1Stmt {
-  bind(...args: unknown[]): D1Stmt;
-  run(): Promise<unknown>;
-  first<T>(): Promise<T | null>;
-  all<T>(): Promise<{ results: T[] }>;
+interface D1Like {
+  prepare(query: string): {
+    bind(...args: unknown[]): {
+      run(): Promise<{ success: boolean }>;
+      first<T>(): Promise<T | null>;
+      all<T>(): Promise<{ results: T[] }>;
+    };
+    run(): Promise<{ success: boolean }>;
+    first<T>(): Promise<T | null>;
+    all<T>(): Promise<{ results: T[] }>;
+  };
 }
 ```
 `first` and `all` must be plain generic async functions (not `vi.fn()`), since `vi.fn()` strips generic type parameters.
 
-## Test Summary (Milestone 5 — Claim-First Onboarding)
+**D1Like local interface pattern (CRITICAL):** Every file touching D1 must define its own local `D1Like` interface. Never import a shared one.
+
+## Test Summary (Milestone 6 — Complete Pre-Vertical Platform)
 
 | Package | Tests | Status |
 |---|---|---|
@@ -134,9 +157,12 @@ interface D1Stmt {
 | @webwaka/relationships | 5 | ✅ All passing |
 | @webwaka/offline-sync | 4 | ✅ All passing |
 | @webwaka/search-indexing | 0 | ✅ passWithNoTests (scaffold only) |
-| @webwaka/claims | 15 | ✅ All passing (10 state-machine + 5 verification) |
-| apps/api | 50 | ✅ All passing (15 base + 20 discovery M4 + 15 claim M5) |
-| **Total** | **202** | ✅ All passing |
+| @webwaka/claims | 15 | ✅ All passing |
+| @webwaka/payments | 16 | ✅ All passing (M6) |
+| @webwaka/events | 19 | ✅ All passing (M6) |
+| @webwaka/frontend | 45 | ✅ All passing (M6) |
+| apps/api | 62 | ✅ All passing (50 M5 base + 12 new M6) |
+| **Total** | **294** | ✅ All passing |
 
 ## D1 Migration Files
 
@@ -153,6 +179,8 @@ interface D1Stmt {
 | `0008_init_search_index.sql` | Search entries + FTS5 virtual table ← M4 |
 | `0009_init_discovery_events.sql` | Discovery events log ← M4 |
 | `0010_claim_workflow.sql` | claim_requests table + indexes ← M5 |
+| `0011_payments.sql` | billing_history table + indexes ← M6 |
+| `0012_event_log.sql` | event_log append-only table + indexes ← M6 |
 
 ## Seed Data
 
@@ -167,9 +195,9 @@ interface D1Stmt {
 Ward seed is pre-committed. Source: `nielvid/states-lga-wards-polling-units` (GitHub, INEC data).
 8,810 / 8,810 wards matched — zero unmatched. 767 INSERT batches (≤50 rows each).
 
-## API Routes (apps/api — Hono Worker, M3 baseline + M4 additions)
+## API Routes (apps/api — Hono Worker)
 
-### Milestone 3 Routes
+### Core Routes (M3)
 
 | Method | Path | Auth | Description |
 |---|---|---|---|
@@ -188,20 +216,7 @@ Ward seed is pre-committed. Source: `nielvid/states-lga-wards-polling-units` (Gi
 | POST | `/entities/organizations` | JWT | Create organization |
 | GET | `/entities/organizations/:id` | JWT | Get organization |
 
-### Milestone 5 Routes (Claim-First Onboarding)
-
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| POST | `/claim/intent` | JWT | Convert discovery intent → formal claim_request |
-| POST | `/claim/advance` | JWT (admin) | Advance claim state: approve or reject |
-| POST | `/claim/verify` | JWT | Submit verification evidence |
-| GET | `/claim/status/:profileId` | none | Public claim status + checklist |
-| POST | `/workspaces/:id/activate` | JWT | Activate workspace plan (Paystack stub) |
-| PATCH | `/workspaces/:id` | JWT (admin) | Update plan/name |
-| POST | `/workspaces/:id/invite` | JWT | Invite member to workspace |
-| GET | `/workspaces/:id/analytics` | JWT | Usage metrics (members, entities, pending claims) |
-
-### Milestone 4 Routes (Discovery Layer — public, no auth)
+### Discovery Routes (M4 — public, no auth)
 
 | Method | Path | Auth | Description |
 |---|---|---|---|
@@ -210,6 +225,40 @@ Ward seed is pre-committed. Source: `nielvid/states-lga-wards-polling-units` (Gi
 | POST | `/discovery/claim-intent` | none | Capture claim interest |
 | GET | `/discovery/nearby/:placeId` | none | Entities in geography subtree |
 | GET | `/discovery/trending` | none | Most-viewed profiles this week |
+
+### Claim + Workspace Routes (M5)
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/claim/intent` | JWT | Convert discovery intent → formal claim_request |
+| POST | `/claim/advance` | JWT (admin) | Advance claim state: approve or reject |
+| POST | `/claim/verify` | JWT | Submit verification evidence |
+| GET | `/claim/status/:profileId` | none | Public claim status + checklist |
+| POST | `/workspaces/:id/activate` | JWT | Activate workspace plan |
+| PATCH | `/workspaces/:id` | JWT (admin) | Update plan/name |
+| POST | `/workspaces/:id/invite` | JWT | Invite member to workspace |
+| GET | `/workspaces/:id/analytics` | JWT | Usage metrics |
+
+### M6 Routes — Payments + Frontend
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/workspaces/:id/upgrade` | JWT | Initialise Paystack checkout |
+| POST | `/payments/verify` | JWT | Verify + sync Paystack payment |
+| GET | `/workspaces/:id/billing` | JWT | Billing history |
+| GET | `/public/:tenantSlug` | none | Tenant manifest + discovery page |
+| GET | `/admin/:workspaceId/dashboard` | none | Admin layout model |
+| POST | `/themes/:tenantId` | JWT | Update tenant branding |
+
+## Cloudflare Worker Bindings (Env interface)
+
+| Binding | Type | Purpose |
+|---|---|---|
+| `DB` | D1Database | Main SQLite database |
+| `GEOGRAPHY_CACHE` | KVNamespace | Geography index cache |
+| `JWT_SECRET` | string | JWT HMAC secret (CF Worker Secret) |
+| `ENVIRONMENT` | string | development / staging / production |
+| `PAYSTACK_SECRET_KEY` | string | Paystack API secret (CF Worker Secret, M6) |
 
 ## Deployment
 
@@ -235,3 +284,13 @@ Ward seed is pre-committed. Source: `nielvid/states-lga-wards-polling-units` (Gi
 - T5: Feature access gated by entitlement check via `@webwaka/entitlements`.
 - T6: Discovery driven by `@webwaka/geography` hierarchy — no raw string city/state matching.
 - Discovery routes are **public** (no auth). Never expose `tenant_id` in public responses.
+
+## Agent Scratchpad (Critical Patterns)
+
+- **D1Like local interface pattern:** Every file touching D1 must define its own local `D1Like` interface. Never import a shared one.
+- **Auth middleware pattern:** Apply `authMiddleware` at app level in `index.ts` via `app.use('/route/path', authMiddleware)`, NOT inline in route handlers — inline breaks test mocking.
+- **vitest.config.ts alias pattern:** Every new workspace package used in `apps/api` must be added to `apps/api/vitest.config.ts` resolve.alias AND `apps/api/tsconfig.json` paths.
+- **exactOptionalPropertyTypes:** Use conditional spread `...(val !== undefined ? { key: val } : {})` for optional object fields. Returning `{ key: undefined }` to an `{ key?: T }` type fails.
+- **State key compact format:** `akwaibom` (not `akwa_ibom`), `crossriver` (not `cross_river`).
+- **Workspace ownerId type:** `IndividualId | OrganizationId` (not UserId) — cast to string for comparison.
+- **Paystack amounts:** Always in kobo (NGN × 100). Paystack sends amounts as integers.
