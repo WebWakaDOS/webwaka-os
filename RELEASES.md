@@ -53,6 +53,16 @@ Before promoting to production:
 
 ## Release History
 
+### M7b — Offline Sync + USSD Gateway + POS Float Ledger
+- **Date:** 2026-04-08
+- **PR:** #24 | **SHA:** `ef76fdc`
+- **QA:** Replit Agent QA | 178/178 tests · 0 typecheck errors | Approved + Merged
+- **Deliverables:** D1 migrations 0022–0025, `@webwaka/offline-sync` (Dexie.js + SyncEngine + SW), `apps/ussd-gateway` (Hono Worker + KV FSM + *384#), `@webwaka/pos` (double-entry float ledger), 6 POS API routes + `POST /sync/apply`
+- **Compliance:** P6, P9, P11, T3, T4
+- **QA Fixes:** 4 — `@webwaka/pos` alias (vitest+tsconfig), migration 0025 `client_id` UNIQUE, migration 0025 `status` spec
+- **QA Report:** `docs/qa/m7b-qa-report.md`
+- **Release Notes:** `docs/milestones/m7b-release-notes.md`
+
 ### M7a — Regulatory Survival + Multi-Channel Contact
 - **Date:** 2026-04-08
 - **PR:** #21 | **SHA:** `d629339`
