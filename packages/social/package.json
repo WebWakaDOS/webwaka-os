@@ -1,0 +1,27 @@
+{
+  "name": "@webwaka/social",
+  "version": "0.1.0",
+  "description": "Social network platform — profiles, follows, posts, feeds, groups, DMs, stories",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "dependencies": {
+    "@webwaka/core": "workspace:*",
+    "@webwaka/types": "workspace:*",
+    "@webwaka/entitlements": "workspace:*",
+    "@webwaka/identity": "workspace:*",
+    "@webwaka/ai": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "vitest": "^1.2.0"
+  },
+  "keywords": ["social", "feed", "posts", "follows", "groups", "dm", "stories", "nigeria"]
+}

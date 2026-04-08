@@ -35,3 +35,7 @@ Identity without tenant context is insufficient. Tenant context without identity
 - Eliminates entire classes of tenant data leakage by making workspace context mandatory
 - Increases complexity of auth flows — mitigated by centralizing all auth in `packages/auth`
 - Agent-generated code must pass auth middleware correctly — enforced by CI integration tests
+
+---
+
+> **M7 Cross-Reference 2026-04-08:** Reviewed by Base44 Super Agent — no conflicts with M7 additions. New packages (identity, otp, community, social) and apps/ussd-gateway conform to all decisions in this TDR.

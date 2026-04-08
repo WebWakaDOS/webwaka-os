@@ -1,0 +1,27 @@
+{
+  "name": "@webwaka/community",
+  "version": "0.1.0",
+  "description": "Skool-style community platform — spaces, channels, courses, events, memberships",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "dependencies": {
+    "@webwaka/core": "workspace:*",
+    "@webwaka/types": "workspace:*",
+    "@webwaka/entitlements": "workspace:*",
+    "@webwaka/payments": "workspace:*",
+    "@webwaka/identity": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "vitest": "^1.2.0"
+  },
+  "keywords": ["community", "skool", "forum", "courses", "memberships", "events", "nigeria"]
+}

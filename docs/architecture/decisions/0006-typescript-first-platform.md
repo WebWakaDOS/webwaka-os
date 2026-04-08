@@ -25,3 +25,7 @@ No new packages or apps may be created in plain JavaScript.
 - Type errors block CI — no `any`-based workarounds to unblock builds; fix the types
 - The `check-core-version` workflow enforces package version consistency at the type level
 - Agents generating code must produce valid TypeScript that passes `tsc --noEmit`
+
+---
+
+> **M7 Cross-Reference 2026-04-08:** Reviewed by Base44 Super Agent — no conflicts with M7 additions. New packages (identity, otp, community, social) and apps/ussd-gateway conform to all decisions in this TDR.

@@ -81,3 +81,26 @@ Violations of any invariant are treated as blocking issues:
 - **Technical invariants (T1–T10):** Base44 blocks merge; issue opened with `governance` + `blocked` labels
 
 To propose an exception, open an issue using the **Architecture Decision** template.
+
+---
+
+## M7 Additions
+
+### P9 — Agent Float Double-Entry Ledger
+Every float movement in the Agent POS network must be recorded as a double-entry ledger transaction. No float credit or debit may exist without an offsetting entry. The `agent_float_ledger` table is append-only. Balance is always computed from ledger history, never stored as a mutable scalar. Violations are critical financial bugs requiring immediate rollback.
+
+### P10 — BVN/NIN Consent Before Lookup (NDPR Compliance)
+No BVN or NIN lookup may be initiated without a prior consent record in `consent_records` for that user, with the appropriate `data_type` (`'BVN'` or `'NIN'`) and `purpose`. Consent must be explicit, granular, and purpose-specific (NDPR Article 5). Automated batch BVN lookups are not permitted. See `docs/enhancements/m7/ndpr-consent.md`.
+
+### P11 — Offline Writes via Dexie.js Queue → Deterministic Sync
+All client-side writes made during offline periods must be queued in Dexie.js (`packages/offline-sync`). On reconnection, the sync engine replays the queue in FIFO order. Conflict resolution uses server-wins with a client-side notification. No offline write may be silently dropped. Every sync attempt is logged with outcome. See `docs/enhancements/m7/offline-sync.md`.
+
+---
+
+## Enforcement (Updated M7)
+
+Violations of any invariant are treated as blocking issues:
+- **Product invariants (P1–P11):** Founder review required before any exception
+- **Technical invariants (T1–T10):** Base44 blocks merge; issue opened with `governance` + `blocked` labels
+
+To propose an exception, open an issue using the **Architecture Decision** template.

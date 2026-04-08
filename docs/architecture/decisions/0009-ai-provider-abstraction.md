@@ -39,3 +39,51 @@ Supported providers are registered at runtime. The active provider is resolved f
 - Abstraction layer must be kept thin — it routes, it does not transform logic
 - Provider-specific features (e.g. function calling, vision) are exposed as optional capability checks
 - See `docs/governance/ai-policy.md` for governance rules that apply on top of this architecture
+
+---
+
+## M7 Extension: Abstraction Pattern Applied to Payments, OTP, and Identity
+
+The provider-abstraction pattern established in this TDR is extended in Milestone 7 to three additional integration categories. The rationale is identical: Nigerian market requires multiple providers, no business logic should couple to a specific vendor.
+
+### Payments Abstraction (`packages/payments`)
+
+```typescript
+interface PaymentProvider {
+  initiateCharge(params: ChargeParams): Promise<ChargeResult>;
+  verifyTransaction(reference: string): Promise<VerifyResult>;
+  createSubscription(params: SubscriptionParams): Promise<SubscriptionResult>;
+  cancelSubscription(subscriptionCode: string): Promise<void>;
+}
+```
+
+Active providers: Paystack (primary), Flutterwave (failover). Provider selection is tenant config.
+
+### OTP Abstraction (`packages/otp`)
+
+```typescript
+interface OTPProvider {
+  sendOTP(phone: string, message: string, options: OTPOptions): Promise<OTPSendResult>;
+  verifyOTP(phone: string, code: string): Promise<boolean>;
+}
+```
+
+Active providers: Termii (primary), Africa's Talking (failover), WhatsApp Business API (optional channel). Priority: SMS → WhatsApp → USSD (last resort). See `docs/identity/otp-channels.md`.
+
+### Identity Abstraction (`packages/identity`)
+
+```typescript
+interface IdentityProvider {
+  verifyBVN(bvn: string, consent: ConsentRecord): Promise<BVNVerifyResult>;
+  verifyNIN(nin: string, consent: ConsentRecord): Promise<NINVerifyResult>;
+  verifyCAC(rcNumber: string): Promise<CACVerifyResult>;
+  verifyFRSC(licenseNumber: string): Promise<FRSCVerifyResult>;
+}
+```
+
+Active providers: Prembly (primary), Paystack Identity (BVN secondary). All lookups require a `ConsentRecord` parameter — passing `null` throws a compile error. See `docs/identity/bvn-nin-guide.md`.
+
+### Invariant Cross-Reference
+- P7 (Vendor Neutral AI) is the source pattern — the same logic applies here.
+- P8 (BYOK) — tenants may supply their own Paystack/Termii keys.
+- P10 (BVN/NIN Consent) — enforced at the `IdentityProvider` interface boundary.

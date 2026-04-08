@@ -34,3 +34,26 @@
 3. Political relationships must be explicit, not tag-based.
 4. Publication relationships must separate neutral discovery from owned brand channels.
 5. Delegation must always be constrained by entitlement.
+
+---
+
+## M7 Addition: Social & Community Relationships
+
+| Relationship | Description |
+|---|---|
+| `follows` | SocialProfile → SocialProfile directed follow (no reciprocity implied) |
+| `blocks` | SocialProfile → SocialProfile hard block — hides content, prevents DMs |
+| `mutes` | SocialProfile → SocialProfile soft hide — content hidden, not notified |
+| `community_membership` | User → CommunitySpace join relationship with role and tier |
+| `forum_reply` | ForumPost → ForumThread reply chain |
+| `reacts_to` | User → SocialPost reaction (like, fire, clap, etc.) |
+| `member_of_group` | SocialProfile → SocialGroup membership |
+| `dm_thread` | SocialProfile ↔ SocialProfile or Group direct message thread |
+
+### Social Graph Rules
+
+1. `follows` is asymmetric by default. Mutual follows create a "connection" in display logic but remain two independent records.
+2. A `blocks` relationship supersedes `follows`, `mutes`, and `dm_thread` — blocked user cannot see content or send DMs.
+3. `community_membership` role hierarchy: `owner > admin > moderator > member > guest`.
+4. `forum_reply` chains are stored with `parent_post_id` for threading. Max depth = 5 (flat after that).
+5. All social relationships are tenant-scoped (`tenant_id` is required on every record).

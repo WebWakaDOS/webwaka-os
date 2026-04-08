@@ -116,3 +116,51 @@ These rules are enforced by:
 - CI checks (TypeScript, tests, audit)
 - Code review (CODEOWNERS)
 - Base44 Super Agent governance review at each milestone
+
+---
+
+## M7 Additions
+
+### R5 — Rate Limiting (Sliding Window)
+
+All public endpoints must apply sliding-window rate limiting via Cloudflare KV (`RATE_LIMIT_KV`).
+
+| Endpoint Class | Limit | Window |
+|---|---|---|
+| OTP send | 3 requests | 10 minutes per phone number |
+| OTP verify | 5 attempts | 10 minutes per phone number |
+| BVN/NIN lookup | 2 requests | 1 hour per user |
+| Login / token refresh | 10 requests | 5 minutes per IP |
+| General API (authenticated) | 120 requests | 1 minute per `tenant_id + user_id` |
+| General API (unauthenticated) | 30 requests | 1 minute per IP |
+
+Key format: `rate_limit:{endpoint_class}:{identifier}:{window_bucket}`
+
+Exceeding the limit returns HTTP 429 with `Retry-After` header. Do not reveal internal limits in error messages.
+
+### R6 — Webhook Idempotency
+
+All inbound webhooks (Paystack, OTP providers, identity providers) must be processed idempotently.
+
+- Every inbound webhook must carry a provider-issued event ID.
+- Before processing, check `idempotency_log` table: `SELECT 1 FROM idempotency_log WHERE event_id = ? AND provider = ?`.
+- If found: return HTTP 200 immediately (already processed).
+- If not found: process, then INSERT into `idempotency_log(event_id, provider, processed_at)`.
+- `idempotency_log` rows expire after 7 days (via Cloudflare D1 TTL or scheduled cleanup).
+- Webhook signature verification (Paystack HMAC-SHA512) must pass before any payload processing. Failed signature = HTTP 400 + audit log entry.
+
+### R7 — PII Hashing in Logs
+
+Raw PII must never appear in logs, audit trails, or error messages.
+
+| Field | Storage in Logs |
+|---|---|
+| IP address | `SHA-256(SALT + ip_address)` — one-way hash |
+| Phone number | Last 4 digits only: `****1234` |
+| BVN | Never logged — not even partial |
+| NIN | Never logged — not even partial |
+| Email | Domain only: `****@gmail.com` |
+
+`SALT` is a platform-level secret stored in Cloudflare Worker secrets (`LOG_PII_SALT`). Rotated every 90 days.
+
+Violation: logging raw PII is treated as a data breach and triggers the Incident Response procedure (Section 10).

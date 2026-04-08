@@ -386,63 +386,161 @@
 
 ---
 
-## Milestone 7 — Full Platform + Community + Social
+## Milestone 7 — Nigeria Platform Hardening + Community + Social
 
-**Goal:** Launch Community Platform (Skool-style) and Social Network (Twitter+IG+FB style) as full vertical modules. All 57 pre-vertical enhancements must be complete before M7 coding begins (M6a+M6b+M6c done).
+**Goal:** Nigeria compliance hardening (CBN KYC, NDPR, FRSC/CAC), offline-first (Dexie.js + USSD), Community Platform (Skool-style), Social Network (Twitter+IG+FB style), Nigeria UX polish.
 **Owner:** Replit Agent (implementation) + Base44 Super Agent (architecture, QA, PR review)
-**Overall status:** 🔲 NOT STARTED — depends on M6a + M6b + M6c
+**Overall status:** 🔲 NOT STARTED — depends on M6a + M6b + M6c completion
+**Target tests:** 360+ (300 baseline → +60 new)
+**New packages:** `packages/identity`, `packages/otp`, `packages/community`, `packages/social`
+**New apps:** `apps/ussd-gateway`
+**New migrations:** D1 0013–0034 (12 for M6 pre-verticals + 22 for M7)
+**Governance docs:** Complete in `feat/m7-docs-update` (PR #20) — all 16 governance + 12 TDRs updated + 18 new docs
 
-**Governance docs:** Created in `feat/m7-docs-update` (PR #19) — see below
-**Baseline:** Requires 360+ tests, all 12 migrations (0013–0024), packages/identity, packages/otp
+---
 
-### M7.1 — Community Platform
+### M7a — Regulatory Survival (3 days)
+
+**Goal:** CBN KYC tiers, BVN/NIN/CAC/FRSC identity, NDPR consent, rate limiting hardening, webhook idempotency.
 
 | Task | Status | Notes |
 |---|---|---|
-| packages/community — CommunitySpace, Membership, Channel, Post, Event entities | NOT STARTED | See docs/community/community-model.md |
-| Community migrations (0025–0028) | NOT STARTED | |
+| packages/identity — BVN/NIN/CAC/FRSC via Prembly | NOT STARTED | See docs/identity/bvn-nin-guide.md + frsc-cac-integration.md |
+| packages/otp — Termii SMS + WhatsApp + USSD voice | NOT STARTED | See docs/identity/otp-channels.md |
+| CBN KYC tier enforcement (requireKYCTier) | NOT STARTED | See docs/enhancements/m7/cbn-kyc-tiers.md |
+| NDPR consent_records table + middleware | NOT STARTED | See docs/enhancements/m7/ndpr-consent.md |
+| Rate limiting R5 (RATE_LIMIT_KV sliding window) | NOT STARTED | See docs/governance/security-baseline.md R5 |
+| Webhook idempotency R6 (idempotency_log table) | NOT STARTED | See docs/governance/security-baseline.md R6 |
+| PII hashing in logs R7 (SHA-256 salt + ip/phone) | NOT STARTED | See docs/governance/security-baseline.md R7 |
+| KYC upgrade journey UI (BVN → NIN → CAC/FRSC screens) | NOT STARTED | |
+| Nigerian phone validation Zod schema | NOT STARTED | In packages/otp |
+| OTP rate limiting (3 sends / 10min per phone) | NOT STARTED | R5 enforcement |
+| Carrier detection (MTN/Airtel/Glo/9mobile) | NOT STARTED | In packages/otp |
+| D1 migrations: consent_records, idempotency_log, kyc_tiers | NOT STARTED | Migrations 0013–0015 |
+| Tests: 30+ covering identity + otp + kyc + ndpr | NOT STARTED | |
+| Base44 QA audit — M7a | NOT STARTED | |
+| Founder approval — M7a | NOT STARTED | |
+
+---
+
+### M7b — Offline + Agent Network (3 days)
+
+**Goal:** Dexie.js offline queue, deterministic sync, USSD gateway, POS agent terminals, float double-entry ledger.
+
+| Task | Status | Notes |
+|---|---|---|
+| packages/offline-sync — Dexie.js queue + sync engine | NOT STARTED | See docs/enhancements/m7/offline-sync.md |
+| Deterministic conflict resolution (server-wins) | NOT STARTED | Platform Invariant P11 |
+| apps/ussd-gateway — Africa's Talking USSD Worker | NOT STARTED | See apps/ussd-gateway/wrangler.toml |
+| USSD session state (KV, 3-min TTL) | NOT STARTED | |
+| USSD menu: wallet / trending / transport / community | NOT STARTED | See docs/enhancements/m7/offline-sync.md |
+| POS agent terminal model | NOT STARTED | See docs/enhancements/m7/agent-network.md |
+| Agent float ledger (double-entry, P9) | NOT STARTED | Platform Invariant P9 |
+| Float top-up / cash-out flows | NOT STARTED | |
+| D1 migrations: offline_queue, agent_float_ledger, ussd_sessions | NOT STARTED | Migrations 0016–0018 |
+| Tests: 20+ covering offline sync + ussd + float ledger | NOT STARTED | |
+| Base44 QA audit — M7b | NOT STARTED | |
+| Founder approval — M7b | NOT STARTED | |
+
+---
+
+### M7c — Community Platform (4 days)
+
+**Goal:** Full Skool-style community platform — spaces, channels, forums, courses, events, paid memberships.
+
+| Task | Status | Notes |
+|---|---|---|
+| packages/community — CommunitySpace, Membership, Channel, Thread, Course, Event | NOT STARTED | See docs/community/community-model.md |
 | Community API routes (/community/*) | NOT STARTED | See docs/community/skool-features.md |
-| Course modules + lesson progress | NOT STARTED | |
-| Community membership payment + KYC gating | NOT STARTED | See docs/community/community-entitlements.md |
-| Member leaderboard | NOT STARTED | |
+| Forum thread + reply system (5-level threading) | NOT STARTED | |
+| Course modules + lesson progress tracking | NOT STARTED | |
 | Community event RSVP + SMS reminders | NOT STARTED | |
+| Paid membership tiers + KYC gating | NOT STARTED | See docs/community/community-entitlements.md |
+| Revenue split (Paystack Split Payment) | NOT STARTED | See docs/community/community-monetization.md |
 | Invite link system | NOT STARTED | |
 | Community broadcast DMs | NOT STARTED | |
+| Member leaderboard | NOT STARTED | |
+| AI moderation classifier (profanity/NSFW/spam) | NOT STARTED | See docs/community/community-moderation.md |
+| NDPR consent at community join | NOT STARTED | P10 enforcement |
 | Offline lesson cache (Service Worker) | NOT STARTED | |
-| NDPR consent at community join | NOT STARTED | |
-| Community moderation integration | NOT STARTED | |
-| Tests: 60+ covering all community items | NOT STARTED | |
+| D1 migrations: community_spaces, memberships, channels, threads, courses, events | NOT STARTED | Migrations 0019–0024 |
+| Tests: 60+ covering all community features | NOT STARTED | |
+| Base44 QA audit — M7c | NOT STARTED | |
+| Founder approval — M7c | NOT STARTED | |
 
-### M7.2 — Social Network Platform
+---
+
+### M7d — Social Network Platform (4 days)
+
+**Goal:** Full social network — posts, feeds, follows, groups, DMs, stories (Twitter + IG + FB).
 
 | Task | Status | Notes |
 |---|---|---|
-| packages/social — SocialProfile, Follow, Post, Group, DM, Reaction | NOT STARTED | See docs/social/social-graph.md |
-| Social migrations (0029–0034) | NOT STARTED | |
-| Feed algorithm — home + explore + trending | NOT STARTED | See docs/social/feed-algorithm.md |
+| packages/social — SocialProfile, Follow, SocialPost, Group, DMThread, DMMessage, Reaction | NOT STARTED | See docs/social/social-graph.md |
+| Social feed algorithm (home + explore + trending) | NOT STARTED | See docs/social/feed-algorithm.md |
 | Social API routes (/social/*) | NOT STARTED | |
-| Stories (24hr TTL posts) | NOT STARTED | |
+| Stories (24h TTL, Dexie.js offline cache) | NOT STARTED | See docs/social/stories-spec.md |
 | Group creation + membership | NOT STARTED | |
-| Direct messaging | NOT STARTED | |
-| Verification badge (NIN/BVN-gated blue tick) | NOT STARTED | |
-| Moderation pipeline (AI classifier + human queue) | NOT STARTED | See docs/social/social-moderation.md |
-| NITDA Code of Practice compliance | NOT STARTED | |
+| Direct messaging (AES-256-GCM at rest) | NOT STARTED | See docs/social/dm-privacy.md |
+| Verification badge (NIN/BVN blue-tick gated) | NOT STARTED | |
+| AI moderation pipeline (classifier + human queue) | NOT STARTED | See docs/social/social-moderation.md |
+| NITDA Code of Practice compliance | NOT STARTED | Self-assessment checklist |
 | Boosted content / sponsored feed placement | NOT STARTED | |
-| Offline feed cache (last 50 posts in IndexedDB) | NOT STARTED | |
-| USSD trending feed (*384# → 3) | NOT STARTED | |
+| Offline feed cache (last 50 posts, IndexedDB) | NOT STARTED | |
+| USSD trending feed integration (*384# → 3) | NOT STARTED | apps/ussd-gateway |
 | Naija Pidgin (pcm) post labelling | NOT STARTED | |
-| Tests: 60+ covering all social items | NOT STARTED | |
+| Block / mute / close-friends lists | NOT STARTED | See docs/social/social-graph.md |
+| D1 migrations: social_profiles, follows, posts, groups, dm_threads, reactions, stories | NOT STARTED | Migrations 0025–0034 |
+| Tests: 60+ covering all social features | NOT STARTED | |
+| Base44 QA audit — M7d | NOT STARTED | |
+| Founder approval — M7d | NOT STARTED | |
 
-### M7.3 — QA + Launch Gate
+---
+
+### M7e — Nigeria UX Polish (2 days)
+
+**Goal:** Airtime top-up, LGA selector component, Naija Pidgin locale, dark mode.
 
 | Task | Status | Notes |
 |---|---|---|
-| All M7 packages typecheck clean | NOT STARTED | |
-| Total tests ≥ 500 (360 baseline + M7 additions) | NOT STARTED | |
-| Lighthouse PWA score ≥ 80 | NOT STARTED | |
-| NITDA Code of Practice self-assessment | NOT STARTED | |
-| CBN KYC compliance audit (all tiers enforced) | NOT STARTED | |
-| NDPR consent records audit | NOT STARTED | |
+| Airtime top-up flow (Telcos via Paystack or Termii) | NOT STARTED | |
+| LGA selector UI component (all 774 LGAs from packages/geography) | NOT STARTED | |
+| Naija Pidgin (pcm) locale strings (i18next) | NOT STARTED | |
+| Dark mode implementation (design-system tokens) | NOT STARTED | |
+| USSD shortcode UI display component (*384#) | NOT STARTED | |
+| Low-data mode (compressed images, text-only option) | NOT STARTED | |
+| Tests: 10+ covering UX components | NOT STARTED | |
+| Lighthouse PWA score ≥ 80 (all apps) | NOT STARTED | |
+| Base44 QA audit — M7e | NOT STARTED | |
+| Founder approval — M7e | NOT STARTED | |
+
+---
+
+### M7 QA + Launch Gate
+
+| Task | Status | Notes |
+|---|---|---|
+| All M7 packages typecheck clean (0 errors) | NOT STARTED | |
+| Total tests ≥ 360 (300 baseline + 60 M7 target) | NOT STARTED | Stretch: 500+ |
+| Lighthouse PWA score ≥ 80 on all customer-facing apps | NOT STARTED | |
+| NITDA Code of Practice self-assessment complete | NOT STARTED | |
+| CBN KYC compliance audit (all 4 tiers enforced + tested) | NOT STARTED | |
+| NDPR consent records audit (all 11 data_types covered) | NOT STARTED | |
 | Security penetration test (OTP replay, BVN enumeration) | NOT STARTED | |
-| Base44 full QA audit | NOT STARTED | |
+| USSD shortcode NCC registration submitted (*384#) | NOT STARTED | |
+| Agent float ledger reconciliation test | NOT STARTED | |
+| Base44 full QA audit — M7 | NOT STARTED | |
 | Founder approval — Milestone 7 | NOT STARTED | |
+
+---
+
+## Total M7 Deliverables
+
+| Phase | Duration | Deliverables |
+|---|---|---|
+| M7a — Regulatory Survival | 3 days | Identity + OTP + KYC + NDPR + Rate Limiting |
+| M7b — Offline + Agents | 3 days | Dexie.js + USSD + POS float ledger |
+| M7c — Community Platform | 4 days | Skool-style: forums + courses + events + memberships |
+| M7d — Social Network | 4 days | Posts + feeds + DMs + groups + stories |
+| M7e — Nigeria UX | 2 days | Airtime + LGA + Pidgin + dark mode |
+| **Total** | **19 days** | **84 tasks across 5 phases** |

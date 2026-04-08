@@ -30,3 +30,7 @@ All platform code — apps, shared packages, tests, infrastructure templates, go
 - Requires strong internal package boundaries to prevent coupling — enforced by package scope rules in Milestone 2
 - CI must be efficient to avoid long runtimes — enforced via affected-package-only job filters
 - All agents must respect monorepo layout conventions — enforced via `CONTRIBUTING.md` and `AGENTS.md`
+
+---
+
+> **M7 Cross-Reference 2026-04-08:** Reviewed by Base44 Super Agent — no conflicts with M7 additions. New packages (identity, otp, community, social) and apps/ussd-gateway conform to all decisions in this TDR.

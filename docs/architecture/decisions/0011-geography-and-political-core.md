@@ -31,3 +31,7 @@ These models must be implemented in `packages/core` before any vertical-specific
 - Discovery indexing, filtering, and aggregation are built on top of this canonical model
 - Political assignment records (office type + territory + person + term) derive from the same model — no parallel political-only geography tables
 - See `docs/governance/geography-taxonomy.md` and `docs/governance/political-taxonomy.md` for the canonical definitions
+
+---
+
+> **M7 Cross-Reference 2026-04-08:** Reviewed by Base44 Super Agent — no conflicts with M7 additions. New packages (identity, otp, community, social) and apps/ussd-gateway conform to all decisions in this TDR.

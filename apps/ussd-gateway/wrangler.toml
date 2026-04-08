@@ -1,0 +1,55 @@
+# apps/ussd-gateway/wrangler.toml
+# USSD Gateway Worker — Africa's Talking USSD integration
+# Shortcode: *384# (pending NCC registration)
+# See docs/enhancements/m7/offline-sync.md for USSD feature map
+
+name = "webwaka-ussd-gateway"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# Environments
+[env.staging]
+name = "webwaka-ussd-gateway-staging"
+vars = { ENVIRONMENT = "staging" }
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "webwaka-staging"
+database_id = ""  # Set in CI from CLOUDFLARE_D1_STAGING_ID secret
+
+[env.production]
+name = "webwaka-ussd-gateway-production"
+vars = { ENVIRONMENT = "production" }
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "webwaka-production"
+database_id = ""  # Set in CI from CLOUDFLARE_D1_PRODUCTION_ID secret
+
+# KV Namespaces
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = ""  # Set per environment
+
+# USSD session state (3-minute TTL handled in code)
+[[kv_namespaces]]
+binding = "USSD_SESSION_KV"
+id = ""  # Set per environment
+
+# Routes — Africa's Talking sends POST to /ussd
+[env.staging.routes]
+pattern = "api-staging.webwaka.ng/ussd"
+zone_name = "webwaka.ng"
+
+[env.production.routes]
+pattern = "api.webwaka.ng/ussd"
+zone_name = "webwaka.ng"
+
+# Secrets (set via: wrangler secret put SECRET_NAME)
+# Required:
+#   AFRICAS_TALKING_USERNAME
+#   AFRICAS_TALKING_API_KEY
+#   INTER_SERVICE_SECRET
+#   JWT_SECRET
+#   LOG_PII_SALT
