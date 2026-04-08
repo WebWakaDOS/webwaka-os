@@ -9,7 +9,7 @@
  *   P9/T4 — Integer kobo: amount_kobo must be a positive integer (₦50–₦20,000)
  *   T3 — Tenant isolation: tenantId from auth context on all DB queries
  *   CBN — KYC Tier 1 required before any airtime purchase
- *   R9 — Rate limit: 5 top-ups per user per hour (KV: rate:airtime:{userId})
+ *   R9 — Rate limit: 5 top-ups per user per hour (KV: rate:airtime:{tenantId}:{userId})
  */
 
 import { Hono } from 'hono';
@@ -32,7 +32,7 @@ interface D1Like {
   prepare(sql: string): {
     bind(...args: unknown[]): {
       first<T>(): Promise<T | null>;
-      run(): Promise<{ success: boolean }>;
+      run(): Promise<{ success: boolean; meta?: { changes: number } }>;
       all<T>(): Promise<{ results: T[] }>;
     };
   };
@@ -86,7 +86,7 @@ async function deductFromFloat(
   reference: string,
   tenantId: string,
 ): Promise<void> {
-  // Get wallet by agentId + tenantId (T3)
+  // Step A: Fetch wallet identity (id, current balance) — T3: bind both agentId + tenantId.
   const wallet = await db
     .prepare(`SELECT id, balance_kobo FROM agent_wallets WHERE agent_id = ? AND tenant_id = ? LIMIT 1`)
     .bind(agentId, tenantId)
@@ -98,16 +98,30 @@ async function deductFromFloat(
     throw err;
   }
 
-  if (wallet.balance_kobo < amountKobo) {
+  // Step B: Atomic conditional UPDATE — only decrements if balance is still sufficient.
+  // The WHERE balance_kobo >= ? clause prevents any concurrent race from over-spending
+  // (D1/SQLite single-writer WAL ensures this UPDATE is serialized per database).
+  const now = Math.floor(Date.now() / 1000);
+  const updateResult = await db
+    .prepare(
+      `UPDATE agent_wallets
+       SET balance_kobo = balance_kobo - ?, updated_at = ?
+       WHERE id = ? AND balance_kobo >= ?`,
+    )
+    .bind(amountKobo, now, wallet.id, amountKobo)
+    .run();
+
+  // meta.changes = 0 means the conditional WHERE failed — balance became insufficient
+  // between our SELECT (Step A) and this UPDATE (Step B). Reject as INSUFFICIENT_FLOAT.
+  if ((updateResult.meta?.changes ?? 1) === 0) {
     const err = new Error('Insufficient agent float balance');
     (err as Error & { code: string }).code = 'INSUFFICIENT_FLOAT';
     throw err;
   }
 
+  // Step C: Record ledger entry with the computed new balance.
   const newBalance = wallet.balance_kobo - amountKobo;
   const entryId = `fle_${crypto.randomUUID()}`;
-  const now = Math.floor(Date.now() / 1000);
-
   await db
     .prepare(
       `INSERT INTO float_ledger
@@ -115,11 +129,6 @@ async function deductFromFloat(
        VALUES (?, ?, ?, ?, 'cash_out', ?, ?)`,
     )
     .bind(entryId, wallet.id, -amountKobo, newBalance, reference, now)
-    .run();
-
-  await db
-    .prepare(`UPDATE agent_wallets SET balance_kobo = ?, updated_at = ? WHERE id = ?`)
-    .bind(newBalance, now, wallet.id)
     .run();
 }
 
@@ -153,8 +162,8 @@ airtimeRoutes.post('/topup', async (c) => {
     );
   }
 
-  // Rate limit — 5 top-ups per user per hour (R9 pattern for airtime)
-  const rateLimitKey = `rate:airtime:${auth.userId}`;
+  // Rate limit — 5 top-ups per user per hour (R9 pattern; T3: tenant-scoped KV key)
+  const rateLimitKey = `rate:airtime:${auth.tenantId}:${auth.userId}`;
   const countStr = await c.env.RATE_LIMIT_KV.get(rateLimitKey);
   const count = countStr ? parseInt(countStr, 10) : 0;
   if (count >= RATE_LIMIT) {
