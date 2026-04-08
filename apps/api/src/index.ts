@@ -97,6 +97,8 @@ import { socialRoutes } from './routes/social.js';
 import { identityRateLimit } from './middleware/rate-limit.js';
 import { auditLogMiddleware } from './middleware/audit-log.js';
 import { assertDMMasterKey } from '@webwaka/social';
+import { airtimeRoutes } from './routes/airtime.js';
+import { lowDataMiddleware } from './middleware/low-data.js';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -123,6 +125,8 @@ app.use('*', async (c, next) => {
   })(c, next);
 });
 app.use('*', logger());
+// M7e: Low-data mode — strips media_urls from JSON responses when X-Low-Data: 1 (P4/P6)
+app.use('*', lowDataMiddleware);
 
 // ---------------------------------------------------------------------------
 // Public routes (no auth)
@@ -228,6 +232,13 @@ app.use('/community/channels/*/posts', authMiddleware);
 app.use('/community/lessons/*/progress', authMiddleware);
 app.use('/community/events/*/rsvp', authMiddleware);
 app.route('/community', communityRoutes);
+
+// ---------------------------------------------------------------------------
+// M7e: Airtime top-up routes — auth required (P2/P9/T3/T4, KYC Tier 1, rate limit)
+// ---------------------------------------------------------------------------
+
+app.use('/airtime/*', authMiddleware);
+app.route('/airtime', airtimeRoutes);
 
 // ---------------------------------------------------------------------------
 // M7c: Social routes — most require auth; /social/profile/:handle is public

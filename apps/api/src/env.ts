@@ -72,10 +72,10 @@ export interface Env {
 
   /**
    * AES-GCM master key for DM encryption (M7c).
-   * Platform Invariant P14 — assertDMMasterKey called at startup.
-   * Never hardcode or log this value.
+   * Platform Invariant P14 — assertDMMasterKey() called at startup validates presence.
+   * Never hardcode or log this value. Optional in type; runtime enforced.
    */
-  DM_MASTER_KEY: string;
+  DM_MASTER_KEY?: string;
 
   /**
    * Comma-separated list of allowed CORS origins (M7b advisory fix).
@@ -86,9 +86,23 @@ export interface Env {
   ALLOWED_ORIGINS?: string;
 
   /**
-   * DM master encryption key — AES-256-GCM (M7c, Platform Invariant P14).
-   * Must be present at startup. Absence throws — never silently stores plaintext.
-   * Base64-encoded 32-byte key. Set via: wrangler secret put DM_MASTER_KEY
+   * WhatsApp provider selector (M7f).
+   * '360dialog' routes WhatsApp OTPs via 360dialog Business API.
+   * 'termii' (default) routes via Termii WA gateway or Meta Cloud.
    */
-  DM_MASTER_KEY: string;
+  WHATSAPP_PROVIDER?: '360dialog' | 'termii';
+
+  /**
+   * 360dialog API key (M7f).
+   * Only required when WHATSAPP_PROVIDER = '360dialog'.
+   * Set via: wrangler secret put DIALOG360_API_KEY
+   */
+  DIALOG360_API_KEY?: string;
+
+  /**
+   * Telegram webhook secret token (M7f).
+   * Validates X-Telegram-Bot-Api-Secret-Token header on /telegram/webhook.
+   * Set via: wrangler secret put TELEGRAM_WEBHOOK_SECRET (in apps/ussd-gateway)
+   */
+  TELEGRAM_WEBHOOK_SECRET?: string;
 }

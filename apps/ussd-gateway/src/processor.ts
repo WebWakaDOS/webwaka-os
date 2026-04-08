@@ -172,7 +172,7 @@ function handleEnterAmount(session: USSDSession, input: string): ProcessResult {
   if (isNaN(amount) || amount <= 0) {
     return { text: endSession('Invalid amount. Please try again.'), session, ended: true };
   }
-  const recipient = session.data['recipient'] ?? 'Unknown';
+  const recipient = (session.data['recipient'] as string | undefined) ?? 'Unknown';
   return {
     text: sendMoneyConfirm(recipient, input),
     session: { ...session, state: 'send_money_confirm', data: { ...session.data, amount: input } },

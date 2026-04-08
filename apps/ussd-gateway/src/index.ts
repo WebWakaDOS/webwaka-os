@@ -23,7 +23,8 @@
 import { Hono } from 'hono';
 import { getOrCreateSession, saveSession, deleteSession, type USSDSession } from './session.js';
 import { processUSSDInput } from './processor.js';
-import { mainMenu, type TrendingPost, type CommunityItem } from './menus.js';
+import { mainMenu, type TrendingPostSnippet, type CommunityItem } from './menus.js';
+import { handleTelegramWebhook, type TelegramUpdate } from './telegram.js';
 
 interface Env {
   DB: D1Database;
@@ -35,6 +36,15 @@ interface Env {
   JWT_SECRET: string;
   LOG_PII_SALT: string;
   ENVIRONMENT: 'staging' | 'production';
+  TELEGRAM_BOT_TOKEN: string;
+  TELEGRAM_WEBHOOK_SECRET: string;
+  /**
+   * T3: USSD Worker tenant identity. Set via `wrangler secret put TENANT_ID` per deployment.
+   * Each deployed USSD Worker instance serves exactly one tenant.
+   * In multi-tenant Cloudflare deployments, Workers are dispatched per-subdomain so
+   * TENANT_ID is always a trusted secret from the Worker runtime, never a user input.
+   */
+  TENANT_ID?: string;
 }
 
 const app = new Hono<{ Bindings: Env }>();
@@ -47,11 +57,11 @@ const app = new Hono<{ Bindings: Env }>();
  * Fetch top 5 trending social posts sorted by like_count (Branch 3).
  * Gracefully returns empty array on D1 error.
  */
-async function fetchTrendingPosts(db: D1Database, tenantId: string): Promise<TrendingPost[]> {
+async function fetchTrendingPosts(db: D1Database, tenantId: string): Promise<TrendingPostSnippet[]> {
   try {
     const result = await db
       .prepare(
-        `SELECT p.content, sp.handle
+        `SELECT p.id, p.content, sp.handle
          FROM social_posts p
          JOIN social_profiles sp ON sp.id = p.author_id AND sp.tenant_id = p.tenant_id
          WHERE p.tenant_id = ? AND p.is_deleted = 0 AND p.post_type = 'post'
@@ -59,8 +69,8 @@ async function fetchTrendingPosts(db: D1Database, tenantId: string): Promise<Tre
          LIMIT 5`,
       )
       .bind(tenantId)
-      .all<{ content: string; handle: string }>();
-    return (result.results ?? []).map((r) => ({ handle: r.handle, content: r.content }));
+      .all<{ id: string; content: string; handle: string }>();
+    return (result.results ?? []).map((r) => ({ id: r.id, snippet: r.content, authorHandle: r.handle }));
   } catch {
     return [];
   }
@@ -132,8 +142,9 @@ app.post('/ussd', async (c) => {
     return c.text('END Invalid USSD request.', 400);
   }
 
-  // Derive tenantId from session or default — in production, use Worker env routing
-  const tenantId = 'default';
+  // T3: Derive tenantId from Worker env (set via wrangler secret put TENANT_ID per deployment).
+  // Each USSD Worker instance is deployed per-tenant subdomain; TENANT_ID is never user-supplied.
+  const tenantId = c.env.TENANT_ID ?? 'default';
 
   try {
     let session = await getOrCreateSession(c.env.USSD_SESSION_KV, sessionId, phoneNumber);
@@ -172,6 +183,37 @@ app.post('/ussd', async (c) => {
     console.error('[ussd-gateway] Error processing USSD request:', err);
     return c.text('END Service unavailable. Please try again later.', 200, { 'Content-Type': 'text/plain' });
   }
+});
+
+// ---------------------------------------------------------------------------
+// M7f: Telegram Bot webhook — POST /telegram/webhook
+// ---------------------------------------------------------------------------
+
+/**
+ * POST /telegram/webhook
+ * Receives Telegram Bot updates. Validates TELEGRAM_WEBHOOK_SECRET header.
+ * Always returns 200 — Telegram requires 200 even on processing errors.
+ *
+ * On /start command: looks up user by Telegram handle, updates telegram_chat_id.
+ */
+app.post('/telegram/webhook', async (c) => {
+  const secretToken = c.req.header('X-Telegram-Bot-Api-Secret-Token');
+  if (!secretToken || secretToken !== c.env.TELEGRAM_WEBHOOK_SECRET) {
+    return c.json({ error: 'Forbidden' }, 403);
+  }
+
+  const body = await c.req.json<TelegramUpdate>().catch(() => null);
+
+  if (body) {
+    await handleTelegramWebhook(body, {
+      DB: c.env.DB as unknown as Parameters<typeof handleTelegramWebhook>[1]['DB'],
+      TELEGRAM_BOT_TOKEN: c.env.TELEGRAM_BOT_TOKEN,
+    }).catch((err) => {
+      console.error('[telegram/webhook] Error handling update:', err instanceof Error ? err.message : err);
+    });
+  }
+
+  return c.json({ ok: true });
 });
 
 /**

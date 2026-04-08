@@ -11,3 +11,4 @@ export * from './jwt.js';
 export * from './roles.js';
 export * from './entitlements.js';
 export * from './middleware.js';
+export * from './guards.js';
