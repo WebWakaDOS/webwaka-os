@@ -25,6 +25,7 @@ WebWaka OS is a multi-tenant, multi-vertical, white-label SaaS platform operatin
 | M7 QA Gate | ✅ DONE — QA report `/approve-m7ef` — SHA `3d5a67a` |
 | **M7 Platform Total** | **719 tests passing** (baseline 609, +110 new) — merged to main `3d5a67a` |
 | **M8 Planning** | ✅ DONE — SHA `75930c4` — 160 verticals seeded, packages/verticals FSM scaffold, 6 framework docs |
+| **M8 QA Gate** | ✅ DONE — docs/qa/m8-self-verification.md — 25/25 checklist — /self-approved-m8-planning — PR #26 merged SHA `1139a26` |
 | **M8a — Verticals Infrastructure** | 🔲 IN PROGRESS — packages/verticals scaffold done (27 tests); API routes + wrangler wiring pending |
 | M8b — Politics + POS Business | 🔲 PLANNED — docs/milestones/m8b-framework.md |
 | M8c — Transport Verticals | 🔲 PLANNED — docs/milestones/m8c-framework.md |
