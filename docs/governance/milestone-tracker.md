@@ -544,3 +544,47 @@
 | M7d — Social Network | 4 days | Posts + feeds + DMs + groups + stories |
 | M7e — Nigeria UX | 2 days | Airtime + LGA + Pidgin + dark mode |
 | **Total** | **19 days** | **84 tasks across 5 phases** |
+
+
+---
+
+### M7f — Integration + Multi-Channel Contact (3 days)
+
+**Goal:** Cross-vertical testing, multi-channel contact rollout, final M7 docs, QA gate.
+
+| Task | Status | Notes |
+|---|---|---|
+| packages/contact — ContactChannels entity + ContactService | NOT STARTED | See docs/contact/multi-channel-model.md |
+| Contact verification API routes (/contact/*) | NOT STARTED | See docs/contact/contact-verification.md |
+| OTP routing algorithm (preference + fallback chain) | NOT STARTED | See docs/contact/otp-routing.md |
+| Multi-channel form in claim-first onboarding | NOT STARTED | See docs/governance/claim-first-onboarding.md |
+| Telegram Bot (@WebWakaBot) setup + webhook | NOT STARTED | apps/ussd-gateway or standalone Worker |
+| WhatsApp Business API connection (Termii/360dialog) | NOT STARTED | See docs/identity/otp-channels.md |
+| D1 migration: contact_channels (0036) | NOT STARTED | |
+| NDPR consent per channel (P12 enforcement) | NOT STARTED | See docs/enhancements/m7/ndpr-consent.md |
+| Primary phone mandatory guard (P13 enforcement) | NOT STARTED | See packages/auth/src/guards.ts |
+| Rate limiting per channel (R9 enforcement) | NOT STARTED | RATE_LIMIT_KV |
+| Cross-vertical integration smoke tests | NOT STARTED | All M7a-M7e packages working together |
+| docs/contact/ finalized (3 files) | NOT STARTED | |
+| Tests: 20+ covering contact + OTP routing | NOT STARTED | |
+| Base44 QA audit — M7f | NOT STARTED | |
+| Founder approval — M7f | NOT STARTED | |
+
+
+---
+
+## Updated M7 Totals (M7f included)
+
+| Phase | Duration | Scope |
+|---|---|---|
+| M7a — Regulatory Survival | 3 days | Identity + OTP + KYC + NDPR + Rate Limiting |
+| M7b — Offline + Agents | 3 days | Dexie.js + USSD + POS float ledger |
+| M7c — Community Platform | 4 days | Skool-style: forums + courses + events + memberships |
+| M7d — Social Network | 4 days | Posts + feeds + DMs + groups + stories |
+| M7e — Nigeria UX | 2 days | Airtime + LGA + Pidgin + dark mode |
+| M7f — Integration + Multi-Channel Contact | 3 days | SMS/WhatsApp/Telegram contact + cross-vertical QA |
+| **Total** | **22 days** | **91 deliverables** |
+
+**Tests target:** 360+ (300 M6 baseline + 60 M7 new)
+**KYC tiers target:** All 4 tiers (0–3) enforced + tested
+**OTP channels target:** SMS + WhatsApp + Telegram all verified working

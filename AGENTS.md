@@ -80,7 +80,10 @@ See `docs/governance/milestone-tracker.md` for current status.
 14. `docs/community/` (all 5 files) — Community platform spec
 15. `docs/social/` (all 5 files) — Social network spec
 16. `docs/architecture/decisions/0009-ai-provider-abstraction.md` — M7 extension to payments/otp/identity
-17. `docs/architecture/decisions/0010-offline-pwa-standard.md` — M7 Dexie.js + USSD requirements
+17. `docs/architecture/decisions/0010-offline-pwa-standard.md`
+18. `docs/contact/multi-channel-model.md` — ContactChannels entity + D1 schema
+19. `docs/contact/contact-verification.md` — per-channel verification flows
+20. `docs/contact/otp-routing.md` — preference + fallback routing algorithm — M7 Dexie.js + USSD requirements
 
 ### M7 Phase Order (STRICT — T9: No Skipped Phases)
 
@@ -101,3 +104,4 @@ Each phase must pass CI and Base44 QA before the next phase begins.
 | `@webwaka/community` | M7c | `packages/community/src/index.ts` |
 | `@webwaka/social` | M7d | `packages/social/src/index.ts` |
 | `@webwaka/ussd-gateway` | M7b | `apps/ussd-gateway/src/index.ts` |
+| `@webwaka/contact` | M7f | `packages/contact/src/index.ts` |

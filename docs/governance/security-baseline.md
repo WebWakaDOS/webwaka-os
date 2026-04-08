@@ -164,3 +164,25 @@ Raw PII must never appear in logs, audit trails, or error messages.
 `SALT` is a platform-level secret stored in Cloudflare Worker secrets (`LOG_PII_SALT`). Rotated every 90 days.
 
 Violation: logging raw PII is treated as a data breach and triggers the Incident Response procedure (Section 10).
+
+---
+
+## M7a Security Rules (Multi-Channel OTP)
+
+### R8 — Multi-Channel OTP Delivery
+OTP delivery MUST follow the channel waterfall: SMS (primary) → WhatsApp (secondary) → Telegram (tertiary) → Voice (accessibility only). Channel selection is governed by `packages/otp/src/channel-router.ts`. Transaction-purpose OTPs MUST start with SMS; Telegram is NOT permitted for transaction OTPs.
+
+### R9 — Rate Limiting Per Channel
+OTP requests are rate-limited per channel and per IP:
+- SMS: max 5 OTPs/hour per phone number
+- WhatsApp: max 5 OTPs/hour per phone number
+- Telegram: max 3 OTPs/hour per handle
+- Email: max 3 OTPs/hour per address
+- IP-level: max 10 OTP requests/hour across all channels
+
+After 3 failed OTP attempts on any channel → lock that channel for 30 minutes (60 min for transaction purposes).
+
+Rate limit state is stored in `RATE_LIMIT_KV` with keys: `rate:otp:{channel}:{identifier}` and `lock:otp:{channel}:{identifier}`.
+
+### R10 — Contact Verification Independent Per Channel
+Each contact channel is verified independently. Verification of one channel does NOT imply verification of another (e.g. verifying SMS does NOT verify WhatsApp, even if the same phone number). `contact_channels.{channel}_verified` flags are set only by the channel-specific OTP confirm flow.

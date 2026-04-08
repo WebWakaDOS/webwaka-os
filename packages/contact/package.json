@@ -1,0 +1,18 @@
+{
+  "name": "@webwaka/contact",
+  "version": "0.0.0",
+  "description": "Multi-channel contact management (SMS/WhatsApp/Telegram/Email) for WebWaka OS",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "@webwaka/otp": "workspace:*",
+    "@webwaka/auth": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  }
+}

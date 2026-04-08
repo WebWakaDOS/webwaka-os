@@ -104,3 +104,17 @@ Violations of any invariant are treated as blocking issues:
 - **Technical invariants (T1–T10):** Base44 blocks merge; issue opened with `governance` + `blocked` labels
 
 To propose an exception, open an issue using the **Architecture Decision** template.
+
+---
+
+## M7a Platform Invariants (Multi-Channel Contact)
+
+### P12 — Multi-Channel Consent (NDPR)
+Before sending any message or OTP to a contact channel, an active `consent_records` entry must exist for that channel type (`data_type: "phone" | "whatsapp" | "telegram" | "email"`). Consent UI must be shown during the verification step. Consent is revocable at any time — revoking disables that channel for outbound communication.
+
+**Enforcement:** `packages/contact/src/contact-service.ts` must check consent before every `requestOTP` call.
+
+### P13 — Primary Phone is Mandatory
+Every entity that initiates a KYC flow, claim workflow, or financial operation MUST have a verified `primary_phone`. This is an SMS-capable E.164 number. The platform MUST refuse KYC Tier 1 uplift if `primary_phone_verified = false`.
+
+**Enforcement:** `packages/auth/src/guards.ts` tier check must assert `primary_phone_verified` before granting KYC Tier 1.

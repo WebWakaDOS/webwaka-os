@@ -153,3 +153,40 @@ Existence in the system does not automatically grant access to all capabilities.
 ## KYC Rule (M7)
 
 Any entity that participates in a monetary transaction or paid community must have a `kyc_tier` evaluated at the point of action. See `docs/governance/entitlement-model.md` for CBN tier definitions.
+
+---
+
+## ContactChannels (M7a — Multi-Channel Contact)
+
+**Purpose:** Stores all verified contact channels for an entity (SMS/WhatsApp/Telegram/Email).
+
+**Key Rule:** `primary_phone` is mandatory (Platform Invariant P13). All other channels are optional.
+
+```typescript
+ContactChannels {
+  entity_id            string    // FK → entities.id (1:1 unique)
+  tenant_id            string
+
+  primary_phone        string    // E.164 (+234...) — MANDATORY
+  primary_phone_verified boolean
+  primary_phone_verified_at number | null
+
+  whatsapp_phone       string | null
+  whatsapp_verified    boolean
+  whatsapp_same_as_primary boolean   // UI checkbox
+
+  telegram_handle      string | null  // @handle
+  telegram_chat_id     string | null  // server-populated via bot
+  telegram_verified    boolean
+
+  email                string | null
+  email_verified       boolean
+
+  notification_preference  "sms" | "whatsapp" | "telegram" | "email"
+  otp_preference           "sms" | "whatsapp" | "telegram"
+}
+```
+
+**Package:** `@webwaka/contact` (`packages/contact/`)
+**Spec:** `docs/contact/multi-channel-model.md`
+**Migration:** `0036_contact_channels.sql`
