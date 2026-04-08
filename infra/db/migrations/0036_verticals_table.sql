@@ -39,3 +39,7 @@ CREATE INDEX IF NOT EXISTS idx_verticals_priority    ON verticals(priority);
 CREATE INDEX IF NOT EXISTS idx_verticals_status      ON verticals(status);
 CREATE INDEX IF NOT EXISTS idx_verticals_entity_type ON verticals(entity_type);
 CREATE INDEX IF NOT EXISTS idx_verticals_kyc_tier    ON verticals(required_kyc_tier);
+
+-- Add vertical_id FK to workspaces (workspace ↔ vertical registry link)
+ALTER TABLE workspaces ADD COLUMN vertical_id TEXT REFERENCES verticals(id);
+CREATE INDEX IF NOT EXISTS idx_workspaces_vertical_id ON workspaces(vertical_id);

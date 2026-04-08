@@ -34,7 +34,7 @@ WebWaka OS is built once and reused infinitely. Verticals are the sector-specifi
 
 | Category | Count | Examples |
 |---|---|---|
-| Commerce | 45 | POS Business Mgmt, Restaurant, Supermarket, Fashion Brand |
+| Commerce | 45 | POS Business Management System, Restaurant, Supermarket, Fashion Brand |
 | Transport | 12 | Motor Park, Mass Transit, Rideshare, Haulage, NURTW |
 | Civic | 13 | Church, NGO, Cooperative, Mosque, Youth Org, Women's Assoc |
 | Politics | 8 | Politician, Party, Campaign Office, LGA Office, Ward Rep |
@@ -66,7 +66,7 @@ These 17 verticals are explicitly designed into the platform DNA. All must reach
 | 7 | `church` | Church / Faith Community | organization | M8d | IT-reg, community_spaces |
 | 8 | `ngo` | NGO / Non-Profit | organization | M8d | IT-reg, community_spaces |
 | 9 | `cooperative` | Cooperative Society | organization | M8d | CAC, membership_tiers |
-| 10 | `pos-business` | POS Business Mgmt System | organization | M8b | CAC, inventory schema |
+| 10 | `pos-business` | POS Business Management System | organization | M8b | CAC, inventory schema |
 | 11 | `market` | Market / Trading Hub | place | M8e | geography, multi-vendor |
 | 12 | `professional` | Professional (Lawyer/Doctor) | individual | M8e | license bodies, social |
 | 13 | `school` | School / Educational Inst. | organization | M8e | CAC, community_courses |
@@ -97,7 +97,7 @@ These 17 verticals are explicitly designed into the platform DNA. All must reach
 - Membership tiers — `community_members.tier` — already in schema
 - Donation/dues collection — needs Paystack integration at vertical layer
 
-### Commerce Verticals (POS Business Mgmt)
+### Commerce Verticals (POS Business Management System)
 - **Distinct from existing `packages/pos/`** — agent float infrastructure stays separate
 - New: inventory table, product catalog, customer CRM, staff scheduling
 - Shared: Paystack payments, entitlements, event bus
