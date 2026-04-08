@@ -233,7 +233,7 @@ export async function assertChannelConsent(
   db: D1Like,
   userId: string,
   channelType: 'sms' | 'whatsapp' | 'telegram' | 'email',
-  _tenantId: string,
+  tenantId: string,
 ): Promise<void> {
   const dataTypeMap: Record<string, string> = {
     sms: 'phone',
@@ -243,13 +243,15 @@ export async function assertChannelConsent(
   };
   const dataType = dataTypeMap[channelType];
 
+  // T3: bind both userId AND tenantId — consent_records.tenant_id enforces cross-tenant isolation.
+  // revoked_at IS NULL confirms active (non-revoked) consent per NDPR.
   const row = await db
     .prepare(
       `SELECT id FROM consent_records
-       WHERE user_id = ? AND data_type = ? AND consented = 1
+       WHERE user_id = ? AND tenant_id = ? AND data_type = ? AND revoked_at IS NULL
        LIMIT 1`,
     )
-    .bind(userId, dataType)
+    .bind(userId, tenantId, dataType)
     .first<{ id: string }>();
 
   if (!row) {
@@ -269,6 +271,11 @@ export async function assertChannelConsent(
  * Asserts that the user has a verified primary SMS channel.
  * Called before any KYC uplift or financial operation.
  * Throws ContactError('PRIMARY_PHONE_REQUIRED') if not verified.
+ *
+ * Tenant isolation note: contact_channels has no tenant_id column.
+ * Isolation is enforced via globally unique UUID user_id (assigned per user,
+ * never reused across tenants). The caller's auth JWT already validates tenantId.
+ * _tenantId is accepted for API consistency and future migration readiness.
  */
 export async function assertPrimaryPhoneVerified(
   db: D1Like,

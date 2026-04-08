@@ -189,10 +189,12 @@ contactRoutes.post('/verify/:channel', async (c) => {
         TERMII_API_KEY: c.env.TERMII_API_KEY,
         WHATSAPP_ACCESS_TOKEN: c.env.WHATSAPP_ACCESS_TOKEN,
         WHATSAPP_PHONE_NUMBER_ID: c.env.WHATSAPP_PHONE_NUMBER_ID,
+        WHATSAPP_PROVIDER: c.env.WHATSAPP_PROVIDER,
+        DIALOG360_API_KEY: c.env.DIALOG360_API_KEY,
         TELEGRAM_BOT_TOKEN: c.env.TELEGRAM_BOT_TOKEN,
         LOG_PII_SALT: c.env.LOG_PII_SALT,
         RATE_LIMIT_KV: c.env.RATE_LIMIT_KV,
-      },
+      } as Parameters<typeof sendMultiChannelOTP>[0]['env'] & { WHATSAPP_PROVIDER?: string; DIALOG360_API_KEY?: string },
     });
 
     const now = Math.floor(Date.now() / 1000);

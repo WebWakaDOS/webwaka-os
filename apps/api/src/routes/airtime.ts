@@ -172,43 +172,45 @@ airtimeRoutes.post('/topup', async (c) => {
 
   const db = c.env.DB as unknown as D1Like;
 
-  // Deduct from agent float (T3 — tenantId from auth)
-  let termiiRef: string;
-  try {
-    // Call Termii Airtime API — amount passed as Naira (kobo ÷ 100)
-    const amountNaira = amountKobo / 100; // T4: only division to convert, never stored as float
-    termiiRef = `airtime_${crypto.randomUUID()}`;
+  // Step 1: Pre-check float balance BEFORE calling Termii (prevents financial leakage).
+  // Termii must NEVER be called unless we know the agent has sufficient funds.
+  const wallet = await db
+    .prepare(`SELECT id, balance_kobo FROM agent_wallets WHERE agent_id = ? AND tenant_id = ? LIMIT 1`)
+    .bind(auth.userId, auth.tenantId)
+    .first<{ id: string; balance_kobo: number }>();
 
-    const termiiRes = await fetch(TERMII_AIRTIME_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        api_key: c.env.TERMII_API_KEY,
-        ported_number: true,
-        network,
-        phone,
-        amount: amountNaira,
-      }),
-    });
-
-    if (!termiiRes.ok) {
-      const errBody = await termiiRes.json().catch(() => ({})) as Record<string, unknown>;
-      const msg = typeof errBody['message'] === 'string' ? errBody['message'] : `Termii error ${termiiRes.status}`;
-      return c.json({ error: 'provider_error', message: msg }, 502);
-    }
-
-    // Deduct from float after confirmed Termii success
-    await deductFromFloat(db, auth.userId, amountKobo, termiiRef, auth.tenantId);
-  } catch (err) {
-    const e = err as Error & { code?: string };
-    if (e.code === 'INSUFFICIENT_FLOAT') {
-      return c.json({ error: 'insufficient_float', message: 'Insufficient agent float balance' }, 402);
-    }
-    if (e.code === 'WALLET_NOT_FOUND') {
-      return c.json({ error: 'wallet_not_found', message: 'Agent wallet not found' }, 404);
-    }
-    throw err;
+  if (!wallet) {
+    return c.json({ error: 'wallet_not_found', message: 'Agent wallet not found' }, 404);
   }
+  if (wallet.balance_kobo < amountKobo) {
+    return c.json({ error: 'insufficient_float', message: 'Insufficient agent float balance' }, 402);
+  }
+
+  // Step 2: Call Termii Airtime API (only after float confirmed) — amount in Naira
+  // T4: division is presentation-only; kobo remains the stored unit.
+  const amountNaira = amountKobo / 100;
+  const termiiRef = `airtime_${crypto.randomUUID()}`;
+
+  const termiiRes = await fetch(TERMII_AIRTIME_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      api_key: c.env.TERMII_API_KEY,
+      ported_number: true,
+      network,
+      phone,
+      amount: amountNaira,
+    }),
+  });
+
+  if (!termiiRes.ok) {
+    const errBody = await termiiRes.json().catch(() => ({})) as Record<string, unknown>;
+    const msg = typeof errBody['message'] === 'string' ? errBody['message'] : `Termii error ${termiiRes.status}`;
+    return c.json({ error: 'provider_error', message: msg }, 502);
+  }
+
+  // Step 3: Deduct from float ONLY after confirmed Termii success (atomic ledger record)
+  await deductFromFloat(db, auth.userId, amountKobo, termiiRef, auth.tenantId);
 
   // Increment rate limit counter (1 hour TTL)
   await c.env.RATE_LIMIT_KV.put(rateLimitKey, String(count + 1), { expirationTtl: 3600 });
