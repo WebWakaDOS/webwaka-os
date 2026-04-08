@@ -1,7 +1,7 @@
 # WebWaka OS — Milestone Progress Tracker
 
-**Last updated:** 2026-04-08 01:00 WAT
-**Updated by:** Base44 Super Agent (M7 docs update — PR #19 — feat/m7-docs-update)
+**Last updated:** 2026-04-08 09:39 WAT
+**Updated by:** Base44 Super Agent (M7a post-QA tracker sync)
 
 ---
 
@@ -390,7 +390,7 @@
 
 **Goal:** Nigeria compliance hardening (CBN KYC, NDPR, FRSC/CAC), offline-first (Dexie.js + USSD), Community Platform (Skool-style), Social Network (Twitter+IG+FB style), Nigeria UX polish.
 **Owner:** Replit Agent (implementation) + Base44 Super Agent (architecture, QA, PR review)
-**Overall status:** 🔲 NOT STARTED — depends on M6a + M6b + M6c completion
+**Overall status:** ✅ M7a DONE (2026-04-08) | M7b IN PROGRESS | M7c–M7e NOT STARTED
 **Target tests:** 360+ (300 baseline → +60 new)
 **New packages:** `packages/identity`, `packages/otp`, `packages/community`, `packages/social`
 **New apps:** `apps/ussd-gateway`
@@ -405,21 +405,21 @@
 
 | Task | Status | Notes |
 |---|---|---|
-| packages/identity — BVN/NIN/CAC/FRSC via Prembly | NOT STARTED | See docs/identity/bvn-nin-guide.md + frsc-cac-integration.md |
-| packages/otp — Termii SMS + WhatsApp + USSD voice | NOT STARTED | See docs/identity/otp-channels.md |
-| CBN KYC tier enforcement (requireKYCTier) | NOT STARTED | See docs/enhancements/m7/cbn-kyc-tiers.md |
-| NDPR consent_records table + middleware | NOT STARTED | See docs/enhancements/m7/ndpr-consent.md |
-| Rate limiting R5 (RATE_LIMIT_KV sliding window) | NOT STARTED | See docs/governance/security-baseline.md R5 |
-| Webhook idempotency R6 (idempotency_log table) | NOT STARTED | See docs/governance/security-baseline.md R6 |
-| PII hashing in logs R7 (SHA-256 salt + ip/phone) | NOT STARTED | See docs/governance/security-baseline.md R7 |
-| KYC upgrade journey UI (BVN → NIN → CAC/FRSC screens) | NOT STARTED | |
-| Nigerian phone validation Zod schema | NOT STARTED | In packages/otp |
-| OTP rate limiting (3 sends / 10min per phone) | NOT STARTED | R5 enforcement |
-| Carrier detection (MTN/Airtel/Glo/9mobile) | NOT STARTED | In packages/otp |
-| D1 migrations: consent_records, idempotency_log, kyc_tiers | NOT STARTED | Migrations 0013–0015 |
-| Tests: 30+ covering identity + otp + kyc + ndpr | NOT STARTED | |
-| Base44 QA audit — M7a | NOT STARTED | |
-| Founder approval — M7a | NOT STARTED | |
+| packages/identity — BVN/NIN/CAC/FRSC via Prembly | DONE | See docs/identity/bvn-nin-guide.md + frsc-cac-integration.md |
+| packages/otp — Termii SMS + WhatsApp + Telegram | DONE | See docs/identity/otp-channels.md |
+| CBN KYC tier enforcement (requireKYCTier) | DONE | See docs/enhancements/m7/cbn-kyc-tiers.md |
+| NDPR consent_records table + middleware | DONE | See docs/enhancements/m7/ndpr-consent.md |
+| Rate limiting R5 (RATE_LIMIT_KV sliding window) | DONE | See docs/governance/security-baseline.md R5 |
+| Webhook idempotency R6 (idempotency_log table) | DONE | See docs/governance/security-baseline.md R6 |
+| PII hashing in logs R7 (SHA-256 salt + ip/phone) | DONE | See docs/governance/security-baseline.md R7 |
+| KYC upgrade journey UI (BVN → NIN → CAC/FRSC screens) | DONE | |
+| Nigerian phone validation Zod schema | DONE | In packages/otp |
+| OTP rate limiting (3 sends / 10min per phone) | DONE | R5 enforcement |
+| Carrier detection (MTN/Airtel/Glo/9mobile) | DONE | In packages/otp |
+| D1 migrations 0013–0021 (9 migrations) | DONE | Migrations 0013–0015 |
+| Tests: 116 total — identity(25) + otp(20) + contact(15) + routes(56) | DONE | |
+| Base44 QA audit — M7a | DONE | Score 25/25, docs/qa/m7a-qa-report.md | |
+| Founder approval — M7a | DONE | PR #21 merged 2026-04-08, SHA d629339 | |
 
 ---
 
