@@ -158,7 +158,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   // -------------------------------------------------------------------------
-  // Static file serving
+  // Static file serving (M7e: PWA headers for manifest.json and sw.js)
   // -------------------------------------------------------------------------
   const requestPath = pathname === '/' ? '/index.html' : pathname;
   const filePath = path.join(PUBLIC_DIR, requestPath);
@@ -171,7 +171,25 @@ const server = http.createServer(async (req, res) => {
       res.end('Not found');
       return;
     }
-    res.writeHead(200, { 'Content-Type': contentType });
+
+    // M7e: PWA headers — required for Lighthouse PWA score ≥ 80 (P5)
+    const headers = {
+      'Content-Type': contentType,
+      'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'",
+    };
+
+    // Link manifest header on all HTML responses
+    if (ext === '.html' || requestPath === '/index.html') {
+      headers['Link'] = '</manifest.json>; rel=manifest';
+    }
+
+    // Service worker must be served from root scope (no cache)
+    if (pathname === '/sw.js') {
+      headers['Service-Worker-Allowed'] = '/';
+      headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+    }
+
+    res.writeHead(200, headers);
     res.end(data);
   });
 });

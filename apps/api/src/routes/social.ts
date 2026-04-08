@@ -96,11 +96,16 @@ socialRoutes.post('/profile/setup', async (c) => {
   const db = c.env.DB as unknown as D1Like;
 
   try {
-    const profile = await setupSocialProfile(db, {
+    const { handle, displayName, bio, phoneNumber } = parsed.data;
+    const profileArgs: Parameters<typeof setupSocialProfile>[1] = {
       profileId: auth.userId,
-      ...parsed.data,
+      handle,
       tenantId,
-    });
+      ...(displayName !== undefined ? { displayName } : {}),
+      ...(bio !== undefined ? { bio } : {}),
+      ...(phoneNumber !== undefined ? { phoneNumber } : {}),
+    };
+    const profile = await setupSocialProfile(db, profileArgs);
     return c.json({ profile }, 201);
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Unknown error';

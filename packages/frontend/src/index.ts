@@ -1,8 +1,9 @@
 /**
  * @webwaka/frontend — Frontend composition utilities (tenant manifest, profile renderer,
- * admin layout, discovery page model, theme utilities).
+ * admin layout, discovery page model, theme utilities, i18n, USSD shortcode).
  *
  * Milestone 6 — Frontend Composition Layer
+ * M7e — Naija Pidgin locale, USSD shortcode utilities
  */
 
 export type {
@@ -32,3 +33,15 @@ export { buildDiscoveryPage, normaliseDiscoveryQuery } from './discovery-page.js
 
 export type { ThemeCSSVars, ThemeValidationResult } from './theme.js';
 export { brandingToCssVars, validateBranding } from './theme.js';
+
+// M7e — i18n locale strings (Naija Pidgin + English)
+export { pcmLocale, enLocale } from './i18n/index.js';
+export type { LocaleKey } from './i18n/index.js';
+
+// M7e — USSD shortcode display utilities
+export {
+  USSD_SHORTCODE,
+  USSD_SHORTCODE_DISPLAY,
+  formatUSSDPrompt,
+  getUSSDDialLink,
+} from './ussd-shortcode.js';

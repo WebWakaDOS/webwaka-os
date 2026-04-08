@@ -21,7 +21,7 @@ interface D1Like {
  * Assert that the DM master key is present and non-empty.
  * P14 — throws if key is undefined or empty string.
  */
-export function assertDMMasterKey(key: string | undefined): void {
+export function assertDMMasterKey(key: string | undefined): asserts key is string {
   if (key === undefined || key === null || key.length === 0) {
     throw new Error('P14_VIOLATION: DM_MASTER_KEY is required but was not provided');
   }

@@ -8,7 +8,7 @@
 
 import { type OTPChannel, type OTPPurpose, type OTPSendResult, type OTPEnv, OTPError } from './types.js';
 import { sendSMSOTP } from './termii-sms.js';
-import { sendWhatsAppOTP } from './whatsapp-meta.js';
+import { sendWhatsAppOTP, sendWhatsAppOTP360dialog } from './whatsapp-meta.js';
 import { sendTelegramOTP } from './telegram-bot.js';
 import { resolveOTPChannels, rateLimitKey, lockKey, CHANNEL_RATE_LIMITS, lockDurationSeconds } from './channel-router.js';
 import { generateOTP, hashOTP, otpExpiresAt } from './otp-generator.js';
@@ -60,10 +60,16 @@ export async function sendMultiChannelOTP(opts: SendOTPOptions): Promise<SendOTP
       if (channel === 'sms') {
         result = await sendSMSOTP(identifier, otp, env.TERMII_API_KEY, expiresAt);
       } else if (channel === 'whatsapp') {
-        result = await sendWhatsAppOTP(
-          identifier, otp, purpose,
-          env.WHATSAPP_ACCESS_TOKEN, env.WHATSAPP_PHONE_NUMBER_ID, expiresAt,
-        );
+        // M7f: Route to 360dialog or Meta Cloud based on WHATSAPP_PROVIDER env var
+        if ((env as OTPEnv & { WHATSAPP_PROVIDER?: string }).WHATSAPP_PROVIDER === '360dialog') {
+          const apiKey = (env as OTPEnv & { DIALOG360_API_KEY?: string }).DIALOG360_API_KEY ?? '';
+          result = await sendWhatsAppOTP360dialog(identifier, otp, purpose, apiKey, expiresAt);
+        } else {
+          result = await sendWhatsAppOTP(
+            identifier, otp, purpose,
+            env.WHATSAPP_ACCESS_TOKEN, env.WHATSAPP_PHONE_NUMBER_ID, expiresAt,
+          );
+        }
       } else if (channel === 'telegram') {
         result = await sendTelegramOTP(identifier, otp, purpose, env.TELEGRAM_BOT_TOKEN, expiresAt);
       } else {

@@ -103,4 +103,109 @@ geographyRoutes.get('/places/:placeId/ancestry', async (c) => {
   }
 });
 
+// ---------------------------------------------------------------------------
+// M7e: States, LGAs, Wards — D1 direct queries (public, cacheable)
+// ---------------------------------------------------------------------------
+
+/**
+ * GET /geography/states
+ * Returns all Nigerian states from the places table.
+ * Public — no auth. T3 exception: geography is platform-wide, not tenant-scoped.
+ * Cache-Control: public, max-age=86400
+ */
+geographyRoutes.get('/states', async (c) => {
+  interface StateRow {
+    id: string;
+    name: string;
+    geography_type: string;
+    parent_id: string | null;
+  }
+
+  try {
+    const { results } = await c.env.DB.prepare(
+      `SELECT id, name, geography_type, parent_id
+       FROM places
+       WHERE geography_type = 'state'
+       ORDER BY name ASC
+       LIMIT 500`,
+    ).all<StateRow>();
+
+    c.header('Cache-Control', 'public, max-age=86400');
+    return c.json({ data: results, count: results.length });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Internal error';
+    return c.json({ error: message }, 500);
+  }
+});
+
+/**
+ * GET /geography/lgas?stateId={id}
+ * Returns LGAs belonging to the given state.
+ * Public — no auth. Cache-Control: public, max-age=86400
+ */
+geographyRoutes.get('/lgas', async (c) => {
+  const stateId = c.req.query('stateId');
+  if (!stateId || stateId.trim() === '') {
+    return c.json({ error: 'stateId query parameter is required' }, 400);
+  }
+
+  interface LGARow {
+    id: string;
+    name: string;
+    geography_type: string;
+    parent_id: string | null;
+  }
+
+  try {
+    const { results } = await c.env.DB.prepare(
+      `SELECT id, name, geography_type, parent_id
+       FROM places
+       WHERE geography_type = 'local_government_area' AND parent_id = ?
+       ORDER BY name ASC
+       LIMIT 500`,
+    ).bind(stateId).all<LGARow>();
+
+    c.header('Cache-Control', 'public, max-age=86400');
+    return c.json({ data: results, count: results.length });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Internal error';
+    return c.json({ error: message }, 500);
+  }
+});
+
+/**
+ * GET /geography/wards?lgaId={id}
+ * Returns wards belonging to the given LGA.
+ * Public — no auth. Cache-Control: public, max-age=86400
+ */
+geographyRoutes.get('/wards', async (c) => {
+  const lgaId = c.req.query('lgaId');
+  if (!lgaId || lgaId.trim() === '') {
+    return c.json({ error: 'lgaId query parameter is required' }, 400);
+  }
+
+  interface WardRow {
+    id: string;
+    name: string;
+    geography_type: string;
+    parent_id: string | null;
+  }
+
+  try {
+    const { results } = await c.env.DB.prepare(
+      `SELECT id, name, geography_type, parent_id
+       FROM places
+       WHERE geography_type = 'ward' AND parent_id = ?
+       ORDER BY name ASC
+       LIMIT 500`,
+    ).bind(lgaId).all<WardRow>();
+
+    c.header('Cache-Control', 'public, max-age=86400');
+    return c.json({ data: results, count: results.length });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Internal error';
+    return c.json({ error: message }, 500);
+  }
+});
+
 export { geographyRoutes };
