@@ -1,32 +1,25 @@
 /**
- * apps/ussd-gateway
+ * apps/ussd-gateway — USSD Gateway Worker (M7b)
+ * Framework: Hono (T1 — Cloudflare-first)
  *
- * USSD Gateway Worker — Africa's Talking integration
  * Shortcode: *384# (pending NCC registration)
+ * Carrier: Africa's Talking USSD webhook
  *
- * Feature map (see docs/enhancements/m7/offline-sync.md):
- *   *384# → 1  — Check wallet / balance
- *   *384# → 2  — Send money (KYC gated T1-T3)
- *   *384# → 3  — Trending feed (top 5 posts by engagement)
- *   *384# → 4  — Book transport seat
- *   *384# → 5  — Community announcements
+ * Feature map:
+ *   *384# → 1  — My Wallet (balance)
+ *   *384# → 2  — Send Money (KYC gated T1-T3)
+ *   *384# → 3  — Trending Now (top engagement)
+ *   *384# → 4  — Book Transport
+ *   *384# → 5  — Community
  *
- * Session state: Cloudflare KV (USSD_SESSION_KV) — 3-minute TTL
- * Rate limiting: RATE_LIMIT_KV (R5 — 30 USSD requests per phone per hour)
+ * Session state: USSD_SESSION_KV (3-minute TTL, TDR-0010)
+ * Rate limit: RATE_LIMIT_KV (R5 — 30/hr per phone)
  */
 
-// TODO M7b — Implement:
-// - apps/ussd-gateway/src/session-manager.ts (KV-backed session state)
-// - apps/ussd-gateway/src/menus/ (one file per menu: main, wallet, feed, transport, community)
-// - apps/ussd-gateway/src/handlers/ (one handler per USSD feature)
-// - apps/ussd-gateway/src/rate-limiter.ts
-// - apps/ussd-gateway/src/auth.ts (phone number → tenant_id resolution)
-
-export default {
-  async fetch(_request: Request, _env: Env): Promise<Response> {
-    return new Response('USSD Gateway — Stub (M7b)', { status: 200 });
-  },
-};
+import { Hono } from 'hono';
+import { getOrCreateSession, saveSession, deleteSession } from './session.js';
+import { processUSSDInput } from './processor.js';
+import { mainMenu } from './menus.js';
 
 interface Env {
   DB: D1Database;
@@ -39,3 +32,52 @@ interface Env {
   LOG_PII_SALT: string;
   ENVIRONMENT: 'staging' | 'production';
 }
+
+const app = new Hono<{ Bindings: Env }>();
+
+/**
+ * POST /ussd — Africa's Talking USSD webhook
+ * Body: application/x-www-form-urlencoded
+ *   sessionId, serviceCode, phoneNumber, text
+ */
+app.post('/ussd', async (c) => {
+  const body = await c.req.parseBody();
+  const sessionId = String(body['sessionId'] ?? '');
+  const phoneNumber = String(body['phoneNumber'] ?? '');
+  const text = String(body['text'] ?? '');
+
+  if (!sessionId || !phoneNumber) {
+    return c.text('END Invalid USSD request.', 400);
+  }
+
+  try {
+    const session = await getOrCreateSession(c.env.USSD_SESSION_KV, sessionId, phoneNumber);
+
+    // Fresh session — show main menu immediately without processing input
+    if (!text) {
+      const result = processUSSDInput(session, '');
+      await saveSession(c.env.USSD_SESSION_KV, result.session);
+      return c.text(result.ended ? result.text : mainMenu(), 200, { 'Content-Type': 'text/plain' });
+    }
+
+    const result = processUSSDInput(session, text);
+
+    if (result.ended) {
+      await deleteSession(c.env.USSD_SESSION_KV, sessionId);
+    } else {
+      await saveSession(c.env.USSD_SESSION_KV, result.session);
+    }
+
+    return c.text(result.text, 200, { 'Content-Type': 'text/plain' });
+  } catch (err) {
+    console.error('[ussd-gateway] Error processing USSD request:', err);
+    return c.text('END Service unavailable. Please try again later.', 200, { 'Content-Type': 'text/plain' });
+  }
+});
+
+/**
+ * GET /health — liveness probe
+ */
+app.get('/health', (c) => c.json({ status: 'ok', service: 'ussd-gateway' }));
+
+export default app;

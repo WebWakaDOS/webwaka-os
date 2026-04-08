@@ -13,7 +13,6 @@
     "build": "tsc -p tsconfig.build.json"
   },
   "dependencies": {
-    "@webwaka/core": "workspace:*",
     "@webwaka/types": "workspace:*",
     "@webwaka/entitlements": "workspace:*",
     "@webwaka/payments": "workspace:*",

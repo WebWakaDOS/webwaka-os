@@ -13,11 +13,9 @@
     "build": "tsc -p tsconfig.build.json"
   },
   "dependencies": {
-    "@webwaka/core": "workspace:*",
     "@webwaka/types": "workspace:*",
     "@webwaka/entitlements": "workspace:*",
-    "@webwaka/identity": "workspace:*",
-    "@webwaka/ai": "workspace:*"
+    "@webwaka/identity": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.3.0",
