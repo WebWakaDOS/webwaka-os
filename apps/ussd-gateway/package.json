@@ -12,7 +12,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@webwaka/core": "workspace:*",
+    "hono": "^4.12.12",
     "@webwaka/types": "workspace:*",
     "@webwaka/auth": "workspace:*"
   },

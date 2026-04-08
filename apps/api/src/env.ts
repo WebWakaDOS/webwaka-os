@@ -69,4 +69,12 @@ export interface Env {
    * Never hardcode or log this value.
    */
   LOG_PII_SALT: string;
+
+  /**
+   * Comma-separated list of allowed CORS origins (M7b advisory fix).
+   * Example: "https://app.webwaka.com,https://admin.webwaka.com"
+   * Set via CF Dashboard / wrangler secret put ALLOWED_ORIGINS
+   * Falls back to ['https://*.webwaka.com'] in production if not set.
+   */
+  ALLOWED_ORIGINS?: string;
 }

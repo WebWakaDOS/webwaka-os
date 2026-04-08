@@ -47,13 +47,23 @@
  *   DELETE /contact/channels/:channel     — remove channel (auth required, M7a)
  *   GET  /contact/preferences             — get OTP preferences (auth required, M7a)
  *   PUT  /contact/preferences             — update OTP preferences (auth required, M7a)
+ *   POST /sync/apply                      — offline queue replay (auth required, M7b)
+ *   POST /pos/terminals                   — register POS terminal (auth required, M7b)
+ *   POST /pos/float/credit                — top up agent float (auth required, M7b)
+ *   POST /pos/float/debit                 — deduct from float (auth required, M7b)
+ *   GET  /pos/float/balance               — get current balance (auth required, M7b)
+ *   GET  /pos/float/history               — paginated ledger (auth required, M7b)
+ *   POST /pos/float/reverse               — reverse a ledger entry (auth required, M7b)
  *
  * Platform Invariants enforced:
  *   T3 — tenant_id on all DB queries (via auth middleware context)
  *   T4 — kobo integers enforced by repository layer
  *   T5 — entitlement checks in entity create routes
  *   T6 — geography-driven discovery via /geography routes
+ *   P6  — offline queue replay via /sync/apply (M7b)
+ *   P9  — all float amounts validated as integer kobo (M7b)
  *   P10 — NDPR consent required before identity lookups (M7a)
+ *   P11 — server-wins conflict on /sync/apply (M7b)
  *   R5  — 2/hour BVN/NIN rate limit (M7a)
  *   R8  — SMS mandatory for transaction OTPs (M7a)
  *   R9  — channel-level OTP rate limits (M7a)
@@ -80,6 +90,8 @@ import {
 import { publicRoutes, adminPublicRoutes, themeRoutes } from './routes/public.js';
 import { identityRoutes } from './routes/identity.js';
 import { contactRoutes } from './routes/contact.js';
+import { syncRoutes } from './routes/sync.js';
+import { posRoutes } from './routes/pos.js';
 import { identityRateLimit } from './middleware/rate-limit.js';
 import { auditLogMiddleware } from './middleware/audit-log.js';
 
@@ -90,13 +102,23 @@ const app = new Hono<{ Bindings: Env }>();
 // ---------------------------------------------------------------------------
 
 app.use('*', secureHeaders());
-app.use('*', cors({
-  origin: ['https://*.webwaka.com', 'http://localhost:5173'],
-  allowHeaders: ['Authorization', 'Content-Type'],
-  allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  exposeHeaders: ['X-Request-Id'],
-  maxAge: 86400,
-}));
+// M7b advisory: CORS origin reads ALLOWED_ORIGINS from Worker env (not hardcoded wildcard).
+// ALLOWED_ORIGINS is a comma-separated string set via CF Dashboard secret.
+// Fallback: ['https://*.webwaka.com', 'http://localhost:5173'] for development.
+app.use('*', async (c, next) => {
+  const envOrigins = c.env?.ALLOWED_ORIGINS;
+  const allowed: string[] = envOrigins
+    ? envOrigins.split(',').map((o) => o.trim()).filter(Boolean)
+    : ['https://*.webwaka.com', 'http://localhost:5173'];
+
+  return cors({
+    origin: (origin) => (allowed.includes(origin) ? origin : null),
+    allowHeaders: ['Authorization', 'Content-Type'],
+    allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    exposeHeaders: ['X-Request-Id'],
+    maxAge: 86400,
+  })(c, next);
+});
 app.use('*', logger());
 
 // ---------------------------------------------------------------------------
@@ -179,6 +201,20 @@ app.route('/identity', identityRoutes);
 app.use('/contact/*', authMiddleware);
 app.use('/contact/verify/*', auditLogMiddleware);
 app.route('/contact', contactRoutes);
+
+// ---------------------------------------------------------------------------
+// M7b: Offline sync endpoint — auth required (P11 — server-wins conflict)
+// ---------------------------------------------------------------------------
+
+app.use('/sync/*', authMiddleware);
+app.route('/sync', syncRoutes);
+
+// ---------------------------------------------------------------------------
+// M7b: POS terminal + float ledger routes — auth required (P9/T3/T4)
+// ---------------------------------------------------------------------------
+
+app.use('/pos/*', authMiddleware);
+app.route('/pos', posRoutes);
 
 // ---------------------------------------------------------------------------
 // Global error handler

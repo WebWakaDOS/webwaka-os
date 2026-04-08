@@ -17,6 +17,7 @@ export default defineConfig({
       '@webwaka/identity':      path.resolve(__dirname, '../../packages/identity/src/index.ts'),
       '@webwaka/otp':           path.resolve(__dirname, '../../packages/otp/src/index.ts'),
       '@webwaka/contact':       path.resolve(__dirname, '../../packages/contact/src/index.ts'),
+      '@webwaka/pos':           path.resolve(__dirname, '../../packages/pos/src/index.ts'),
     },
   },
   test: {

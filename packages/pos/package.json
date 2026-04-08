@@ -1,8 +1,8 @@
 {
-  "name": "@webwaka/offline-sync",
+  "name": "@webwaka/pos",
   "version": "0.1.0",
   "private": true,
-  "description": "PWA offline sync runtime (Dexie.js + SyncEngine + Service Worker) for WebWaka OS.",
+  "description": "POS terminal management + float double-entry ledger for WebWaka OS.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -21,13 +21,11 @@
   },
   "dependencies": {
     "@webwaka/types": "workspace:*",
-    "dexie": "^3.2.7"
+    "@webwaka/auth": "workspace:*"
   },
   "devDependencies": {
-    "fake-indexeddb": "^6.0.0",
+    "@cloudflare/workers-types": "^4.20240620.0",
     "typescript": "^5.4.5",
-    "vitest": "^1.6.0",
-    "jsdom": "^24.0.0",
-    "@types/jsdom": "^21.0.0"
+    "vitest": "^1.6.0"
   }
 }
