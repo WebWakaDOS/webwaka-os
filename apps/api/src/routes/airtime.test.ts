@@ -27,15 +27,20 @@ function makeApp(overrides?: {
   kv?: Partial<MockKV>;
   termiiStatus?: number;
   walletBalance?: number;
+  kycTier?: string;
 }): Hono {
   const app = new Hono();
 
   const walletBalance = overrides?.walletBalance ?? 500_000; // ₦5,000 default
+  const kycTier = overrides?.kycTier ?? 't1'; // Default: Tier 1 (KYC verified)
 
   const defaultDB = {
     prepare: vi.fn().mockImplementation((sql: string) => ({
       bind: (..._args: unknown[]) => ({
         first: <T>() => {
+          if (sql.includes('users') && sql.includes('kyc_tier')) {
+            return Promise.resolve({ kyc_tier: kycTier } as T);
+          }
           if (sql.includes('agent_wallets')) {
             return Promise.resolve({ id: 'wlt_001', balance_kobo: walletBalance } as T);
           }
@@ -194,5 +199,17 @@ describe('POST /airtime/topup', () => {
     expect(res.status).toBe(200);
     const body = await res.json() as Record<string, unknown>;
     expect(body['network']).toBe('Airtel');
+  });
+
+  it('returns 403 when user KYC is Tier 0 (unverified) — financial gate', async () => {
+    const app = makeApp({ kycTier: 't0' });
+    const res = await app.request('/airtime/topup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: '08031234567', amount_kobo: 50_000 }),
+    });
+    expect(res.status).toBe(403);
+    const body = await res.json() as Record<string, unknown>;
+    expect(body['error']).toBe('kyc_required');
   });
 });

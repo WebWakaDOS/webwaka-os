@@ -138,6 +138,21 @@ airtimeRoutes.post('/topup', async (c) => {
   const auth = c.get('auth');
   if (!auth) return c.json({ error: 'Unauthorized' }, 401);
 
+  // KYC Tier-1 gate — airtime top-up is a financial operation requiring at minimum Tier 1.
+  // Tier 0 (unverified) users are blocked per Nigeria CBN KYC compliance (BVN linkage = T1).
+  const kycDb = c.env.DB as unknown as D1Like;
+  const kycRow = await kycDb
+    .prepare(`SELECT kyc_tier FROM users WHERE id = ? LIMIT 1`)
+    .bind(auth.userId)
+    .first<{ kyc_tier: string }>();
+
+  if (!kycRow || kycRow.kyc_tier === 't0') {
+    return c.json(
+      { error: 'kyc_required', message: 'Airtime top-up requires KYC Tier 1 or above. Please complete BVN verification first.' },
+      403,
+    );
+  }
+
   // Rate limit — 5 top-ups per user per hour (R9 pattern for airtime)
   const rateLimitKey = `rate:airtime:${auth.userId}`;
   const countStr = await c.env.RATE_LIMIT_KV.get(rateLimitKey);

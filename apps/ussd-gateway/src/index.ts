@@ -38,6 +38,13 @@ interface Env {
   ENVIRONMENT: 'staging' | 'production';
   TELEGRAM_BOT_TOKEN: string;
   TELEGRAM_WEBHOOK_SECRET: string;
+  /**
+   * T3: USSD Worker tenant identity. Set via `wrangler secret put TENANT_ID` per deployment.
+   * Each deployed USSD Worker instance serves exactly one tenant.
+   * In multi-tenant Cloudflare deployments, Workers are dispatched per-subdomain so
+   * TENANT_ID is always a trusted secret from the Worker runtime, never a user input.
+   */
+  TENANT_ID?: string;
 }
 
 const app = new Hono<{ Bindings: Env }>();
@@ -135,8 +142,9 @@ app.post('/ussd', async (c) => {
     return c.text('END Invalid USSD request.', 400);
   }
 
-  // Derive tenantId from session or default — in production, use Worker env routing
-  const tenantId = 'default';
+  // T3: Derive tenantId from Worker env (set via wrangler secret put TENANT_ID per deployment).
+  // Each USSD Worker instance is deployed per-tenant subdomain; TENANT_ID is never user-supplied.
+  const tenantId = c.env.TENANT_ID ?? 'default';
 
   try {
     let session = await getOrCreateSession(c.env.USSD_SESSION_KV, sessionId, phoneNumber);

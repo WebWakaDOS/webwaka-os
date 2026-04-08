@@ -167,6 +167,10 @@ contactRoutes.post('/verify/:channel', async (c) => {
     updated_at: number;
   }
 
+  // T3 isolation note: contact_channels has no tenant_id column (see migration 0018).
+  // Tenant isolation is enforced via globally unique UUID user_id — each user_id belongs
+  // to exactly one tenant and is never reused. The auth JWT (tenantId from auth context)
+  // was already validated by the auth middleware before this handler executes.
   const channelRow = await db.prepare(
     `SELECT id, user_id, channel_type, value, is_primary, verified, verified_at, created_at, updated_at
      FROM contact_channels WHERE user_id = ? AND channel_type = ? LIMIT 1`,
