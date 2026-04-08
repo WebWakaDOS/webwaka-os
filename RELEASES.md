@@ -48,3 +48,35 @@ Before promoting to production:
 - [ ] Staging deploy successful
 - [ ] Founder signoff received
 - [ ] Rollback plan documented
+
+---
+
+## Release History
+
+### M7a — Regulatory Survival + Multi-Channel Contact
+- **Date:** 2026-04-08
+- **PR:** #21 | **SHA:** `d629339`
+- **QA:** Base44 Super Agent | Score: 25/25 | Approved
+- **Deliverables:** 9 migrations, 15 package files (@webwaka/identity + @webwaka/otp + @webwaka/contact), CBN KYC tiers, 9 API routes, 2 middleware, 116 tests
+- **Compliance:** P10 P12 P13 R5 R6 R7 R8 R9 R10
+- **Release Notes:** `docs/milestones/m7a-release-notes.md`
+
+### M6 — Payments + Frontend + Events
+- **Date:** 2026-04-07
+- **PR:** #17 | Merged to main
+- **QA:** Base44 Super Agent | Approved
+
+### M5 — Claim-First Onboarding MVP
+- **PR:** #16 | Merged to main
+
+### M4 — Discovery Layer MVP
+- **PR:** #14 | Merged to main
+
+### M3 — Vertical Scaffolding + API
+- **PR:** #13
+
+### M2 — Core Package Scaffold
+- **PR:** #10 | Merged
+
+### M1 — Governance Baseline
+- **PR:** #6 | Merged

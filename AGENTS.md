@@ -88,20 +88,26 @@ See `docs/governance/milestone-tracker.md` for current status.
 ### M7 Phase Order (STRICT — T9: No Skipped Phases)
 
 ```
-M7a (3 days) → M7b (3 days) → M7c (4 days) → M7d (4 days) → M7e (2 days)
+M7a ✅ DONE  → M7b (3 days) → M7c (4 days) → M7d (4 days) → M7e (2 days)
     ↓                ↓                ↓               ↓              ↓
 identity+otp    offline+ussd     community        social         ux polish
+MERGED 2026-04-08
+PR #21 SHA d629339
 ```
 
 Each phase must pass CI and Base44 QA before the next phase begins.
+
+> **M7a APPROVED 2026-04-08** — PR #21 merged. Score: 25/25. QA: Base44 Super Agent.
+> 9 migrations, 15 package files, 9 API endpoints, 116 tests, all compliance rules (P10 P12 P13 R5 R6 R7 R8 R9 R10).
+> **Next:** M7b — Dexie.js offline sync + USSD gateway + POS float double-entry ledger.
 
 ### New Package Stubs (scaffolded — implement in order)
 
 | Package | Phase | Stub Location |
 |---|---|---|
-| `@webwaka/identity` | M7a | `packages/identity/src/index.ts` |
-| `@webwaka/otp` | M7a | `packages/otp/src/index.ts` |
+| `@webwaka/identity` | ✅ M7a DONE | `packages/identity/src/index.ts` |
+| `@webwaka/otp` | ✅ M7a DONE | `packages/otp/src/index.ts` |
+| `@webwaka/contact` | ✅ M7a DONE | `packages/contact/src/index.ts` |
 | `@webwaka/community` | M7c | `packages/community/src/index.ts` |
 | `@webwaka/social` | M7d | `packages/social/src/index.ts` |
 | `@webwaka/ussd-gateway` | M7b | `apps/ussd-gateway/src/index.ts` |
-| `@webwaka/contact` | M7f | `packages/contact/src/index.ts` |
