@@ -92,8 +92,11 @@ import { identityRoutes } from './routes/identity.js';
 import { contactRoutes } from './routes/contact.js';
 import { syncRoutes } from './routes/sync.js';
 import { posRoutes } from './routes/pos.js';
+import { communityRoutes } from './routes/community.js';
+import { socialRoutes } from './routes/social.js';
 import { identityRateLimit } from './middleware/rate-limit.js';
 import { auditLogMiddleware } from './middleware/audit-log.js';
+import { assertDMMasterKey } from '@webwaka/social';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -215,6 +218,36 @@ app.route('/sync', syncRoutes);
 
 app.use('/pos/*', authMiddleware);
 app.route('/pos', posRoutes);
+
+// ---------------------------------------------------------------------------
+// M7c: Community routes — join requires auth (P10 NDPR), reads are public (T3)
+// ---------------------------------------------------------------------------
+
+app.use('/community/join', authMiddleware);
+app.use('/community/channels/*/posts', authMiddleware);
+app.use('/community/lessons/*/progress', authMiddleware);
+app.use('/community/events/*/rsvp', authMiddleware);
+app.route('/community', communityRoutes);
+
+// ---------------------------------------------------------------------------
+// M7c: Social routes — most require auth; /social/profile/:handle is public
+// P14 — assert DM_MASTER_KEY is present at startup before routes are wired.
+// ---------------------------------------------------------------------------
+
+app.use('/social/*', async (c, next) => {
+  if (c.req.path.includes('/dm/threads')) {
+    assertDMMasterKey(c.env.DM_MASTER_KEY);
+  }
+  await next();
+});
+app.use('/social/profile/setup', authMiddleware);
+app.use('/social/follow/*', authMiddleware);
+app.use('/social/feed', authMiddleware);
+app.use('/social/posts', authMiddleware);
+app.use('/social/posts/*/react', authMiddleware);
+app.use('/social/dm/*', authMiddleware);
+app.use('/social/stories', authMiddleware);
+app.route('/social', socialRoutes);
 
 // ---------------------------------------------------------------------------
 // Global error handler

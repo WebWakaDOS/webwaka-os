@@ -71,6 +71,13 @@ export interface Env {
   LOG_PII_SALT: string;
 
   /**
+   * AES-GCM master key for DM encryption (M7c).
+   * Platform Invariant P14 — assertDMMasterKey called at startup.
+   * Never hardcode or log this value.
+   */
+  DM_MASTER_KEY: string;
+
+  /**
    * Comma-separated list of allowed CORS origins (M7b advisory fix).
    * Example: "https://app.webwaka.com,https://admin.webwaka.com"
    * Set via CF Dashboard / wrangler secret put ALLOWED_ORIGINS

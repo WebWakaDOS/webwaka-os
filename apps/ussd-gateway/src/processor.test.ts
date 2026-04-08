@@ -6,7 +6,7 @@ import { describe, it, expect } from 'vitest';
 import { processUSSDInput } from './processor.js';
 import type { USSDSession } from './session.js';
 
-function makeSession(state: USSDSession['state'] = 'main_menu', data: Record<string, string> = {}): USSDSession {
+function makeSession(state: USSDSession['state'] = 'main_menu', data: Record<string, unknown> = {}): USSDSession {
   return {
     sessionId: 'sess_test',
     phone: '+2348012345678',
@@ -136,5 +136,188 @@ describe('processUSSDInput — trailing-input extraction', () => {
     const session = makeSession('send_money_enter_amount', { recipient: '+2348099999999' });
     const result = processUSSDInput(session, '2*+2348099999999*500');
     expect(result.session.data['amount']).toBe('500');
+  });
+});
+
+// ============================================================================
+// Branch 3 — Trending Feed FSM
+// ============================================================================
+
+const samplePosts = [
+  { id: 'p1', snippet: 'Tech scene in Lagos is booming!', authorHandle: 'tunde_dev' },
+  { id: 'p2', snippet: 'New fintech regulations announced.', authorHandle: 'naija_finance' },
+  { id: 'p3', snippet: 'Champions League highlights!', authorHandle: 'sports_ng' },
+];
+
+describe('processUSSDInput — trending_feed (Branch 3)', () => {
+  it('shows "0. Back" in trending feed menu', () => {
+    const session = makeSession('trending_feed');
+    const result = processUSSDInput(session, '3*0');
+    // input "0" from trending_feed → back to main menu
+    expect(result.session.state).toBe('main_menu');
+    expect(result.ended).toBe(false);
+  });
+
+  it('"0" from trending_feed returns to main_menu', () => {
+    const result = processUSSDInput(makeSession('trending_feed'), '3*0');
+    expect(result.session.state).toBe('main_menu');
+    expect(result.text).toMatch(/^CON /);
+  });
+
+  it('"1" with posts → state trending_view_post', () => {
+    const session = makeSession('trending_feed', { trendingPosts: samplePosts });
+    const result = processUSSDInput(session, '3*1');
+    expect(result.session.state).toBe('trending_view_post');
+    expect(result.ended).toBe(false);
+  });
+
+  it('"2" with posts → state trending_view_post with correct index', () => {
+    const session = makeSession('trending_feed', { trendingPosts: samplePosts });
+    const result = processUSSDInput(session, '3*2');
+    expect(result.session.state).toBe('trending_view_post');
+    expect(result.session.data['viewingPostIndex']).toBe(1);
+  });
+
+  it('"6" (out of range) ends session with error', () => {
+    const session = makeSession('trending_feed', { trendingPosts: samplePosts });
+    const result = processUSSDInput(session, '3*6');
+    expect(result.text).toMatch(/^END /);
+    expect(result.ended).toBe(true);
+  });
+
+  it('invalid letter input ends session', () => {
+    const session = makeSession('trending_feed', { trendingPosts: samplePosts });
+    const result = processUSSDInput(session, '3*x');
+    expect(result.text).toMatch(/^END /);
+    expect(result.ended).toBe(true);
+  });
+
+  it('"1" with empty posts ends session', () => {
+    const session = makeSession('trending_feed', { trendingPosts: [] });
+    const result = processUSSDInput(session, '3*1');
+    expect(result.text).toMatch(/^END /);
+    expect(result.ended).toBe(true);
+  });
+
+  it('viewPost text contains author handle', () => {
+    const session = makeSession('trending_feed', { trendingPosts: samplePosts });
+    const result = processUSSDInput(session, '3*1');
+    expect(result.text).toContain('tunde_dev');
+  });
+
+  it('viewPost text contains post snippet', () => {
+    const session = makeSession('trending_feed', { trendingPosts: samplePosts });
+    const result = processUSSDInput(session, '3*1');
+    expect(result.text).toContain('Tech scene');
+  });
+
+  it('"0" from trending_view_post → back to trending_feed', () => {
+    const session = makeSession('trending_view_post', { trendingPosts: samplePosts, viewingPostIndex: 0 });
+    const result = processUSSDInput(session, '3*1*0');
+    expect(result.session.state).toBe('trending_feed');
+    expect(result.ended).toBe(false);
+  });
+});
+
+// ============================================================================
+// Branch 5 — Community Menu FSM
+// ============================================================================
+
+const sampleEvents = [
+  { id: 'ev1', title: 'Lagos Dev Summit 2026' },
+  { id: 'ev2', title: 'Women in Tech Abuja' },
+];
+
+const sampleGroups = [
+  { id: 'g1', name: 'Lagos Developers' },
+  { id: 'g2', name: 'Naija Fintech' },
+];
+
+describe('processUSSDInput — community_menu (Branch 5)', () => {
+  it('"0" from community_menu → back to main_menu', () => {
+    const result = processUSSDInput(makeSession('community_menu'), '5*0');
+    expect(result.session.state).toBe('main_menu');
+    expect(result.ended).toBe(false);
+  });
+
+  it('"1" → community_announcements state', () => {
+    const result = processUSSDInput(makeSession('community_menu'), '5*1');
+    expect(result.session.state).toBe('community_announcements');
+    expect(result.ended).toBe(false);
+    expect(result.text).toMatch(/^CON /);
+  });
+
+  it('"2" → community_events state', () => {
+    const result = processUSSDInput(makeSession('community_menu'), '5*2');
+    expect(result.session.state).toBe('community_events');
+    expect(result.ended).toBe(false);
+    expect(result.text).toMatch(/^CON /);
+  });
+
+  it('"3" → community_groups state', () => {
+    const result = processUSSDInput(makeSession('community_menu'), '5*3');
+    expect(result.session.state).toBe('community_groups');
+    expect(result.ended).toBe(false);
+    expect(result.text).toMatch(/^CON /);
+  });
+
+  it('invalid input ends session', () => {
+    const result = processUSSDInput(makeSession('community_menu'), '5*9');
+    expect(result.text).toMatch(/^END /);
+    expect(result.ended).toBe(true);
+  });
+
+  it('"0" from community_announcements → back to community_menu', () => {
+    const result = processUSSDInput(makeSession('community_announcements'), '5*1*0');
+    expect(result.session.state).toBe('community_menu');
+    expect(result.ended).toBe(false);
+  });
+
+  it('invalid input from community_announcements ends session', () => {
+    const result = processUSSDInput(makeSession('community_announcements'), '5*1*9');
+    expect(result.text).toMatch(/^END /);
+    expect(result.ended).toBe(true);
+  });
+
+  it('"0" from community_events → back to community_menu', () => {
+    const result = processUSSDInput(makeSession('community_events'), '5*2*0');
+    expect(result.session.state).toBe('community_menu');
+    expect(result.ended).toBe(false);
+  });
+
+  it('"1" from community_events with data → ends with event title', () => {
+    const session = makeSession('community_events', { communityEvents: sampleEvents });
+    const result = processUSSDInput(session, '5*2*1');
+    expect(result.text).toMatch(/^END /);
+    expect(result.text).toContain('Lagos Dev Summit');
+    expect(result.ended).toBe(true);
+  });
+
+  it('"0" from community_groups → back to community_menu', () => {
+    const result = processUSSDInput(makeSession('community_groups'), '5*3*0');
+    expect(result.session.state).toBe('community_menu');
+    expect(result.ended).toBe(false);
+  });
+
+  it('"1" from community_groups with data → ends with group name', () => {
+    const session = makeSession('community_groups', { communityGroups: sampleGroups });
+    const result = processUSSDInput(session, '5*3*1');
+    expect(result.text).toMatch(/^END /);
+    expect(result.text).toContain('Lagos Developers');
+    expect(result.ended).toBe(true);
+  });
+
+  it('community_events menu shows numbered list when data populated', () => {
+    const session = makeSession('community_menu', { communityEvents: sampleEvents });
+    const result = processUSSDInput(session, '5*2');
+    expect(result.text).toContain('Lagos Dev Summit');
+    expect(result.text).toMatch(/^CON /);
+  });
+
+  it('community_groups menu shows numbered list when data populated', () => {
+    const session = makeSession('community_menu', { communityGroups: sampleGroups });
+    const result = processUSSDInput(session, '5*3');
+    expect(result.text).toContain('Lagos Developers');
+    expect(result.text).toMatch(/^CON /);
   });
 });

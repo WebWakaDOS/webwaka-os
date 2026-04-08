@@ -13,14 +13,19 @@ export type USSDState =
   | 'send_money_enter_amount'
   | 'send_money_confirm'
   | 'trending_feed'
+  | 'trending_view_post'
   | 'transport_menu'
-  | 'community_menu';
+  | 'community_menu'
+  | 'community_announcements'
+  | 'community_events'
+  | 'community_groups';
 
 export interface USSDSession {
   sessionId: string;
   phone: string;
   state: USSDState;
-  data: Record<string, string>;
+  /** M7c: Record<string, unknown> to support arrays (trendingPosts, communityEvents) */
+  data: Record<string, unknown>;
   createdAt: number;
 }
 

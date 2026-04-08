@@ -26,7 +26,9 @@
     "@webwaka/entitlements": "workspace:*",
     "@webwaka/relationships": "workspace:*",
     "zod": "^3.22.4",
-    "@webwaka/pos": "workspace:*"
+    "@webwaka/pos": "workspace:*",
+    "@webwaka/community": "workspace:*",
+    "@webwaka/social": "workspace:*"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241205.0",

@@ -62,17 +62,33 @@ Amount: \u20A6${amountNaira}
 2. Cancel`;
 }
 
+export interface TrendingPostSnippet {
+  id: string;
+  snippet: string;
+  authorHandle: string;
+}
+
 /**
- * Trending feed — top 5 placeholder
+ * Trending feed — top posts list.
+ * If posts are provided, display numbered list; otherwise show placeholder.
  */
-export function trendingFeed(): string {
-  return `CON Trending Now
-1. See top stories
-2. Local news
-3. Business
-4. Sports
-5. Politics
+export function trendingFeed(posts?: TrendingPostSnippet[]): string {
+  if (!posts || posts.length === 0) {
+    return `CON Trending Now
+No trending posts right now.
 0. Back`;
+  }
+  const lines = posts
+    .slice(0, 5)
+    .map((p, i) => `${i + 1}. ${p.snippet.slice(0, 30)}`);
+  return `CON Trending Now\n${lines.join('\n')}\n0. Back`;
+}
+
+/**
+ * View a single trending post.
+ */
+export function viewTrendingPost(post: TrendingPostSnippet): string {
+  return `CON @${post.authorHandle}:\n${post.snippet.slice(0, 100)}\n\n0. Back to Trending`;
 }
 
 /**
@@ -85,8 +101,18 @@ export function transportMenu(): string {
 0. Back`;
 }
 
+export interface CommunityItem {
+  id: string;
+  name: string;
+}
+
+export interface EventItem {
+  id: string;
+  title: string;
+}
+
 /**
- * Community menu
+ * Community main menu
  */
 export function communityMenu(): string {
   return `CON Community
@@ -94,6 +120,45 @@ export function communityMenu(): string {
 2. Events
 3. Groups
 0. Back`;
+}
+
+/**
+ * Community announcements
+ */
+export function communityAnnouncements(items?: string[]): string {
+  if (!items || items.length === 0) {
+    return `CON Announcements
+No announcements right now.
+0. Back`;
+  }
+  const lines = items.slice(0, 5).map((s, i) => `${i + 1}. ${s.slice(0, 35)}`);
+  return `CON Announcements\n${lines.join('\n')}\n0. Back`;
+}
+
+/**
+ * Community events list
+ */
+export function communityEvents(events?: EventItem[]): string {
+  if (!events || events.length === 0) {
+    return `CON Events
+No upcoming events.
+0. Back`;
+  }
+  const lines = events.slice(0, 5).map((e, i) => `${i + 1}. ${e.title.slice(0, 35)}`);
+  return `CON Events\n${lines.join('\n')}\n0. Back`;
+}
+
+/**
+ * Community groups / spaces list
+ */
+export function communityGroups(groups?: CommunityItem[]): string {
+  if (!groups || groups.length === 0) {
+    return `CON Groups
+No groups available.
+0. Back`;
+  }
+  const lines = groups.slice(0, 5).map((g, i) => `${i + 1}. ${g.name.slice(0, 35)}`);
+  return `CON Groups\n${lines.join('\n')}\n0. Back`;
 }
 
 /**

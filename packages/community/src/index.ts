@@ -1,26 +1,55 @@
 /**
- * @webwaka/community
+ * @webwaka/community — Community Platform (Skool-style) for WebWaka OS.
+ * Milestone 7c.
  *
- * Skool-style community platform for WebWaka OS.
- * Entities: CommunitySpace, CommunityMembership, CommunityChannel,
- *           ForumThread, CourseModule, CommunityEvent
- *
- * See docs/community/ for full specification:
- * - community-model.md     — entity model
- * - skool-features.md      — feature set
- * - community-entitlements.md — KYC + subscription gating
- * - community-moderation.md   — content moderation pipeline
- * - community-monetization.md — payments + revenue split
+ * Invariants enforced:
+ *   T3 — all DB queries scoped by tenant_id
+ *   T4 — all monetary values as integer kobo
+ *   T5 — paid tiers / courses gated by entitlement plan
+ *   P10 — NDPR consent required before joinCommunity
+ *   P15 — classifyContent called before every post insert
  */
 
-// TODO M7c — Implement:
-// - packages/community/src/entities/ (all 6 entity types)
-// - packages/community/src/migrations/ (0025–0028)
-// - packages/community/src/routes/ (API handlers)
-// - packages/community/src/moderation.ts
-// - packages/community/src/moderation-config.ts
-// - packages/community/src/membership-payment.ts (KYC gating)
-// - packages/community/src/broadcast-dm.ts
-// - packages/community/src/offline-cache.ts (Service Worker strategy)
+export type { CommunitySpace, CreateCommunitySpaceArgs } from './space.js';
+export { createCommunitySpace, getCommunitySpace, listSpaces } from './space.js';
 
-export { COMMUNITY_STUB_VERSION } from './stub';
+export type {
+  CommunityMembership,
+  CommunityMembershipTier,
+  JoinCommunityArgs,
+  CreateMembershipTierArgs,
+} from './membership.js';
+export {
+  joinCommunity,
+  getMembership,
+  leaveCommunity,
+  createMembershipTier,
+} from './membership.js';
+
+export type { CommunityChannel, ChannelPost, CreateChannelArgs, CreateChannelPostArgs } from './channel.js';
+export { createChannel, listChannels, createChannelPost, listChannelPosts } from './channel.js';
+
+export type { CourseModule, CourseLesson, LessonProgress } from './course.js';
+export {
+  createCourseModule,
+  getCourseModules,
+  createCourseLesson,
+  getLessonById,
+  recordLessonProgress,
+} from './course.js';
+
+export type { CommunityEvent, CreateEventArgs, EventRsvp } from './event.js';
+export { createEvent, listEvents, rsvpToEvent } from './event.js';
+
+export type { ModerationResult, ModerationStatus } from './moderation.js';
+export { classifyContent } from './moderation.js';
+
+export type { CommunityEntitlements } from './entitlements.js';
+export {
+  FREE_COMMUNITY_ENTITLEMENTS,
+  PRO_COMMUNITY_ENTITLEMENTS,
+  ENTERPRISE_COMMUNITY_ENTITLEMENTS,
+  assertPaidTiersEnabled,
+  assertCoursesEnabled,
+  assertMaxSpaces,
+} from './entitlements.js';

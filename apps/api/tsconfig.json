@@ -16,7 +16,9 @@
       "@webwaka/identity":      ["../../packages/identity/src/index.ts"],
       "@webwaka/otp":           ["../../packages/otp/src/index.ts"],
       "@webwaka/contact":       ["../../packages/contact/src/index.ts"],
-      "@webwaka/pos":           ["../../packages/pos/src/index.ts"]
+      "@webwaka/pos":           ["../../packages/pos/src/index.ts"],
+      "@webwaka/community":     ["../../packages/community/src/index.ts"],
+      "@webwaka/social":        ["../../packages/social/src/index.ts"]
     },
     "rootDir": "../..",
     "outDir": "dist",

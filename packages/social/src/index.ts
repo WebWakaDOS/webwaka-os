@@ -1,32 +1,41 @@
 /**
- * @webwaka/social
+ * @webwaka/social — Social Network for WebWaka OS.
+ * Milestone 7c.
  *
- * Social network platform for WebWaka OS.
- * Entities: SocialProfile, Follow, SocialPost, SocialGroup, DMThread, DMMessage, Reaction
- *
- * See docs/social/ for full specification:
- * - social-graph.md       — follow/block/mute/group model
- * - feed-algorithm.md     — home + explore + trending feeds
- * - social-moderation.md  — AI classifier + human review queue
- * - dm-privacy.md         — DM encryption contracts
- * - stories-spec.md       — 24h ephemeral content
- *
- * Nigeria-specific features:
- * - Verification badge gated on NIN/BVN (packages/identity)
- * - Naija Pidgin (pcm) post labelling
- * - USSD trending feed (*384# → 3)
- * - Offline feed cache (Dexie.js, last 50 posts in IndexedDB)
+ * Invariants enforced:
+ *   T3 — all DB queries scoped by tenant_id
+ *   P14 — DM content encrypted with AES-GCM, DM_MASTER_KEY required
+ *   P15 — classifyContent called before every post insert
  */
 
-// TODO M7d — Implement:
-// - packages/social/src/entities/ (SocialProfile, Follow, SocialPost, etc.)
-// - packages/social/src/migrations/ (0029–0034)
-// - packages/social/src/feed/ (home-feed.ts, explore-feed.ts, trending.ts)
-// - packages/social/src/routes/ (API handlers /social/*)
-// - packages/social/src/moderation.ts (AI classifier integration)
-// - packages/social/src/dm/ (thread-manager.ts, message-encryptor.ts)
-// - packages/social/src/stories/ (stories-ttl-cleanup.ts via scheduled cron)
-// - packages/social/src/verification-badge.ts (BVN/NIN gated)
-// - packages/social/src/ussd-feed.ts (USSD trending endpoint)
+export type { SocialProfile, SetupSocialProfileArgs } from './social-profile.js';
+export {
+  setupSocialProfile,
+  getSocialProfileByHandle,
+  getSocialProfileByPhone,
+} from './social-profile.js';
 
-export { SOCIAL_STUB_VERSION } from './stub';
+export type { SocialFollow, FollowProfileArgs } from './follow.js';
+export { followProfile, unfollowProfile, getFollowers, getFollowing } from './follow.js';
+
+export type { SocialPost, SocialReaction, CreatePostArgs, PostType, ReactionType } from './social-post.js';
+export { createPost, getPost, reactToPost } from './social-post.js';
+
+export type { FeedPost, GetUserFeedOptions } from './feed.js';
+export { getUserFeed } from './feed.js';
+
+export type { DMThread, DMMessage } from './dm.js';
+export {
+  assertDMMasterKey,
+  createDMThread,
+  sendDM,
+  getDMThreads,
+  getDMMessages,
+  decryptDMContent,
+} from './dm.js';
+
+export type { Story } from './story.js';
+export { createStory, getActiveStories, storyTimeRemaining, STORY_TTL_SECONDS } from './story.js';
+
+export type { ModerationResult, ModerationStatus } from './moderation.js';
+export { classifyContent } from './moderation.js';
