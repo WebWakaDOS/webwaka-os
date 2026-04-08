@@ -1,7 +1,7 @@
 # WebWaka OS — Milestone Progress Tracker
 
-**Last updated:** 2026-04-07 23:55 WAT
-**Updated by:** Base44 OpenClaw (Milestone 6 — ✅ DONE — PR #17 merged to main, SHA 0920b66)
+**Last updated:** 2026-04-08 01:00 WAT
+**Updated by:** Base44 Super Agent (M7 docs update — PR #19 — feat/m7-docs-update)
 
 ---
 
@@ -290,3 +290,159 @@
 | New API routes | 6 (upgrade, verify, billing, public, dashboard, themes) |
 | Security fixes | 2 (W1 webhook sig, T1/T3 tenant isolation) |
 | Final test count | 300 (+6 security tests vs 294 baseline) |
+
+---
+
+## Milestone 6a — Pre-Vertical Enhancement: Security / KYC / Compliance
+
+**Goal:** Address all 20 Priority 1 enhancements from PR #18 research. All financial features legally operable post-M6a.
+**Owner:** Replit Agent (implementation) + Base44 Super Agent (QA, audit)
+**Overall status:** 🔲 NOT STARTED — awaiting PR #18 synthesis approval
+
+**Pre-requisite:** PR #18 approved and merged to staging | M6 done ✅
+
+| Task | Status | Notes |
+|---|---|---|
+| DAY 0 HOTFIX: 0013_init_users.sql → merge to main | NOT STARTED | Critical — auth routes 500 without this |
+| 0014_kyc_fields.sql — NIN/BVN cols on individuals/profiles | NOT STARTED | |
+| 0015_otp_log.sql — replay attack prevention | NOT STARTED | Must precede OTP gateway |
+| 0016_kyc_records.sql — audit trail | NOT STARTED | |
+| 0017_consent_records.sql — NDPR compliance | NOT STARTED | Must precede BVN/NIN code |
+| 0018_missing_indexes.sql | NOT STARTED | |
+| 0019_webhook_idempotency_log.sql | NOT STARTED | |
+| 0020_data_residency_tagging.sql | NOT STARTED | |
+| packages/identity — bvn.ts + nin.ts + frsc.ts + cac.ts | NOT STARTED | See docs/enhancements/m7/kyc-compliance.md |
+| packages/otp — gateway.ts + providers | NOT STARTED | AfricasTalking + Termii |
+| CBN KYC tier gating in packages/entitlements | NOT STARTED | requireKYCTier() + transaction limits |
+| Rate limiting middleware (RATE_LIMIT_KV) | NOT STARTED | Per-phone for OTP, per-IP for general |
+| CAC registration number Zod validation | NOT STARTED | RC-XXXXXXX pattern |
+| Audit log middleware auto-enforcement | NOT STARTED | All DELETE/PATCH routes |
+| IP hashing in auth/claim logs (NDPR) | NOT STARTED | SHA-256 + daily salt |
+| FRSC vehicle/operator validation | NOT STARTED | Move to M6b — transport-specific |
+| requireKYCTierForWorkspaceActivation() guard | NOT STARTED | Base44 addition — workspace publish step |
+| Tests: 50+ covering all M6a items | NOT STARTED | |
+| Base44 QA audit | NOT STARTED | |
+| Founder approval — Milestone 6a | NOT STARTED | |
+
+---
+
+## Milestone 6b — Pre-Vertical Enhancement: Offline / Agent Network
+
+**Goal:** Full offline runtime, POS terminal schema, agent network, USSD gateway.
+**Owner:** Replit Agent (implementation) + Base44 Super Agent (QA, audit)
+**Overall status:** 🔲 NOT STARTED — depends on M6a completion
+
+| Task | Status | Notes |
+|---|---|---|
+| 0021_pos_terminals.sql | NOT STARTED | |
+| 0022_agent_wallets_float_ledger.sql | NOT STARTED | |
+| 0023_agent_sessions_handoff_log.sql | NOT STARTED | Base44 addition — dispute resolution |
+| 0024_exchange_rates.sql | NOT STARTED | |
+| packages/offline-sync — Dexie.js SyncAdapter runtime | NOT STARTED | See docs/enhancements/m7/offline-sync.md |
+| packages/offline-sync — Service Worker registration | NOT STARTED | |
+| packages/offline-sync — exponential backoff scheduler | NOT STARTED | |
+| packages/offline-sync — conflict resolution | NOT STARTED | |
+| apps/ussd-gateway — AfricasTalking USSD Worker | NOT STARTED | |
+| Agent registration + delegation API | NOT STARTED | See docs/enhancements/m7/agent-network.md |
+| Float cash-in / cash-out API | NOT STARTED | |
+| Super Agent → Sub-Agent delegation (2 levels max) | NOT STARTED | |
+| FRSC validation in packages/identity | NOT STARTED | Moved from M6a |
+| Offline indicator UI component | NOT STARTED | packages/design-system |
+| Lighthouse PWA CI check (.github/workflows/lighthouse.yml) | NOT STARTED | Moved from M6a |
+| Tests: 70+ covering all M6b items | NOT STARTED | |
+| Base44 QA audit | NOT STARTED | |
+| Founder approval — Milestone 6b | NOT STARTED | |
+
+---
+
+## Milestone 6c — Pre-Vertical Enhancement: Nigeria UX / Commerce
+
+**Goal:** Full commerce layer, airtime top-up, multi-bank linking, Nigerian locale, 3 fully implemented packages.
+**Owner:** Replit Agent (implementation) + Base44 Super Agent (QA, audit)
+**Overall status:** 🔲 NOT STARTED — depends on M6b completion
+
+| Task | Status | Notes |
+|---|---|---|
+| Airtime top-up API (VTpass) | NOT STARTED | MTN, GLO, Airtel, 9mobile, EEDC |
+| Multi-bank linking (Paystack /bank/resolve) | NOT STARTED | Name enquiry + bank codes |
+| Exchange rate service (CBN API daily fetch) | NOT STARTED | |
+| Paystack split payment (partner commissions) | NOT STARTED | |
+| Flutterwave gateway (Paystack failover) | NOT STARTED | |
+| Nigerian phone validation (Zod + carrier detect) | NOT STARTED | |
+| Bank list endpoint | NOT STARTED | |
+| Route licensing fields (transport) | NOT STARTED | |
+| Recurring charge (Paystack charge_authorization) | NOT STARTED | |
+| packages/workspaces — full implementation | NOT STARTED | Remove stub_${uuid} Paystack reference |
+| packages/profiles — full implementation | NOT STARTED | |
+| packages/search-indexing — full implementation | NOT STARTED | |
+| Nigerian locale en-NG + pcm (Naija Pidgin) | NOT STARTED | |
+| LGA selector UI component | NOT STARTED | |
+| Dark mode | NOT STARTED | |
+| USSD shortcode UI component | NOT STARTED | |
+| Optimistic UI updates | NOT STARTED | |
+| Tests: 70+ covering all M6c items | NOT STARTED | |
+| Base44 QA audit | NOT STARTED | |
+| Founder approval — Milestone 6c | NOT STARTED | |
+
+---
+
+## Milestone 7 — Full Platform + Community + Social
+
+**Goal:** Launch Community Platform (Skool-style) and Social Network (Twitter+IG+FB style) as full vertical modules. All 57 pre-vertical enhancements must be complete before M7 coding begins (M6a+M6b+M6c done).
+**Owner:** Replit Agent (implementation) + Base44 Super Agent (architecture, QA, PR review)
+**Overall status:** 🔲 NOT STARTED — depends on M6a + M6b + M6c
+
+**Governance docs:** Created in `feat/m7-docs-update` (PR #19) — see below
+**Baseline:** Requires 360+ tests, all 12 migrations (0013–0024), packages/identity, packages/otp
+
+### M7.1 — Community Platform
+
+| Task | Status | Notes |
+|---|---|---|
+| packages/community — CommunitySpace, Membership, Channel, Post, Event entities | NOT STARTED | See docs/community/community-model.md |
+| Community migrations (0025–0028) | NOT STARTED | |
+| Community API routes (/community/*) | NOT STARTED | See docs/community/skool-features.md |
+| Course modules + lesson progress | NOT STARTED | |
+| Community membership payment + KYC gating | NOT STARTED | See docs/community/community-entitlements.md |
+| Member leaderboard | NOT STARTED | |
+| Community event RSVP + SMS reminders | NOT STARTED | |
+| Invite link system | NOT STARTED | |
+| Community broadcast DMs | NOT STARTED | |
+| Offline lesson cache (Service Worker) | NOT STARTED | |
+| NDPR consent at community join | NOT STARTED | |
+| Community moderation integration | NOT STARTED | |
+| Tests: 60+ covering all community items | NOT STARTED | |
+
+### M7.2 — Social Network Platform
+
+| Task | Status | Notes |
+|---|---|---|
+| packages/social — SocialProfile, Follow, Post, Group, DM, Reaction | NOT STARTED | See docs/social/social-graph.md |
+| Social migrations (0029–0034) | NOT STARTED | |
+| Feed algorithm — home + explore + trending | NOT STARTED | See docs/social/feed-algorithm.md |
+| Social API routes (/social/*) | NOT STARTED | |
+| Stories (24hr TTL posts) | NOT STARTED | |
+| Group creation + membership | NOT STARTED | |
+| Direct messaging | NOT STARTED | |
+| Verification badge (NIN/BVN-gated blue tick) | NOT STARTED | |
+| Moderation pipeline (AI classifier + human queue) | NOT STARTED | See docs/social/social-moderation.md |
+| NITDA Code of Practice compliance | NOT STARTED | |
+| Boosted content / sponsored feed placement | NOT STARTED | |
+| Offline feed cache (last 50 posts in IndexedDB) | NOT STARTED | |
+| USSD trending feed (*384# → 3) | NOT STARTED | |
+| Naija Pidgin (pcm) post labelling | NOT STARTED | |
+| Tests: 60+ covering all social items | NOT STARTED | |
+
+### M7.3 — QA + Launch Gate
+
+| Task | Status | Notes |
+|---|---|---|
+| All M7 packages typecheck clean | NOT STARTED | |
+| Total tests ≥ 500 (360 baseline + M7 additions) | NOT STARTED | |
+| Lighthouse PWA score ≥ 80 | NOT STARTED | |
+| NITDA Code of Practice self-assessment | NOT STARTED | |
+| CBN KYC compliance audit (all tiers enforced) | NOT STARTED | |
+| NDPR consent records audit | NOT STARTED | |
+| Security penetration test (OTP replay, BVN enumeration) | NOT STARTED | |
+| Base44 full QA audit | NOT STARTED | |
+| Founder approval — Milestone 7 | NOT STARTED | |
