@@ -133,6 +133,49 @@ async function deductFromFloat(
 }
 
 // ---------------------------------------------------------------------------
+// refundFloat — compensating transaction on Termii failure
+// ---------------------------------------------------------------------------
+
+/**
+ * Refund a previously deducted float amount.
+ * Called as a compensating transaction when the Termii provider call fails
+ * after deductFromFloat has already succeeded.
+ * Records a 'cash_in' ledger entry to restore the balance.
+ */
+async function refundFloat(
+  db: D1Like,
+  agentId: string,
+  amountKobo: number,
+  reference: string,
+  tenantId: string,
+): Promise<void> {
+  const wallet = await db
+    .prepare(`SELECT id, balance_kobo FROM agent_wallets WHERE agent_id = ? AND tenant_id = ? LIMIT 1`)
+    .bind(agentId, tenantId)
+    .first<{ id: string; balance_kobo: number }>();
+
+  if (!wallet) return; // Wallet missing — nothing to refund
+
+  const now = Math.floor(Date.now() / 1000);
+  const newBalance = wallet.balance_kobo + amountKobo;
+
+  await db
+    .prepare(`UPDATE agent_wallets SET balance_kobo = balance_kobo + ?, updated_at = ? WHERE id = ?`)
+    .bind(amountKobo, now, wallet.id)
+    .run();
+
+  const entryId = `fle_${crypto.randomUUID()}`;
+  await db
+    .prepare(
+      `INSERT INTO float_ledger
+         (id, wallet_id, amount_kobo, running_balance_kobo, transaction_type, reference, created_at)
+       VALUES (?, ?, ?, ?, 'cash_in', ?, ?)`,
+    )
+    .bind(entryId, wallet.id, amountKobo, newBalance, reference, now)
+    .run();
+}
+
+// ---------------------------------------------------------------------------
 // Airtime route
 // ---------------------------------------------------------------------------
 
@@ -195,26 +238,28 @@ airtimeRoutes.post('/topup', async (c) => {
   const network = body.network ?? carrierToTermiiNetwork(carrier);
 
   const db = c.env.DB as unknown as D1Like;
-
-  // Step 1: Pre-check float balance BEFORE calling Termii (prevents financial leakage).
-  // Termii must NEVER be called unless we know the agent has sufficient funds.
-  const wallet = await db
-    .prepare(`SELECT id, balance_kobo FROM agent_wallets WHERE agent_id = ? AND tenant_id = ? LIMIT 1`)
-    .bind(auth.userId, auth.tenantId)
-    .first<{ id: string; balance_kobo: number }>();
-
-  if (!wallet) {
-    return c.json({ error: 'wallet_not_found', message: 'Agent wallet not found' }, 404);
-  }
-  if (wallet.balance_kobo < amountKobo) {
-    return c.json({ error: 'insufficient_float', message: 'Insufficient agent float balance' }, 402);
-  }
-
-  // Step 2: Call Termii Airtime API (only after float confirmed) — amount in Naira
-  // T4: division is presentation-only; kobo remains the stored unit.
-  const amountNaira = amountKobo / 100;
   const termiiRef = `airtime_${crypto.randomUUID()}`;
 
+  // Step 1: Atomically deduct from float BEFORE calling Termii.
+  // This ensures we can NEVER deliver airtime without a successful ledger deduction.
+  // deductFromFloat uses a conditional UPDATE (WHERE balance_kobo >= amount) — concurrent
+  // races are handled atomically by D1/SQLite. Throws INSUFFICIENT_FLOAT or WALLET_NOT_FOUND.
+  try {
+    await deductFromFloat(db, auth.userId, amountKobo, termiiRef, auth.tenantId);
+  } catch (err) {
+    const e = err as Error & { code?: string };
+    if (e.code === 'INSUFFICIENT_FLOAT') {
+      return c.json({ error: 'insufficient_float', message: 'Insufficient agent float balance' }, 402);
+    }
+    if (e.code === 'WALLET_NOT_FOUND') {
+      return c.json({ error: 'wallet_not_found', message: 'Agent wallet not found' }, 404);
+    }
+    throw err;
+  }
+
+  // Step 2: Call Termii Airtime API. If this fails, we refund the deduction.
+  // T4: division is presentation-only; kobo remains the stored unit.
+  const amountNaira = amountKobo / 100;
   const termiiRes = await fetch(TERMII_AIRTIME_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -228,13 +273,17 @@ airtimeRoutes.post('/topup', async (c) => {
   });
 
   if (!termiiRes.ok) {
+    // Step 2a: Provider failed — refund the deduction as a compensating transaction.
+    const refundRef = `refund_${termiiRef}`;
+    await refundFloat(db, auth.userId, amountKobo, refundRef, auth.tenantId).catch(() => {
+      // Refund failure is logged server-side but not surfaced to the caller —
+      // the 502 response is still correct; a background reconciliation job handles recovery.
+      console.error(`[airtime] REFUND FAILED for ${termiiRef} — manual reconciliation needed`);
+    });
     const errBody = await termiiRes.json().catch(() => ({})) as Record<string, unknown>;
     const msg = typeof errBody['message'] === 'string' ? errBody['message'] : `Termii error ${termiiRes.status}`;
     return c.json({ error: 'provider_error', message: msg }, 502);
   }
-
-  // Step 3: Deduct from float ONLY after confirmed Termii success (atomic ledger record)
-  await deductFromFloat(db, auth.userId, amountKobo, termiiRef, auth.tenantId);
 
   // Increment rate limit counter (1 hour TTL)
   await c.env.RATE_LIMIT_KV.put(rateLimitKey, String(count + 1), { expirationTtl: 3600 });

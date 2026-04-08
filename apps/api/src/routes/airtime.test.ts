@@ -36,7 +36,7 @@ function makeApp(overrides?: {
 
   const defaultDB = {
     prepare: vi.fn().mockImplementation((sql: string) => ({
-      bind: (..._args: unknown[]) => ({
+      bind: (...args: unknown[]) => ({
         first: <T>() => {
           if (sql.includes('users') && sql.includes('kyc_tier')) {
             return Promise.resolve({ kyc_tier: kycTier } as T);
@@ -46,7 +46,17 @@ function makeApp(overrides?: {
           }
           return Promise.resolve(null as T);
         },
-        run: () => Promise.resolve({ success: true }),
+        run: () => {
+          // Simulate D1 conditional UPDATE meta.changes for atomic balance check.
+          // The conditional UPDATE is: WHERE id = ? AND balance_kobo >= ?
+          // args[0] = amountKobo, args[1] = now, args[2] = walletId, args[3] = amountThreshold
+          if (sql.includes('UPDATE agent_wallets') && sql.includes('balance_kobo >= ?')) {
+            const threshold = typeof args[3] === 'number' ? args[3] : 0;
+            const changes = walletBalance >= threshold ? 1 : 0;
+            return Promise.resolve({ success: changes > 0, meta: { changes } });
+          }
+          return Promise.resolve({ success: true, meta: { changes: 1 } });
+        },
         all: <T>() => Promise.resolve({ results: [] as T[] }),
       }),
     })),
