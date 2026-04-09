@@ -66,6 +66,10 @@
  *   book-club, professional-association, sports-club,
  *   campaign-office (L3 HITL), constituency-office (L3 HITL), ward-rep (L3 HITL)
  *
+ * Health Extended — 6 verticals (auth required, M9–M12) — mounted at /api/v1/:slug/*
+ *   dental-clinic (M9), sports-academy (M10), vet-clinic (M10),
+ *   community-health (M12, USSD-safe), elderly-care (M12), rehab-centre (M12, L3 HITL ALL AI)
+ *
  * Platform Invariants enforced:
  *   T3 — tenant_id on all DB queries (via auth middleware context)
  *   T4 — kobo integers enforced by repository layer
@@ -123,6 +127,7 @@ import { commerceP2Batch2Routes } from './routes/verticals-commerce-p2-batch2.js
 import { commerceP3Routes } from './routes/verticals-commerce-p3.js';
 import { transportExtendedRoutes } from './routes/verticals-transport-extended.js';
 import { civicExtendedRoutes } from './routes/verticals-civic-extended.js';
+import healthExtendedRoutes from './routes/verticals-health-extended.js';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -407,6 +412,20 @@ app.use('/api/v1/container-depot/*', authMiddleware);
 app.use('/api/v1/ferry/*', authMiddleware);
 app.use('/api/v1/nurtw/*', authMiddleware);
 app.route('/api/v1', transportExtendedRoutes);
+
+// ---------------------------------------------------------------------------
+// M9–M12: Health Extended — dental-clinic, sports-academy, vet-clinic,
+//          community-health, elderly-care, rehab-centre
+// P13: clinical/patient/animal/resident PII never leaves vertical boundary
+// L3 HITL mandatory for rehab-centre ALL AI; L3 HITL for patient-adjacent AI
+// ---------------------------------------------------------------------------
+app.use('/api/v1/dental-clinic/*', authMiddleware);
+app.use('/api/v1/sports-academy/*', authMiddleware);
+app.use('/api/v1/vet-clinic/*', authMiddleware);
+app.use('/api/v1/community-health/*', authMiddleware);
+app.use('/api/v1/elderly-care/*', authMiddleware);
+app.use('/api/v1/rehab-centre/*', authMiddleware);
+app.route('/api/v1', healthExtendedRoutes);
 
 // ---------------------------------------------------------------------------
 // M7c: Social routes — most require auth; /social/profile/:handle is public

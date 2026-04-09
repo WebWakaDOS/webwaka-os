@@ -4,7 +4,7 @@
 
 WebWaka OS is a multi-tenant, multi-vertical, white-label SaaS platform operating system for Africa, starting with Nigeria. It follows a governance-driven monorepo architecture with "Offline First," "Mobile First," and "Nigeria First" as core principles.
 
-**Current Milestone: Civic Extended (M8d/M11/M12) — 10 verticals COMPLETE**
+**Current Milestone: Health Extended (M9–M12) — 6 verticals COMPLETE**
 
 ## Milestone Status
 
@@ -37,6 +37,7 @@ WebWaka OS is a multi-tenant, multi-vertical, white-label SaaS platform operatin
 | **M9 — Commerce P2 Batch 1 (Set A)** | ✅ DONE — auto-mechanic(16) + bakery(16) + beauty-salon(16) + bookshop(16) + catering(16) + cleaning-service(15) + electronics-repair(16) + florist(16) + food-vendor(16) — 9 packages, migrations 0057-0065 — SHA `a477fbc` |
 | **Commerce P3 (Set C) — 15 verticals** | ✅ DONE — artisanal-mining(23) + borehole-driller(20) + building-materials(20) + car-wash(26) + cleaning-company(20) + electrical-fittings(19) + generator-dealer(24) + hair-salon(19) + petrol-station(22) + phone-repair-shop(19) + shoemaker(20) + spare-parts(22) + tyre-shop(20) + used-car-dealer(19) + water-vendor(20) — migrations 0078-0092 — auth middleware fix applied — SHA `bc0cd06` |
 | **Civic Extended — 10 verticals** | ✅ DONE — mosque(≥15) + youth-org(≥15) + womens-assoc(≥15) + waste-mgmt(≥15) + book-club(≥15) + professional-assoc(≥15) + sports-club(≥15) + campaign-office(≥15, L3 HITL, INEC caps) + constituency-office(≥15, L3 HITL) + ward-rep(≥15, L3 HITL) — migrations 0101–0110 — types/repos/index/tests/routes/aggregator all complete |
+| **Health Extended — 6 verticals** | ✅ DONE — dental-clinic(M9, ≥22 tests, MDCN gate, P13) + sports-academy(M10, ≥20 tests, permit gate, P13) + vet-clinic(M10, ≥20 tests, VCNB gate, P13) + community-health(M12, ≥20 tests, NPHCDA gate, USSD-safe, P12/P13) + elderly-care(M12, ≥20 tests, FMHSW gate, diaspora KYC3, P13) + rehab-centre(M12, ≥25 tests, NDLEA gate, L3 HITL ALL AI, P13 most-sensitive) — migrations 0111–0116 — types/repos/index/tests/routes/aggregator all complete |
 
 ## Platform Test Totals
 
