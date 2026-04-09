@@ -55,6 +55,12 @@
  *   GET  /pos/float/history               — paginated ledger (auth required, M7b)
  *   POST /pos/float/reverse               — reverse a ledger entry (auth required, M7b)
  *
+ * Commerce P3 — 15 verticals (auth required, M10/M11/M12) — mounted at /api/v1/:slug/*
+ *   artisanal-mining, borehole-driller, building-materials, car-wash,
+ *   cleaning-company, electrical-fittings, generator-dealer, hair-salon,
+ *   petrol-station, phone-repair-shop, shoemaker, spare-parts,
+ *   tyre-shop, used-car-dealer, water-vendor
+ *
  * Platform Invariants enforced:
  *   T3 — tenant_id on all DB queries (via auth middleware context)
  *   T4 — kobo integers enforced by repository layer
@@ -339,6 +345,29 @@ app.use('/tailor/*', authMiddleware);
 app.use('/travel-agent/*', authMiddleware);
 app.use('/welding-fabrication/*', authMiddleware);
 app.route('/', commerceP2Batch2Routes);
+
+// ---------------------------------------------------------------------------
+// Commerce P3 (M10/M11/M12): 15 verticals — auth required (T3, P9, P12, P13)
+// Verticals: artisanal-mining, borehole-driller, building-materials, car-wash,
+//            cleaning-company, electrical-fittings, generator-dealer, hair-salon,
+//            petrol-station, phone-repair-shop, shoemaker, spare-parts,
+//            tyre-shop, used-car-dealer, water-vendor
+// ---------------------------------------------------------------------------
+app.use('/api/v1/artisanal-mining/*', authMiddleware);
+app.use('/api/v1/borehole-driller/*', authMiddleware);
+app.use('/api/v1/building-materials/*', authMiddleware);
+app.use('/api/v1/car-wash/*', authMiddleware);
+app.use('/api/v1/cleaning-company/*', authMiddleware);
+app.use('/api/v1/electrical-fittings/*', authMiddleware);
+app.use('/api/v1/generator-dealer/*', authMiddleware);
+app.use('/api/v1/hair-salon/*', authMiddleware);
+app.use('/api/v1/petrol-station/*', authMiddleware);
+app.use('/api/v1/phone-repair-shop/*', authMiddleware);
+app.use('/api/v1/shoemaker/*', authMiddleware);
+app.use('/api/v1/spare-parts/*', authMiddleware);
+app.use('/api/v1/tyre-shop/*', authMiddleware);
+app.use('/api/v1/used-car-dealer/*', authMiddleware);
+app.use('/api/v1/water-vendor/*', authMiddleware);
 app.route('/api/v1', commerceP3Routes);
 
 // ---------------------------------------------------------------------------
