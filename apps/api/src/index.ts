@@ -99,6 +99,9 @@ import { auditLogMiddleware } from './middleware/audit-log.js';
 import { assertDMMasterKey } from '@webwaka/social';
 import { airtimeRoutes } from './routes/airtime.js';
 import { lowDataMiddleware } from './middleware/low-data.js';
+import { verticalsRoutes } from './routes/verticals.js';
+import { workspaceVerticalsRoutes } from './routes/workspace-verticals.js';
+import { superagentRoutes } from './routes/superagent.js';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -239,6 +242,26 @@ app.route('/community', communityRoutes);
 
 app.use('/airtime/*', authMiddleware);
 app.route('/airtime', airtimeRoutes);
+
+// ---------------------------------------------------------------------------
+// M8a: Verticals registry routes — public (no auth required)
+// ---------------------------------------------------------------------------
+
+app.route('/verticals', verticalsRoutes);
+
+// ---------------------------------------------------------------------------
+// M8a: Workspace verticals activation — auth required
+// ---------------------------------------------------------------------------
+
+app.use('/workspaces/*/verticals*', authMiddleware);
+app.route('/workspaces', workspaceVerticalsRoutes);
+
+// ---------------------------------------------------------------------------
+// SA-2.x: SuperAgent routes — auth required; /chat also runs aiConsentGate (P10/P12)
+// ---------------------------------------------------------------------------
+
+app.use('/superagent/*', authMiddleware);
+app.route('/superagent', superagentRoutes);
 
 // ---------------------------------------------------------------------------
 // M7c: Social routes — most require auth; /social/profile/:handle is public

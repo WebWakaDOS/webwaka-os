@@ -58,6 +58,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@webwaka/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai-abstraction
       '@webwaka/auth':
         specifier: workspace:*
         version: link:../../packages/auth
@@ -82,9 +85,15 @@ importers:
       '@webwaka/social':
         specifier: workspace:*
         version: link:../../packages/social
+      '@webwaka/superagent':
+        specifier: workspace:*
+        version: link:../../packages/superagent
       '@webwaka/types':
         specifier: workspace:*
         version: link:../../packages/types
+      '@webwaka/verticals':
+        specifier: workspace:*
+        version: link:../../packages/verticals
       hono:
         specifier: ^4.12.12
         version: 4.12.12
@@ -533,6 +542,9 @@ importers:
       '@webwaka/ai-adapters':
         specifier: workspace:*
         version: link:../ai-adapters
+      '@webwaka/auth':
+        specifier: workspace:*
+        version: link:../auth
       '@webwaka/entitlements':
         specifier: workspace:*
         version: link:../entitlements

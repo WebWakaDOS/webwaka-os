@@ -148,11 +148,14 @@ export async function getNdprConsentStatus(
   tenantId: string,
   db: D1Database,
 ): Promise<boolean> {
+  // Queries superagent_consents (migration 0046 — dedicated AI consent table).
+  // superagent_consents uses revoked_at IS NULL to indicate active consent.
   const row = await db
     .prepare(
-      `SELECT granted FROM consent_records
+      `SELECT granted FROM superagent_consents
        WHERE user_id = ? AND tenant_id = ? AND purpose = 'ai_processing'
-       ORDER BY created_at DESC
+         AND revoked_at IS NULL
+       ORDER BY granted_at DESC
        LIMIT 1`,
     )
     .bind(userId, tenantId)

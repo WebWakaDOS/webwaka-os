@@ -22,6 +22,7 @@
   "dependencies": {
     "@webwaka/ai": "workspace:*",
     "@webwaka/ai-adapters": "workspace:*",
+    "@webwaka/auth": "workspace:*",
     "@webwaka/types": "workspace:*",
     "@webwaka/entitlements": "workspace:*"
   },

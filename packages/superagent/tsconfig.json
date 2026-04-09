@@ -9,6 +9,7 @@
     "paths": {
       "@webwaka/ai":           ["../ai-abstraction/src/index.ts"],
       "@webwaka/ai-adapters":  ["../ai-adapters/src/index.ts"],
+      "@webwaka/auth":         ["../auth/src/index.ts"],
       "@webwaka/types":        ["../types/src/index.ts"],
       "@webwaka/entitlements": ["../entitlements/src/index.ts"]
     }

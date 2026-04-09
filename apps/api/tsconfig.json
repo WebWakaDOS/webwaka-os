@@ -18,7 +18,10 @@
       "@webwaka/contact":       ["../../packages/contact/src/index.ts"],
       "@webwaka/pos":           ["../../packages/pos/src/index.ts"],
       "@webwaka/community":     ["../../packages/community/src/index.ts"],
-      "@webwaka/social":        ["../../packages/social/src/index.ts"]
+      "@webwaka/social":        ["../../packages/social/src/index.ts"],
+      "@webwaka/verticals":     ["../../packages/verticals/src/index.ts"],
+      "@webwaka/superagent":    ["../../packages/superagent/src/index.ts"],
+      "@webwaka/ai":            ["../../packages/ai-abstraction/src/index.ts"]
     },
     "rootDir": "../..",
     "outDir": "dist",
