@@ -1,11 +1,12 @@
-# WebWaka OS — Master Continuation Prompt: Remaining 126 Verticals
+# WebWaka OS — Master Continuation Prompt: All 157 Vertical Execution Prompts
 
 **Document type:** Master agent execution driver  
-**Purpose:** Generate all remaining vertical execution prompt documents (Sets A–I), track progress, push each set to GitHub, and resume automatically after interruption  
+**Purpose:** Reference index for all 10 execution prompt document sets (Sets A–J); track progress and resume automatically after interruption  
 **Repo:** https://github.com/WebWakaDOS/webwaka-os  
 **Branch base:** `main`  
-**Total remaining verticals:** 126 across 9 output documents (Sets A–I)  
-**Tracking file:** `docs/execution-prompts/PROGRESS.md` (created and maintained by the executing agent)
+**Total verticals documented:** 157 unique slugs across 10 output documents (Sets A–J) — **ALL GAPS CLOSED ✅**  
+**Tracking file:** `docs/execution-prompts/PROGRESS.md`  
+**Gap analysis:** `docs/execution-prompts/UNIMPLEMENTED_TASKS.md`
 
 ---
 
@@ -27,7 +28,7 @@ You are an agent executing this master prompt. Follow every instruction exactly 
    - If the file exists on GitHub → confirmed done, skip it.  
    - If the file does NOT exist on GitHub → mark it `PENDING` and re-execute it.
 3. Begin executing from the first `PENDING` set.
-4. Continue until all 9 sets are `DONE`.
+4. Continue until all 10 sets (A–J) are `DONE`.
 
 ### GitHub verification command (use during resume)
 ```bash
@@ -50,8 +51,8 @@ Create this file immediately before processing Set A. Use this exact format:
 
 **Last updated:** [ISO timestamp]
 **Executing agent session:** [session identifier or "unknown"]
-**Total sets:** 9
-**Completed:** 0 / 9
+**Total sets:** 10
+**Completed:** 0 / 10
 
 ---
 
@@ -68,6 +69,7 @@ Create this file immediately before processing Set A. Use this exact format:
 | G | webwaka_verticals_education_agricultural_extended_execution_prompts.md | 13 | ⏳ PENDING | — |
 | H | webwaka_verticals_professional_creator_execution_prompts.md | 11 | ⏳ PENDING | — |
 | I | webwaka_verticals_financial_place_media_institutional_execution_prompts.md | 13 | ⏳ PENDING | — |
+| J | webwaka_verticals_set_j_missing_execution_prompts.md | 28 | ⏳ PENDING | — |
 
 ---
 
@@ -119,13 +121,27 @@ You are NOT allowed to generate content for any vertical without having read thi
 - `packages/auth/src/guards.ts` — KYC tier guards, auth middleware
 - `packages/superagent/` — WakaCU burn engine, AI rights enforcement
 
-### Existing execution prompt documents (read for style and depth calibration)
-- `docs/execution-prompts/webwaka_verticals_commerce_pos_execution_prompts.md`
-- `docs/execution-prompts/webwaka_verticals_civic_government_execution_prompts.md`
-- `docs/execution-prompts/webwaka_verticals_transport_logistics_execution_prompts.md`
-- `docs/execution-prompts/webwaka_verticals_health_education_execution_prompts.md`
-- `docs/execution-prompts/webwaka_verticals_creator_professional_financial_execution_prompts.md`
-- `docs/execution-prompts/webwaka_verticals_agricultural_place_execution_prompts.md`
+### All execution prompt documents (pre-M9 base + Sets A–J)
+
+**Pre-M9 base documents (34 verticals — already implemented):**
+- [`docs/execution-prompts/webwaka_verticals_commerce_pos_execution_prompts.md`](https://github.com/WebWakaDOS/webwaka-os/blob/main/docs/execution-prompts/webwaka_verticals_commerce_pos_execution_prompts.md)
+- [`docs/execution-prompts/webwaka_verticals_civic_government_execution_prompts.md`](https://github.com/WebWakaDOS/webwaka-os/blob/main/docs/execution-prompts/webwaka_verticals_civic_government_execution_prompts.md)
+- [`docs/execution-prompts/webwaka_verticals_transport_logistics_execution_prompts.md`](https://github.com/WebWakaDOS/webwaka-os/blob/main/docs/execution-prompts/webwaka_verticals_transport_logistics_execution_prompts.md)
+- [`docs/execution-prompts/webwaka_verticals_health_education_execution_prompts.md`](https://github.com/WebWakaDOS/webwaka-os/blob/main/docs/execution-prompts/webwaka_verticals_health_education_execution_prompts.md)
+- [`docs/execution-prompts/webwaka_verticals_creator_professional_financial_execution_prompts.md`](https://github.com/WebWakaDOS/webwaka-os/blob/main/docs/execution-prompts/webwaka_verticals_creator_professional_financial_execution_prompts.md)
+- [`docs/execution-prompts/webwaka_verticals_agricultural_place_execution_prompts.md`](https://github.com/WebWakaDOS/webwaka-os/blob/main/docs/execution-prompts/webwaka_verticals_agricultural_place_execution_prompts.md)
+
+**Sets A–J (123 verticals — prompts written, code implementation pending):**
+- **Set A** (9 verticals — Commerce P2 Batch 1): [`webwaka_verticals_commerce_p2_batch1_execution_prompts.md`](https://github.com/WebWakaDOS/webwaka-os/blob/main/docs/execution-prompts/webwaka_verticals_commerce_p2_batch1_execution_prompts.md)
+- **Set B** (12 verticals — Commerce P2 Batch 2): [`webwaka_verticals_commerce_p2_batch2_execution_prompts.md`](https://github.com/WebWakaDOS/webwaka-os/blob/main/docs/execution-prompts/webwaka_verticals_commerce_p2_batch2_execution_prompts.md)
+- **Set C** (15 verticals — Commerce P3 Tail): [`webwaka_verticals_commerce_p3_execution_prompts.md`](https://github.com/WebWakaDOS/webwaka-os/blob/main/docs/execution-prompts/webwaka_verticals_commerce_p3_execution_prompts.md)
+- **Set D** (8 verticals — Transport Extended): [`webwaka_verticals_transport_extended_execution_prompts.md`](https://github.com/WebWakaDOS/webwaka-os/blob/main/docs/execution-prompts/webwaka_verticals_transport_extended_execution_prompts.md)
+- **Set E** (10 verticals — Civic Extended): [`webwaka_verticals_civic_extended_execution_prompts.md`](https://github.com/WebWakaDOS/webwaka-os/blob/main/docs/execution-prompts/webwaka_verticals_civic_extended_execution_prompts.md)
+- **Set F** (6 verticals — Health Extended): [`webwaka_verticals_health_extended_execution_prompts.md`](https://github.com/WebWakaDOS/webwaka-os/blob/main/docs/execution-prompts/webwaka_verticals_health_extended_execution_prompts.md)
+- **Set G** (13 verticals — Education + Agricultural Extended): [`webwaka_verticals_education_agricultural_extended_execution_prompts.md`](https://github.com/WebWakaDOS/webwaka-os/blob/main/docs/execution-prompts/webwaka_verticals_education_agricultural_extended_execution_prompts.md)
+- **Set H** (11 verticals — Professional + Creator Extended): [`webwaka_verticals_professional_creator_execution_prompts.md`](https://github.com/WebWakaDOS/webwaka-os/blob/main/docs/execution-prompts/webwaka_verticals_professional_creator_execution_prompts.md)
+- **Set I** (13 verticals — Financial + Place + Media + Institutional): [`webwaka_verticals_financial_place_media_institutional_execution_prompts.md`](https://github.com/WebWakaDOS/webwaka-os/blob/main/docs/execution-prompts/webwaka_verticals_financial_place_media_institutional_execution_prompts.md)
+- **Set J** (28 verticals — Gap Fill: all previously missing slugs): [`webwaka_verticals_set_j_missing_execution_prompts.md`](https://github.com/WebWakaDOS/webwaka-os/blob/main/docs/execution-prompts/webwaka_verticals_set_j_missing_execution_prompts.md)
 
 ---
 
@@ -337,7 +353,7 @@ Then include one task block per vertical, using the `## THE TASK BLOCK TEMPLATE`
 
 ---
 
-## THE 9 SETS — COMPLETE VERTICAL ASSIGNMENTS
+## THE 10 SETS — COMPLETE VERTICAL ASSIGNMENTS (Sets A–J)
 
 ---
 
@@ -601,6 +617,68 @@ Then include one task block per vertical, using the `## THE TASK BLOCK TEMPLATE`
 
 ---
 
+### SET J — Gap Fill: All Previously Missing Verticals (28 verticals)
+**Output file:** [`docs/execution-prompts/webwaka_verticals_set_j_missing_execution_prompts.md`](https://github.com/WebWakaDOS/webwaka-os/blob/main/docs/execution-prompts/webwaka_verticals_set_j_missing_execution_prompts.md)  
+**Milestone range:** M9–M12  
+**Task ID prefix:** V-COMM-J / V-HLT-J / V-TRN-J / V-PRO-J / V-CIV-J / V-EDU-J  
+**Status:** ✅ DONE — commit `4aff35c` (2026-04-09)
+
+**Identified by:** Full gap analysis against `infra/db/seeds/0004_verticals-master.csv` — 28 slugs that existed in the seed but had no prompt in Sets A–I.
+
+**P2 verticals (11 — M9–M10):**
+
+| Task ID | Slug | Display Name | Priority | Milestone | Key Regulatory Body |
+|---------|------|--------------|----------|-----------|-------------------|
+| V-COMM-J1 | `hotel` | Hotel / Guesthouse / Shortlet | P2 | M9 | NIHOTOUR, state tourism board |
+| V-COMM-J2 | `furniture-maker` | Furniture Maker / Wood Workshop | P2 | M10 | SON (timber), LCCI |
+| V-COMM-J3 | `gas-distributor` | Gas / LPG Distributor | P2 | M10 | DPR/NUPRC, LPGASSOC |
+| V-COMM-J4 | `generator-repair` | Generator Repair / HVAC Technician | P2 | M10 | COREN, SON |
+| V-COMM-J5 | `handyman` | Plumber / Electrician / Handyman | P2 | M9 | COREN, state artisan card |
+| V-COMM-J6 | `it-support` | IT Support / Computer Repair | P2 | M10 | NCC (awareness), CAC |
+| V-COMM-J7 | `laundry` | Laundry / Dry Cleaner | P2 | M10 | CAC, NAFDAC (dry cleaning chemicals) |
+| V-COMM-J8 | `tailor` | Tailoring / Fashion Designer (P2 general) | P2 | M10 | CAC, state trade union |
+| V-COMM-J9 | `logistics-delivery` | Logistics & Delivery (Last-Mile) | P2 | M9 | NIPOST, CAC |
+| V-COMM-J10 | `pharmacy-chain` | Pharmacy Chain / Drugstore | P2 | M9 | PCN (multi-branch), NAFDAC |
+| V-HLT-J1 | `optician` | Optician / Eye Clinic | P2 | M10 | OONL, MDCN (ophthalmologist) |
+
+**P3 verticals (17 — M11–M12):**
+
+| Task ID | Slug | Display Name | Priority | Milestone | Key Regulatory Body |
+|---------|------|--------------|----------|-----------|-------------------|
+| V-COMM-J11 | `printing-press` | Printing Press / Design Studio | P3 | M11 | APCON, NAN, CAC |
+| V-COMM-J12 | `laundry-service` | Laundromat / Laundry Service | P3 | M11 | CAC |
+| V-COMM-J13 | `iron-steel` | Iron & Steel / Roofing Merchant | P3 | M12 | SON (steel grade), COREN |
+| V-COMM-J14 | `internet-cafe` | Internet Café / Business Centre | P3 | M12 | NCC (registration) |
+| V-COMM-J15 | `motorcycle-accessories` | Motorcycle Accessories Shop | P3 | M12 | SON, LCCI |
+| V-COMM-J16 | `paints-distributor` | Paints & Coatings Distributor | P3 | M12 | SON (quality cert), brand authorisation |
+| V-COMM-J17 | `plumbing-supplies` | Plumbing Supplies Dealer | P3 | M12 | SON (pipe standards), CAC |
+| V-CIV-J1 | `ministry-mission` | Ministry / Apostolic Mission / Outreach | P3 | M12 | IT (CAMA 2020), CAC |
+| V-CIV-J2 | `market-association` | Market Leaders / Traders Association | P3 | M12 | CAC (cooperative), LGA |
+| V-CIV-J3 | `motivational-speaker` | Motivational Speaker / Training Firm | P3 | M12 | NITAD, CIPM (awareness) |
+| V-EDU-J1 | `govt-school` | Government School Management | P3 | M12 | SUBEB, UBEC, LGA Education Secretary |
+| V-EDU-J2 | `nursery-school` | Nursery / Crèche (SUBEB-regulated) | P3 | M12 | SUBEB, state MOE, NERDC |
+| V-HLT-J2 | `gym-fitness` | Gym / Fitness Centre (P3 fitness-first) | P3 | M11 | FAFA, CAC |
+| V-HLT-J3 | `orphanage` | Orphanage / Child Care NGO | P3 | M12 | FMWASD, state Social Development |
+| V-COMM-J18 | `oil-gas-services` | Oil & Gas Service Provider | P3 | M12 | NCDMB, DPR/NUPRC, NAPIMS |
+| V-PRO-J1 | `land-surveyor` | Land Surveyor / Registry Agent | P3 | M11 | SURCON, NIS |
+| V-TRN-J1 | `okada-keke` | Okada / Keke Rider Co-op | P3 | M11 | NURTW, OAAN, FRSC |
+
+**Special invariants for Set J:**
+- `gas-distributor`: cylinder sizes stored as integer grams (never float kg)
+- `optician`: prescription dioptre powers as integer ×100 (sphere −2.50 = −250)
+- `gym-fitness`: body weight as integer grams; body fat as integer ×10
+- `oil-gas-services`: contract values use 64-bit INTEGER kobo (can reach billions) — NEVER REAL column
+- `iron-steel`, `plumbing-supplies`: dimensions as integer mm/cm (never float)
+- `laundry-service`, `hotel`: double-booking conflict check required at route level
+- `orphanage`, `nursery-school`: absolute L3 HITL — no child data to AI under any circumstances
+- `optician`: L2 max for scheduling; L3 HITL for any clinical output
+- `govt-school`: L2 max for AI; student_ref_id always opaque
+- `land-surveyor`: L2 max AI; L3 HITL for any land-identity output
+
+**Domain focus for Set J:** Fills every remaining gap in the seed — hospitality, trades, logistics, specialist health, specialist education, civic bodies, and industrial commerce. Enforces the same 5-section template and platform invariants as all other sets.
+
+---
+
 ## EXECUTION WORKFLOW (PER SET)
 
 Follow this exact sequence for each set, without skipping any step:
@@ -663,16 +741,17 @@ Do not pause. Do not ask for confirmation. Proceed to Step 1 for the next set.
 
 ## COMPLETION CRITERIA
 
-All 9 sets are complete when:
-1. All 9 output files exist in `docs/execution-prompts/` on `main` branch of `WebWakaDOS/webwaka-os`
-2. `PROGRESS.md` shows `Completed: 9 / 9` with all sets marked `✅ DONE`
+All 10 sets are complete when:
+1. All 10 output files exist in `docs/execution-prompts/` on `main` branch of `WebWakaDOS/webwaka-os`
+2. `PROGRESS.md` shows `Completed: 10 / 10` with all sets marked `✅ DONE`
 3. Every output document contains the correct number of task blocks matching the set's vertical count
 4. All task blocks follow the 5-section template without omissions
-5. All 126 remaining verticals are covered across the 9 documents
+5. All 157 unique vertical slugs are covered across the 10 documents
 
-**Total task blocks to produce:** 97 (A:9 + B:12 + C:15 + D:8 + E:10 + F:6 + G:13 + H:11 + I:13)  
-**Total output documents to produce:** 9  
-**Total GitHub commits to make:** 18 (1 content commit + 1 progress commit per set) + 1 initial PROGRESS.md commit = 19 commits minimum
+**Total task blocks documented:** 154 (A:9 + B:12 + C:15 + D:8 + E:10 + F:6 + G:13 + H:11 + I:13 + J:28) + 34 pre-M9 = 188 total  
+**Total output documents:** 10 (Sets A–J) + 6 pre-M9 base documents = 16 prompt files total  
+**Total unique slugs in seed CSV:** 157 (160 rows; 3 exact duplicate slugs)  
+**Status as of 2026-04-09:** All 10 sets ✅ DONE — see `PROGRESS.md` for commit SHAs
 
 ---
 
@@ -711,5 +790,6 @@ Always reset the remote URL after pushing (to avoid storing the token in git con
 ---
 
 *Generated by: Replit Agent — WebWaka OS M8 Planning Phase*  
-*Date: 2026-04-09*  
-*Source: `infra/db/seeds/0004_verticals-master.csv` (160 verticals), cross-referenced against all 7 existing execution prompt documents (34 verticals covered, 126 remaining)*
+*Last updated: 2026-04-09 — Set J authored, all 157 gaps closed*  
+*Source: `infra/db/seeds/0004_verticals-master.csv` (160 rows, 157 unique slugs)*  
+*Coverage: 16 total prompt files — 6 pre-M9 base (34 verticals implemented) + 10 sets A–J (123 verticals prompt-documented, pending code implementation)*
