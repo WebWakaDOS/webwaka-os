@@ -1,10 +1,10 @@
 # WebWaka OS — Unimplemented Vertical Tasks
 
-**Generated:** 2026-04-09 (revised after full gap analysis)
+**Generated:** 2026-04-09 (revised after full gap analysis + Set J authored)
 **Source of truth:** `infra/db/seeds/0004_verticals-master.csv` — 157 unique slugs (160 rows; 3 exact duplicates)
-**Total covered by any prompt:** 129 slugs
-**Prompt documented, not yet implemented:** 126 task blocks across Sets A–I
-**NO PROMPT EXISTS YET:** 28 slugs — listed in Section 1 below
+**Total covered by any prompt:** 157 slugs — **ALL GAPS CLOSED ✅**
+**Prompt documented, not yet implemented in code:** 154 task blocks across Sets A–J
+**NO PROMPT EXISTS YET:** 0 — all gaps filled by Set J (`webwaka_verticals_set_j_missing_execution_prompts.md`)
 **Next available migration number:** `0057`
 **Base prompt directory:** `docs/execution-prompts/`
 
@@ -27,10 +27,16 @@
 
 ---
 
-## Section 1 — MISSING: No Execution Prompt Written Yet (28 verticals)
+## Section 1 — ✅ RESOLVED: Set J Execution Prompts Written (2026-04-09)
 
-These 28 slugs exist in the seed CSV and are NOT covered by any existing execution prompt document.
-Execution prompts must be written for these before agent implementation can begin.
+All 28 previously missing slugs now have execution prompts in:
+**`docs/execution-prompts/webwaka_verticals_set_j_missing_execution_prompts.md`** (commit `4aff35c`)
+
+These prompts are ready for agent implementation. The tables below are preserved for reference.
+
+---
+
+### Originally Missing — Now Covered by Set J
 
 ### P2 — High Priority (should be addressed first)
 
@@ -269,10 +275,10 @@ The following 126 verticals have execution prompts written and are ready for age
 
 | Category | Count | Status |
 |----------|-------|--------|
-| No prompt written yet (Section 1) | **28** | Prompts must be authored before implementation |
+| ✅ Set J prompts authored (Section 1) | **28** | Ready for agent execution — commit `4aff35c` |
 | Prompt written, code not implemented (Section 2 — Sets A–I) | **126** | Ready for agent execution |
 | Already implemented (pre-M9, P1 originals + samples) | **34** | Done |
 | CSV duplicate rows (same slug, counted once) | 3 | `driving-school`, `fashion-brand`, `supermarket` |
-| **Total unique slugs in seed** | **157** | |
+| **Total unique slugs in seed** | **157** | **All 157 now have execution prompts** |
 
-> **Action required:** A Set J execution prompt document must be created covering the 28 missing slugs before they can be assigned to implementing agents.
+> **All gaps resolved.** Every unique vertical slug in `0004_verticals-master.csv` now has a full execution prompt. The 154 unimplemented task blocks (Sets A–J) are ready for agent assignment.
