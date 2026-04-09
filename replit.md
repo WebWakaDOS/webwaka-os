@@ -34,6 +34,7 @@ WebWaka OS is a multi-tenant, multi-vertical, white-label SaaS platform operatin
 | **M8d — Civic Expansion** | ✅ DONE — church(36) + ngo(29) + cooperative(28) + mosque(14) + youth-org(15) + womens-assoc(10) + ministry(14) — SHA `b4e0726` |
 | **M8e — P1 Commerce + Creator** | ✅ DONE — creator(35) + sole-trader(23) + market(19) + professional(22) + school(21) + clinic(22) + tech-hub(19) + restaurant(20) — SHA `b4e0726` |
 | **All 17 P1-Original Verticals** | ✅ COMPLETE — 530 new tests across 21 packages, 3 API route bundles, migration 0056 |
+| **M9 — Commerce P2 Batch 1 (Set A)** | ✅ DONE — auto-mechanic(16) + bakery(16) + beauty-salon(16) + bookshop(16) + catering(16) + cleaning-service(15) + electronics-repair(16) + florist(16) + food-vendor(16) — 9 packages, migrations 0057-0065 — SHA `a477fbc` |
 
 ## Platform Test Totals
 
@@ -43,6 +44,7 @@ WebWaka OS is a multi-tenant, multi-vertical, white-label SaaS platform operatin
 | M8 Planning (packages/verticals) | 746 | +27 |
 | M8b (politician + pos-business) | ~800 | +54 |
 | M8c+M8d+M8e (21 vertical packages) | **~1330** | +530 |
+| M9 Commerce P2 Batch 1 (9 packages) | **~1473** | +143 |
 
 ## Tech Stack (Target Production)
 
