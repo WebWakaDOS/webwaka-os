@@ -108,6 +108,7 @@ import { transportRoutes } from './routes/transport.js';
 import { civicRoutes } from './routes/civic.js';
 import { commerceRoutes } from './routes/commerce.js';
 import { commerceP2Routes } from './routes/verticals-commerce-p2.js';
+import { commerceP2Batch2Routes } from './routes/verticals-commerce-p2-batch2.js';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -320,6 +321,23 @@ app.use('/electronics-repair/*', authMiddleware);
 app.use('/florist/*', authMiddleware);
 app.use('/food-vendor/*', authMiddleware);
 app.route('/', commerceP2Routes);
+
+// ---------------------------------------------------------------------------
+// Commerce P2 Batch 2 (M9/M10): 12 verticals
+// ---------------------------------------------------------------------------
+app.use('/construction/*', authMiddleware);
+app.use('/fuel-station/*', authMiddleware);
+app.use('/print-shop/*', authMiddleware);
+app.use('/property-developer/*', authMiddleware);
+app.use('/real-estate-agency/*', authMiddleware);
+app.use('/restaurant-chain/*', authMiddleware);
+app.use('/security-company/*', authMiddleware);
+app.use('/solar-installer/*', authMiddleware);
+app.use('/spa/*', authMiddleware);
+app.use('/tailor/*', authMiddleware);
+app.use('/travel-agent/*', authMiddleware);
+app.use('/welding-fabrication/*', authMiddleware);
+app.route('/', commerceP2Batch2Routes);
 
 // ---------------------------------------------------------------------------
 // M7c: Social routes — most require auth; /social/profile/:handle is public

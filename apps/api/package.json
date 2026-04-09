@@ -64,7 +64,19 @@
     "@webwaka/verticals-cleaning-service": "workspace:*",
     "@webwaka/verticals-electronics-repair": "workspace:*",
     "@webwaka/verticals-florist": "workspace:*",
-    "@webwaka/verticals-food-vendor": "workspace:*"
+    "@webwaka/verticals-food-vendor": "workspace:*",
+    "@webwaka/verticals-construction": "workspace:*",
+    "@webwaka/verticals-fuel-station": "workspace:*",
+    "@webwaka/verticals-print-shop": "workspace:*",
+    "@webwaka/verticals-property-developer": "workspace:*",
+    "@webwaka/verticals-real-estate-agency": "workspace:*",
+    "@webwaka/verticals-restaurant-chain": "workspace:*",
+    "@webwaka/verticals-security-company": "workspace:*",
+    "@webwaka/verticals-solar-installer": "workspace:*",
+    "@webwaka/verticals-spa": "workspace:*",
+    "@webwaka/verticals-tailor": "workspace:*",
+    "@webwaka/verticals-travel-agent": "workspace:*",
+    "@webwaka/verticals-welding-fabrication": "workspace:*"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241205.0",
