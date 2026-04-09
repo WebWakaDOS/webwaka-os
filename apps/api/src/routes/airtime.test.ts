@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /**
  * Airtime top-up route tests (M7e)
  * Platform Invariants: P2 (Nigeria First), P9/T4 (integer kobo), T3 (tenant), R9 (rate limit)

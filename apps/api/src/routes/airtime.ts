@@ -235,7 +235,7 @@ airtimeRoutes.post('/topup', async (c) => {
     return c.json({ error: 'invalid_amount', message: (err as Error).message }, 422);
   }
 
-  const amountKobo = body.amount_kobo as number;
+  const amountKobo = body.amount_kobo;
   const phone = phoneValidation.normalized;
   const carrier = phoneValidation.carrier ?? 'unknown';
   const network = body.network ?? carrierToTermiiNetwork(carrier);

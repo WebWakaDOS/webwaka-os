@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 /**
  * Float reconciliation tests (M7e, additional)
  * Platform Invariants P9 (integer kobo), T3 (tenant isolation), T4 (kobo-only)
