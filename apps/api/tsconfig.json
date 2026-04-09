@@ -20,8 +20,11 @@
       "@webwaka/community":     ["../../packages/community/src/index.ts"],
       "@webwaka/social":        ["../../packages/social/src/index.ts"],
       "@webwaka/verticals":     ["../../packages/verticals/src/index.ts"],
-      "@webwaka/superagent":    ["../../packages/superagent/src/index.ts"],
-      "@webwaka/ai":            ["../../packages/ai-abstraction/src/index.ts"]
+      "@webwaka/superagent":              ["../../packages/superagent/src/index.ts"],
+      "@webwaka/ai":                      ["../../packages/ai-abstraction/src/index.ts"],
+      "@webwaka/ai-adapters":             ["../../packages/ai-adapters/src/index.ts"],
+      "@webwaka/verticals-politician":    ["../../packages/verticals-politician/src/index.ts"],
+      "@webwaka/verticals-pos-business":  ["../../packages/verticals-pos-business/src/index.ts"]
     },
     "rootDir": "../..",
     "outDir": "dist",

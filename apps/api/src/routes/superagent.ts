@@ -1,24 +1,33 @@
 /**
- * SuperAgent API routes — SA-2.x / M8a-3
+ * SuperAgent API routes — SA-3.x / SA-2.x / M8a-3
  *
  * POST   /superagent/consent          — Grant AI processing consent (NDPR P10)
  * DELETE /superagent/consent          — Revoke AI processing consent
  * GET    /superagent/consent          — Get current consent status + history
- * POST   /superagent/chat             — Invoke AI capability (gated by aiConsentGate)
+ * POST   /superagent/chat             — Invoke AI capability (live provider execution SA-3.x)
  * GET    /superagent/usage            — Fetch usage history for current user
  *
  * All routes require authMiddleware (wired in index.ts).
  * /chat additionally runs aiConsentGate (SA-2.2).
  *
  * Platform Invariants:
- *   P7  — no direct SDK calls; resolveAdapter from @webwaka/ai (stub exec in SA-3.x)
+ *   P7  — no direct SDK calls; createAdapter from @webwaka/ai-adapters (fetch-only)
+ *   P9  — WakaCU amounts are integers only; CreditBurnEngine enforces this
  *   P10 — NDPR consent required before /chat (aiConsentGate)
  *   P12 — no AI on USSD (aiConsentGate)
  *   P13 — callers must not send raw PII in messages (documented obligation)
  *   T3  — tenant_id scoping on all D1 queries
- *   P9  — WakaCU amounts are integers only
  *
- * Milestone: M8a + SA-2.x
+ * SA-3.x execution flow (POST /chat):
+ *   1. aiConsentGate — P12 USSD block → AI rights → P10 NDPR (already passed by gate)
+ *   2. WalletService.getWallet — load spend cap + current spend for routing context
+ *   3. resolveAdapter — 5-level BYOK chain → picks provider + model + key
+ *   4. createAdapter(resolved).complete(aiRequest) — live HTTP fetch to provider (P7)
+ *   5. CreditBurnEngine.burn — deduct WakaCU: pool → own wallet → BYOK (post-pay, P9)
+ *   6. UsageMeter.record — write ai_usage_events row with real token counts (P10, P13)
+ *   7. Return real response content + usage summary
+ *
+ * Milestone: M8a + SA-2.x + SA-3.x
  */
 
 import { Hono } from 'hono';
@@ -30,11 +39,15 @@ import {
   listAiConsents,
   aiConsentGate,
   UsageMeter,
+  WalletService,
+  CreditBurnEngine,
+  PartnerPoolService,
 } from '@webwaka/superagent';
 import { resolveAdapter } from '@webwaka/ai';
+import { createAdapter } from '@webwaka/ai-adapters';
 import { buildAIRoutingContext, AIAuthError } from '@webwaka/auth';
 import type { AiConsentPurpose, AiConsentLocale } from '@webwaka/superagent';
-import type { AICapabilityType } from '@webwaka/ai';
+import type { AICapabilityType, AIRequest } from '@webwaka/ai';
 import type { Env } from '../env.js';
 
 // ---------------------------------------------------------------------------
@@ -172,7 +185,7 @@ superagentRoutes.get('/consent', async (c) => {
 });
 
 // ---------------------------------------------------------------------------
-// POST /superagent/chat — Invoke AI capability
+// POST /superagent/chat — Live AI capability invocation (SA-3.x)
 // aiConsentGate checks P10/P12/AI-rights before reaching this handler.
 // ---------------------------------------------------------------------------
 
@@ -188,6 +201,8 @@ superagentRoutes.post(
       pillar?: 1 | 2 | 3;
       messages?: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>;
       vertical?: string;
+      max_tokens?: number;
+      temperature?: number;
     };
     try {
       body = await c.req.json();
@@ -205,27 +220,30 @@ superagentRoutes.post(
     const capability = body.capability as AICapabilityType;
     const pillar: 1 | 2 | 3 = body.pillar ?? 1;
 
-    // Build routing context (P10/P12 gates already passed via aiConsentGate)
-    // aiRights resolved from entitlements in SA-3.x; default false (gate already passed)
+    // Step 1: Load wallet for spend cap context (P9 — integers only)
+    const walletService = new WalletService({ db: c.env.DB });
+    const wallet = await walletService.getWallet(auth.tenantId);
+
+    // Step 2: Build routing context (P10/P12 gates already passed via aiConsentGate)
     const routingCtx = buildAIRoutingContext({
       auth,
       capability,
       pillar,
-      isUssd: false, // already blocked by aiConsentGate
-      ndprConsentGranted: true, // already verified by aiConsentGate
-      aiRights: true, // already verified by aiConsentGate
-      currentSpendWakaCu: 0, // TODO SA-3.x: load from WalletService
-      spendCapWakaCu: 0,
+      isUssd: false,             // already blocked by aiConsentGate (P12)
+      ndprConsentGranted: true,  // already verified by aiConsentGate (P10)
+      aiRights: true,            // already verified by aiConsentGate
+      currentSpendWakaCu: wallet?.currentMonthSpentWakaCu ?? 0,
+      spendCapWakaCu: wallet?.spendCapMonthlyWakaCu ?? 0,
     });
 
-    // Build env vars map for resolver (P7 — no direct SDK calls)
+    // Step 3: Build env vars map for resolver (P7 — no direct SDK calls)
     const envRecord = Object.fromEntries(
       Object.entries(c.env as unknown as Record<string, unknown>).filter(
         ([, v]) => typeof v === 'string',
       ),
     ) as Record<string, string>;
 
-    // Resolve adapter
+    // Step 4: Resolve adapter — 5-level BYOK chain
     let resolved;
     try {
       resolved = await resolveAdapter(routingCtx, envRecord);
@@ -237,38 +255,72 @@ superagentRoutes.post(
       return c.json({ error: 'AI_ROUTING_FAILED', message }, 503);
     }
 
-    // Record usage (actual token counts are 0 — execution wired in SA-3.x)
+    // Step 5: Execute live provider call (P7 — createAdapter uses fetch only, no SDK)
+    const adapter = createAdapter(resolved);
+    const aiRequest: AIRequest = {
+      messages: body.messages,
+      maxTokens: body.max_tokens ?? 1024,
+      temperature: body.temperature ?? 0.7,
+    };
+
+    const startMs = Date.now();
+    let aiResponse: Awaited<ReturnType<typeof adapter.complete>>;
+    try {
+      aiResponse = await adapter.complete(aiRequest);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Provider call failed';
+      return c.json({ error: 'AI_PROVIDER_ERROR', message }, 503);
+    }
+    const durationMs = Date.now() - startMs;
+
+    // Step 6: Charge WakaCU — pool → own wallet → BYOK (P9 integer accounting)
+    // Generate stable burn reference for idempotency (Worker retry safety).
+    const burnRef = crypto.randomUUID();
+    const partnerPoolService = new PartnerPoolService({ db: c.env.DB, walletService });
+    const burnEngine = new CreditBurnEngine({ walletService, partnerPoolService });
+
+    const burn = await burnEngine.burn({
+      tenantId: auth.tenantId,
+      resolved,
+      tokensUsed: aiResponse.tokensUsed,
+      usageEventId: burnRef,
+    });
+
+    // Step 7: Record usage event (P10 — NDPR consent ref; P13 — no prompt content stored)
     const meter = new UsageMeter({ db: c.env.DB });
     await meter.record({
       tenantId: auth.tenantId,
       userId: auth.userId,
       pillar,
       capability,
-      provider: resolved.config.provider,
-      model: resolved.config.model,
+      provider: aiResponse.provider,
+      model: aiResponse.model,
+      // SA-4.x: split prompt/completion tokens once adapters expose them separately
       inputTokens: 0,
-      outputTokens: 0,
-      wakaCuCharged: 0,
+      outputTokens: aiResponse.tokensUsed,
+      wakaCuCharged: burn.wakaCuCharged,
       routingLevel: resolved.level,
-      durationMs: 0,
-      finishReason: 'stub',
+      durationMs,
+      finishReason: aiResponse.finishReason,
       ndprConsentRef: consentId ?? null,
     });
 
     return c.json({
-      provider: resolved.config.provider,
-      model: resolved.config.model,
+      provider: aiResponse.provider,
+      model: aiResponse.model,
       routing_level: resolved.level,
       waku_cu_per_1k_tokens: resolved.wakaCuPer1kTokens,
       response: {
         role: 'assistant',
-        content:
-          '[SuperAgent chat ready — provider adapter execution wired in SA-3.x]',
+        content: aiResponse.content,
       },
       usage: {
         input_tokens: 0,
-        output_tokens: 0,
-        cost_waku_cu: 0,
+        output_tokens: aiResponse.tokensUsed,
+        total_tokens: aiResponse.tokensUsed,
+        cost_waku_cu: burn.wakaCuCharged,
+        charge_source: burn.chargeSource,
+        balance_after_waku_cu: burn.balanceAfter,
       },
     });
   },

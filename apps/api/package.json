@@ -31,7 +31,10 @@
     "@webwaka/social": "workspace:*",
     "@webwaka/verticals": "workspace:*",
     "@webwaka/superagent": "workspace:*",
-    "@webwaka/ai": "workspace:*"
+    "@webwaka/ai": "workspace:*",
+    "@webwaka/ai-adapters": "workspace:*",
+    "@webwaka/verticals-politician": "workspace:*",
+    "@webwaka/verticals-pos-business": "workspace:*"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241205.0",

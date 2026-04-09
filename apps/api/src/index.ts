@@ -102,6 +102,8 @@ import { lowDataMiddleware } from './middleware/low-data.js';
 import { verticalsRoutes } from './routes/verticals.js';
 import { workspaceVerticalsRoutes } from './routes/workspace-verticals.js';
 import { superagentRoutes } from './routes/superagent.js';
+import { politicianRoutes } from './routes/politician.js';
+import { posBusinessRoutes } from './routes/pos-business.js';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -257,11 +259,25 @@ app.use('/workspaces/*/verticals*', authMiddleware);
 app.route('/workspaces', workspaceVerticalsRoutes);
 
 // ---------------------------------------------------------------------------
-// SA-2.x: SuperAgent routes — auth required; /chat also runs aiConsentGate (P10/P12)
+// SA-2.x / SA-3.x: SuperAgent routes — auth required; /chat also runs aiConsentGate (P10/P12)
 // ---------------------------------------------------------------------------
 
 app.use('/superagent/*', authMiddleware);
 app.route('/superagent', superagentRoutes);
+
+// ---------------------------------------------------------------------------
+// M8b: Politician vertical routes — auth required (T3 isolation via tenantId)
+// ---------------------------------------------------------------------------
+
+app.use('/politician/*', authMiddleware);
+app.route('/politician', politicianRoutes);
+
+// ---------------------------------------------------------------------------
+// M8b: POS Business vertical routes — auth required (T3 isolation via tenantId)
+// ---------------------------------------------------------------------------
+
+app.use('/pos-business/*', authMiddleware);
+app.route('/pos-business', posBusinessRoutes);
 
 // ---------------------------------------------------------------------------
 // M7c: Social routes — most require auth; /social/profile/:handle is public
