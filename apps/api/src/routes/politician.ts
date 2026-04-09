@@ -221,8 +221,12 @@ politicianRoutes.post('/:id/transition', async (c) => {
 // ---------------------------------------------------------------------------
 
 politicianRoutes.delete('/:id', async (c) => {
-  const auth = c.get('auth') as { userId: string; tenantId: string };
+  const auth = c.get('auth') as { userId: string; tenantId: string; role?: string };
   const { id } = c.req.param();
+
+  if (auth.role !== 'admin' && auth.role !== 'super_admin') {
+    return c.json({ error: 'Admin role required' }, 403);
+  }
 
   const repo = new PoliticianRepository(c.env.DB);
   const deleted = await repo.delete(id, auth.tenantId);

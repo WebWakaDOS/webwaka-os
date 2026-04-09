@@ -10,20 +10,29 @@
 
 ---
 
+## ⚠️ CRITICAL FOR IMPLEMENTING AGENTS — READ BEFORE WRITING ANY MIGRATION
+
+> **Next available migration number: `0057`**  
+> Last used: `0056_missing_vertical_tables.sql`  
+> Before creating any migration file, run: `ls infra/db/migrations/ | sort | tail -5`  
+> Always use the next sequential number. Never skip or reuse numbers.
+
+---
+
 ## Pending Issues
 
-| # | Issue | Severity | Location |
-|---|-------|----------|----------|
-| 1 | `DELETE /politician/:id` has no admin role guard — any authenticated tenant user can hard-delete | **High** | `apps/api/src/routes/politician.ts` L223 |
-| 2 | 28 verticals seeded in the CSV have no execution prompt in any document — see Section 1 | **High** | `infra/db/seeds/0004_verticals-master.csv` |
-| 3 | PROGRESS.md table still shows Sets F–I as `⏳ PENDING`; SHAs and completion log entries missing | Medium | `docs/execution-prompts/PROGRESS.md` |
-| 4 | 2 moderate Dependabot vulnerabilities unfixed on default branch | Medium | https://github.com/WebWakaDOS/webwaka-os/security/dependabot |
-| 5 | `driving-school` slug appears twice in seed CSV with different display names — data quality issue | Low | `infra/db/seeds/0004_verticals-master.csv` |
-| 6 | `nursery-school` and `creche` are two separate slugs; only `creche` has a prompt (Set G) | Medium | Set G — `webwaka_verticals_education_agricultural_extended_execution_prompts.md` |
-| 7 | `tailor` (P2) and `tailoring-fashion` (P3) are two separate slugs; only `tailoring-fashion` has a prompt (Set B) | Medium | Set B — `webwaka_verticals_commerce_p2_batch2_execution_prompts.md` |
-| 8 | `gym` (P2, pre-M9) and `gym-fitness` (P3) are two separate slugs; only `gym` has a prompt | Low | Pre-M9 `webwaka_verticals_health_education_execution_prompts.md` |
-| 9 | `printing-press` (P3) and `print-shop` (P2) are two separate slugs; only `print-shop` has a prompt (Set B) | Medium | Set B — `webwaka_verticals_commerce_p2_batch2_execution_prompts.md` |
-| 10 | Next migration number (0057) must be checked in `infra/db/migrations/` before any new vertical implementation | Info | `infra/db/migrations/` |
+| # | Issue | Severity | Status | Location |
+|---|-------|----------|--------|----------|
+| 1 | `DELETE /politician/:id` had no admin role guard — any authenticated tenant user could hard-delete | **High** | ✅ FIXED (2026-04-09) — role check added at `apps/api/src/routes/politician.ts` L230 | `apps/api/src/routes/politician.ts` |
+| 2 | 28 verticals seeded in the CSV had no execution prompt in any document | **High** | ✅ RESOLVED (2026-04-09) — Set J authored, commit `4aff35c` | `docs/execution-prompts/webwaka_verticals_set_j_missing_execution_prompts.md` |
+| 3 | PROGRESS.md table showed Sets F–I as `⏳ PENDING`; SHAs and completion log entries missing | Medium | ✅ FIXED (2026-04-09) — all 10 sets show ✅ DONE with SHAs | `docs/execution-prompts/PROGRESS.md` |
+| 4 | 2 moderate Dependabot vulnerabilities: `esbuild <=0.24.2` (GHSA-67mh-4wv8-2f99) and `vite` (GHSA-4w7w-66w2-5vf9) | Medium | ✅ PARTIALLY MITIGATED (2026-04-09) — `esbuild` fully fixed via pnpm override `>=0.25.0` (confirmed by audit). `vite` advisory targets vite 6.x; installed version is 5.4.21 (vitest 1.x). pnpm audit reports a false positive because semver `<=6.4.1` technically includes 5.x. Both deps are dev-only (wrangler + vitest). No production exposure. Full fix requires upgrading vitest to 3.x (deferred — scope risk across 50+ packages). | `package.json` → `pnpm.overrides` |
+| 5 | `driving-school` slug appears twice in seed CSV with different display names — data quality issue | Low | 🔲 OPEN | `infra/db/seeds/0004_verticals-master.csv` |
+| 6 | `nursery-school` and `creche` are two separate slugs; only `creche` has a prompt (Set G) — `nursery-school` covered by Set J | Medium | ✅ RESOLVED by Set J | Set J — `webwaka_verticals_set_j_missing_execution_prompts.md` |
+| 7 | `tailor` (P2) and `tailoring-fashion` (P3) are two separate slugs; `tailoring-fashion` in Set B, `tailor` in Set J | Medium | ✅ RESOLVED by Set J | Sets B + J |
+| 8 | `gym` (P2, pre-M9) and `gym-fitness` (P3) are two separate slugs; `gym-fitness` had no prompt | Low | ✅ RESOLVED by Set J | Set J — `webwaka_verticals_set_j_missing_execution_prompts.md` |
+| 9 | `printing-press` (P3) and `print-shop` (P2) are two separate slugs; `printing-press` had no prompt | Medium | ✅ RESOLVED by Set J | Set J — `webwaka_verticals_set_j_missing_execution_prompts.md` |
+| 10 | Next migration number must be checked before any new vertical implementation | Info | 🔲 ONGOING — next is `0057` (see banner above) | `infra/db/migrations/` |
 
 ---
 
