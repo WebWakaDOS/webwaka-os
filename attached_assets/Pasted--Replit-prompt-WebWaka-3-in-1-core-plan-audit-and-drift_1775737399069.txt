@@ -1,0 +1,192 @@
+
+### ✅ Replit prompt: WebWaka 3‑in‑1 core‑plan audit and drift check
+
+```
+You are a **Senior WebWaka Product Architect and Systems Auditor**. Your task is to perform a **thorough, cross‑repository audit** of the entire WebWaka codebase and documentation to confirm whether the **3‑in‑1 core platform vision** is still the central, structuring principle—and to identify and recommend remediation if there has been drift.
+
+---
+
+### 1. CONTEXT: THE 3‑IN‑1 CORE PLAN
+
+The agreed **central core** of WebWaka is:
+
+WebWaka is a **single platform** for **any individual or organization**, sold via **reseller partners and sub‑partners**, with **white‑labeling opportunities**, offering three **primary, interconnected capabilities**:
+
+1. **Operations‑Management (e.g., POS)**
+   - Turn‑key operations layer such as:
+     - Point‑of‑Sale (POS).
+     - Transaction, order, inventory, and reporting systems.
+     - Back‑office operations for running a business.
+
+2. **Branding / website / portal**
+   - A front‑of‑house branding layer such as:
+     - Single‑vendor e‑commerce store.
+     - Informational site or service portal.
+     - A branded digital presence linked to the underlying operations and/or marketplace.
+
+3. **Listing / multi‑vendor marketplace**
+   - A multi‑tenant listing/marketplace layer such as:
+     - Core categories, listing engine, and onboarding.
+     - Vendors can “claim” listings or stores.
+     - Can be used standalone, or combined with POS and/or branding site (1, 2, or all 3).
+
+End‑users and organizations:
+- Can subscribe to **any combination** (1, 2, or all 3) based on their tier.
+- Receive these through **WebWaka‑direct or partners** who can **white‑label** the platform.
+
+SuperAgent (AI layer) is **not** a fourth primary capability; it is the **intelligence layer** that can run on top of these three core offers.
+
+Your job is to **verify**:
+- Is this 3‑in‑1 core still the **guiding architecture**?
+- Has there been **architectural or planning drift** (e.g., treating AI, SuperAgent, or some verticals as de‑facto fourth primary capabilities)?
+- Are there any **gaps or remediation steps** needed to re‑align the current code and docs with this core?
+
+---
+
+### 2. SCOPE OF YOUR AUDIT
+
+You must read and analyze **all** available WebWaka artifacts, including:
+
+- **Repositories** (core, verticals, pre‑verticals, infra, AI, docs, etc.).
+- **Code files** (models, controllers, APIs, schemas, configs, feature flags, READMEs).
+- **Documents and plans**:
+  - Architecture docs, RFCs, product specs, AI‑implementation plans, roadmap, onboarding docs.
+  - Any “plans not yet executed” or partially‑executed feature lists.
+  - Internal wikis, Notion‑style pages, Google Docs, or similar if accessible.
+
+From these, you must:
+
+- Identify which parts map to:
+  - Operations‑Management (POS‑style modules).
+  - Branding / website / portal.
+  - Listing / multi‑vendor marketplace.
+  - AI / SuperAgent (as a cross‑cutting agent layer).
+- Detect **any divergence** from the 3‑in‑1 core (e.g., modules that no longer clearly fit into one of the three, or new “headline” capabilities that look like a fourth pillar).
+
+---
+
+### 3. REQUIRED ANALYSIS
+
+Perform the following analyses:
+
+#### 3.1. Structural and module mapping
+
+- For each **major module** or **vertical**:
+  - Classify it as:
+    - **POS / Operations‑Management**.
+    - **Branding / website / portal**.
+    - **Listing / multi‑vendor marketplace**.
+    - **AI / SuperAgent** (cross‑layer, not a core pillar).
+    - **Pre‑vertical** (auth, billing, infra, data, etc.).
+  - Note:
+    - Where it lives in the repo (e.g., `webwaka/verticals/pos/...`, `webwaka/verticals/marketplace/...`).
+    - How it connects to the other two pillars (e.g., “POS module feeds into marketplace orders”, “branding site uses marketplace listings”).
+
+#### 3.2. Drift detection
+
+Check for **drift** from the 3‑in‑1 core:
+
+- **Architectural drift**:
+  - Have new modules or repos emerged that look like a **de‑facto fourth primary capability** (e.g., “AI‑only stack” or “automation suite” treated as a main pillar)?
+  - Are there verticals whose **main entry point** no longer clearly maps to OPS / Brand / Marketplace?
+- **Planning drift**:
+  - Do roadmap docs or AI‑plans position SuperAgent or some other feature as a **primary offer** instead of a cross‑cutting layer?
+  - Are there any “pre‑verticals” tasks related to 3‑in‑1 alignment that were **planned but not implemented**?
+
+#### 3.3. Pre‑verticals alignment check
+
+Recall that there was a **pre‑verticals task** planned to:
+
+- Explicitly tag and structure all modules under the 3‑in‑1 core.
+- Ensure all AI‑related work (e.g., WebWaka SuperAgent) is **cross‑layer**, not a pillar.
+
+Determine:
+
+- Was that **pre‑verticals 3‑in‑1‑alignment task** already implemented?
+- If yes, what evidence is in the repo (e.g., labels, docs, tags, service boundaries)?
+- If not, flag it as a **remediation item**.
+
+---
+
+### 4. OUTPUT: AUDIT REPORT + REMEDIATION PLAN
+
+Produce **two main outputs** as markdown documents:
+
+#### 4.1. 3‑in‑1 alignment summary
+
+A document titled: `webwaka_3in1_core_audit_summary.md`
+
+Content:
+
+- **Current state**:
+  - Short statement of whether the 3‑in‑1 core is still the **central organizing principle**.
+  - Summary of:
+    - How many modules fall into each of the three pillars.
+    - Whether AI / SuperAgent is cleanly positioned as a cross‑cutting layer.
+- **Observed drift**:
+  - List of any significant drift (e.g., “module X looks like a fourth pillar”, “AI‑plan doc positions SuperAgent as a primary offer”).
+  - Point to **specific files, paths, or sections** (e.g., `webwaka/ai/README.md`, `webwaka/roadmap-2026.md`).
+- **Overall assessment**:
+  - “The 3‑in‑1 core is **fully intact** and well‑reflected.”
+  - Or: “There is **partial drift**; X, Y, Z need remediation.”
+  - Or: “There is **significant drift**; the core is no longer clearly reflected.”
+
+#### 4.2. Remediation and alignment plan
+
+A document titled: `webwaka_3in1_remediation_plan.md`
+
+Content:
+
+- **Remediation list** (numbered), each item including:
+
+  1. **Item title** (e.g., “Re‑tag all verticals under 3‑in‑1 pillars”).
+  2. **Why it’s needed** (e.g., “Current docs position AI as a fourth pillar; this must be corrected”).
+  3. **Where it lives** (e.g., path to doc, repo, RFC).
+  4. **Concrete action** (e.g., “Update README to explicitly state 3‑in‑1 model and categorize this module as ‘Operations‑Management’”; “Create a GitHub label per pillar: POS, Branding, Marketplace, Pre‑vertical, AI”).
+  5. **Phase / priority** (e.g., “Phase 1 – must be done before AI‑SuperAgent deep‑integration”).
+
+Example item:
+
+```markdown
+1. **Re‑label verticals in docs and repo structure under 3‑in‑1 pillars**
+
+   - **Location**:
+     - https://github.com/webwaka/verticals/...
+     - https://github.com/webwaka/docs/...
+   - **Why**:
+     - Some verticals currently lack explicit 3‑in‑1 categorization, which invites drift.
+   - **Action**:
+     - Add a line to each vertical README: “This module belongs to: [POS / Branding / Marketplace / AI]”.
+     - Add GitHub labels: `3in1:ops`, `3in1:branding`, `3in1:marketplace`, `3in1:ai`.
+   - **Priority**: Phase 1 (must be done before AI‑SuperAgent deep‑integration).
+```
+
+Include separate lists for:
+
+- **Documentation remediations** (e.g., roadmap, AI‑plans, RFCs).
+- **Code and structural remediations** (e.g., folder structure, tags, service boundaries).
+- **Pre‑verticals remediations** (e.g., the previously‑planned 3‑in‑1 tagging and alignment tasks that may not have been implemented yet).
+
+---
+
+### 5. INSTRUCTIONS FOR DEEPNESS AND RESEARCH
+
+Before you start:
+
+- **Read all WebWaka artifacts deeply** (docs, plans, code, repos).
+- **Cross‑reference** multiple sources (e.g., a roadmap doc vs what the code actually does).
+- If any part of the repo/history is inaccessible, **note that explicitly** and base your analysis only on what is visible.
+
+After that, output **only** the two markdown files described above:
+
+1. `webwaka_3in1_core_audit_summary.md`
+2. `webwaka_3in1_remediation_plan.md`
+
+No general commentary; keep everything grounded in **specific, linkable evidence**.
+
+---
+
+Now, proceed:
+1. First, **scan and read** all WebWaka repos and docs you can access.
+2. Then, produce the **audit summary** and **remediation plan** as described.
+```
