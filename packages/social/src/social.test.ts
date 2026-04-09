@@ -17,42 +17,46 @@ import { followProfile, unfollowProfile, getFollowers, getFollowing } from './fo
 import { createPost, getPost, reactToPost } from './social-post.js';
 import { getUserFeed } from './feed.js';
 
-type MockBound = {
-  first: <T>() => Promise<T | null>;
-  run: () => Promise<{ success: boolean }>;
-  all: <T>() => Promise<{ results: T[] }>;
-};
-
-function makeDB(overrides: { firstResult?: unknown; allResults?: unknown[] } = {}): {
-  prepare: ReturnType<typeof vi.fn>;
-} {
-  return {
-    prepare: vi.fn().mockImplementation((_sql: string) => ({
-      bind: (..._args: unknown[]) =>
-        ({
-          first: <T>() => Promise.resolve((overrides.firstResult ?? null) as T | null),
-          run: () => Promise.resolve({ success: true }),
-          all: <T>() => Promise.resolve({ results: (overrides.allResults ?? []) as T[] }),
-        } satisfies MockBound),
-    })),
+interface D1Like {
+  prepare(sql: string): {
+    bind(...args: unknown[]): {
+      run(): Promise<{ success: boolean }>;
+      first<T>(): Promise<T | null>;
+      all<T>(): Promise<{ results: T[] }>;
+    };
+    first<T>(): Promise<T | null>;
+    all<T>(): Promise<{ results: T[] }>;
   };
 }
 
-function makeDBWithHandleCheck(existingHandle: string | null): { prepare: ReturnType<typeof vi.fn> } {
-  return {
-    prepare: vi.fn().mockImplementation((sql: string) => ({
-      bind: (..._args: unknown[]) => ({
-        first: <T>() => {
-          if (sql.includes('social_profiles') && sql.includes('handle')) {
-            return Promise.resolve((existingHandle ? { id: 'sp_existing' } : null) as T);
-          }
-          return Promise.resolve(null);
-        },
-        run: () => Promise.resolve({ success: true }),
-        all: <T>() => Promise.resolve({ results: [] as T[] }),
-      }),
-    })),
-  };
+type MockPrepareFn = D1Like['prepare'] & { mock: { calls: unknown[][] } };
+type MockDB = { prepare: MockPrepareFn };
+
+function makeDB(overrides: { firstResult?: unknown; allResults?: unknown[] } = {}): MockDB {
+  const impl = (_sql: string) => ({
+    bind: (..._args: unknown[]) => ({
+      first: <T>() => Promise.resolve((overrides.firstResult ?? null) as T | null),
+      run: () => Promise.resolve({ success: true }),
+      all: <T>() => Promise.resolve({ results: (overrides.allResults ?? []) as T[] }),
+    }),
+  });
+  return { prepare: vi.fn(impl) as unknown as MockPrepareFn };
+}
+
+function makeDBWithHandleCheck(existingHandle: string | null): MockDB {
+  const impl = (sql: string) => ({
+    bind: (..._args: unknown[]) => ({
+      first: <T>() => {
+        if (sql.includes('social_profiles') && sql.includes('handle')) {
+          return Promise.resolve((existingHandle ? { id: 'sp_existing' } : null) as T);
+        }
+        return Promise.resolve(null);
+      },
+      run: () => Promise.resolve({ success: true }),
+      all: <T>() => Promise.resolve({ results: [] as T[] }),
+    }),
+  });
+  return { prepare: vi.fn(impl) as unknown as MockPrepareFn };
 }
 
 // ============================================================================

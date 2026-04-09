@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
+/* eslint-disable @typescript-eslint/require-await */
 /**
  * Integration-style tests (M7e + M7f)
  * End-to-end flow assertions: consent gate (P12), geography cache header,

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 /**
  * Geography route tests (M7e)
  * Tests: /geography/states, /geography/lgas, /geography/wards (new M7e routes)

@@ -3,7 +3,7 @@
  * (Platform Invariants P15 — moderation-first, T3 — tenant isolation)
  */
 
-import type { SocialPost } from './types.js';
+import type { SocialPost } from './social-post.js';
 import type { D1Like } from './social-profile.js';
 import { createPost } from './social-post.js';
 
@@ -57,6 +57,7 @@ export async function getActiveStories(
     is_flagged: number;
     moderation_status: string;
     is_boosted: number;
+    is_deleted: number;
     expires_at: number | null;
     tenant_id: string;
     created_at: number;
@@ -90,6 +91,7 @@ export async function getActiveStories(
     isFlagged: row.is_flagged === 1,
     moderationStatus: row.moderation_status as SocialPost['moderationStatus'],
     isBoosted: row.is_boosted === 1,
+    isDeleted: row.is_deleted === 1,
     expiresAt: row.expires_at,
     tenantId: row.tenant_id,
     createdAt: row.created_at,

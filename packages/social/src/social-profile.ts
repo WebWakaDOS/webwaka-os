@@ -5,7 +5,7 @@
  * HANDLE_TAKEN: 409 if duplicate handle in same tenant.
  */
 
-interface D1Like {
+export interface D1Like {
   prepare(sql: string): {
     bind(...args: unknown[]): {
       run(): Promise<{ success: boolean }>;

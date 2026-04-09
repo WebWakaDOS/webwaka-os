@@ -32,33 +32,39 @@ import {
 } from './course.js';
 import { createEvent, listEvents, rsvpToEvent } from './event.js';
 
-type MockBound = {
-  first: <T>() => Promise<T | null>;
-  run: () => Promise<{ success: boolean }>;
-  all: <T>() => Promise<{ results: T[] }>;
-};
+interface D1Like {
+  prepare(sql: string): {
+    bind(...args: unknown[]): {
+      run(): Promise<{ success: boolean }>;
+      first<T>(): Promise<T | null>;
+      all<T>(): Promise<{ results: T[] }>;
+    };
+    first<T>(): Promise<T | null>;
+    all<T>(): Promise<{ results: T[] }>;
+  };
+}
+
+type MockPrepareFn = D1Like['prepare'] & { mock: { calls: unknown[][] } };
+type MockDB = { prepare: MockPrepareFn };
 
 function makeDB(overrides: {
   firstResult?: unknown;
   allResults?: unknown[];
-} = {}): {
-  prepare: ReturnType<typeof vi.fn>;
-} {
-  return {
-    prepare: vi.fn().mockImplementation((_sql: string) => ({
-      bind: (..._args: unknown[]) => ({
-        first: <T>() => Promise.resolve((overrides.firstResult ?? null) as T | null),
-        run: () => Promise.resolve({ success: true }),
-        all: <T>() => Promise.resolve({ results: (overrides.allResults ?? []) as T[] }),
-      } satisfies MockBound),
+} = {}): MockDB {
+  const impl = (_sql: string) => ({
+    bind: (..._args: unknown[]) => ({
       first: <T>() => Promise.resolve((overrides.firstResult ?? null) as T | null),
+      run: () => Promise.resolve({ success: true }),
       all: <T>() => Promise.resolve({ results: (overrides.allResults ?? []) as T[] }),
-    })),
-  };
+    }),
+    first: <T>() => Promise.resolve((overrides.firstResult ?? null) as T | null),
+    all: <T>() => Promise.resolve({ results: (overrides.allResults ?? []) as T[] }),
+  });
+  return { prepare: vi.fn(impl) as unknown as MockPrepareFn };
 }
 
-function makeDBWithConsentAndNullSlug(): ReturnType<typeof vi.fn> {
-  return vi.fn().mockImplementation((sql: string) => ({
+function makeDBWithConsentAndNullSlug(): D1Like['prepare'] {
+  const impl = (sql: string) => ({
     bind: (..._args: unknown[]) => ({
       first: <T>() => {
         if (sql.includes('consent_records')) return Promise.resolve({ id: 'consent_1' } as T);
@@ -67,7 +73,8 @@ function makeDBWithConsentAndNullSlug(): ReturnType<typeof vi.fn> {
       run: () => Promise.resolve({ success: true }),
       all: <T>() => Promise.resolve({ results: [] as T[] }),
     }),
-  }));
+  });
+  return vi.fn(impl) as unknown as D1Like['prepare'];
 }
 
 // ============================================================================

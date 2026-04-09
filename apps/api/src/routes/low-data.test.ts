@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 /**
  * Low-data mode middleware tests (M7e)
  * Platform Invariants P4 (low-data mode), P6 (text content never stripped)
