@@ -116,6 +116,7 @@ import { commerceRoutes } from './routes/commerce.js';
 import { commerceP2Routes } from './routes/verticals-commerce-p2.js';
 import { commerceP2Batch2Routes } from './routes/verticals-commerce-p2-batch2.js';
 import { commerceP3Routes } from './routes/verticals-commerce-p3.js';
+import { transportExtendedRoutes } from './routes/verticals-transport-extended.js';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -369,6 +370,20 @@ app.use('/api/v1/tyre-shop/*', authMiddleware);
 app.use('/api/v1/used-car-dealer/*', authMiddleware);
 app.use('/api/v1/water-vendor/*', authMiddleware);
 app.route('/api/v1', commerceP3Routes);
+
+// ---------------------------------------------------------------------------
+// M9/M12: Transport Extended — clearing-agent, courier, dispatch-rider,
+//          airport-shuttle, cargo-truck, container-depot, ferry, nurtw
+// ---------------------------------------------------------------------------
+app.use('/api/v1/clearing-agent/*', authMiddleware);
+app.use('/api/v1/courier/*', authMiddleware);
+app.use('/api/v1/dispatch-rider/*', authMiddleware);
+app.use('/api/v1/airport-shuttle/*', authMiddleware);
+app.use('/api/v1/cargo-truck/*', authMiddleware);
+app.use('/api/v1/container-depot/*', authMiddleware);
+app.use('/api/v1/ferry/*', authMiddleware);
+app.use('/api/v1/nurtw/*', authMiddleware);
+app.route('/api/v1', transportExtendedRoutes);
 
 // ---------------------------------------------------------------------------
 // M7c: Social routes — most require auth; /social/profile/:handle is public

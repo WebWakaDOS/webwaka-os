@@ -1,0 +1,181 @@
+/**
+ * packages/verticals-cargo-truck — CargoTruckRepository tests
+ * M12 Transport Extended — acceptance: ≥15 tests.
+ */
+
+import { describe, it, expect, beforeEach } from 'vitest';
+import { CargoTruckRepository } from './cargo-truck.js';
+import {
+  guardSeedToClaimed,
+  guardClaimedToFrscVerified,
+  isValidCargoTruckTransition,
+} from './types.js';
+
+function makeDb() {
+  const store: Record<string, unknown>[] = [];
+  const prep = (sql: string) => {
+    const bindFn = (...vals: unknown[]) => ({
+      run: async () => {
+        if (sql.trim().toUpperCase().startsWith('INSERT')) {
+          const colM = sql.match(/\(([^)]+)\)\s+VALUES/i);
+          const valM = sql.match(/VALUES\s*\(([^)]+)\)/i);
+          if (colM && valM) {
+            const cols = colM[1]!.split(',').map((c: string) => c.trim());
+            const tokens = valM[1]!.split(',').map((v: string) => v.trim());
+            const row: Record<string, unknown> = {};
+            let bi = 0;
+            cols.forEach((col: string, i: number) => {
+              const tok = tokens[i] ?? '?';
+              if (tok === '?') { row[col] = vals[bi++]; }
+              else if (tok.toUpperCase() === 'NULL') { row[col] = null; }
+              else if (tok.toLowerCase().includes('unixepoch')) { row[col] = Math.floor(Date.now() / 1000); }
+              else if (tok.startsWith("'") && tok.endsWith("'")) { row[col] = tok.slice(1, -1); }
+              else if (!Number.isNaN(Number(tok))) { row[col] = Number(tok); }
+              else { row[col] = vals[bi++]; }
+            });
+            if (!row['status']) row['status'] = 'seeded';
+            if (!row['created_at']) row['created_at'] = Math.floor(Date.now() / 1000);
+            if (!row['updated_at']) row['updated_at'] = Math.floor(Date.now() / 1000);
+            store.push(row);
+          }
+        } else if (sql.trim().toUpperCase().startsWith('UPDATE')) {
+          const setM = sql.match(/SET\s+(.+?)\s+WHERE/is);
+          if (setM) {
+            const clauses = setM[1]!.split(',').map((c: string) => c.trim()).filter((c: string) => !c.toLowerCase().includes('updated_at') && !c.toLowerCase().includes('unixepoch'));
+            const id = vals[vals.length - 2] as string;
+            const tid = vals[vals.length - 1] as string;
+            const idx = store.findIndex(r => r['id'] === id && r['tenant_id'] === tid);
+            if (idx >= 0) {
+              clauses.forEach((clause: string, i: number) => {
+                const col = clause.split('=')[0]!.trim();
+                (store[idx] as Record<string, unknown>)[col] = vals[i];
+              });
+            }
+          }
+        }
+        return { success: true };
+      },
+      first: async <T>() => {
+        if (!sql.trim().toUpperCase().startsWith('SELECT')) return null as T;
+        const found = store.find(r =>
+          vals.length >= 2 ? (r['id'] === vals[0] || r['workspace_id'] === vals[0]) && r['tenant_id'] === vals[1] : r['id'] === vals[0]
+        );
+        return (found ?? null) as T;
+      },
+      all: async <T>() => ({
+        results: store.filter(r =>
+          vals.length >= 2
+            ? (r['profile_id'] === vals[0] || r['truck_id'] === vals[0]) && r['tenant_id'] === vals[1]
+            : true
+        ),
+      } as { results: T[] }),
+    });
+    return { bind: bindFn };
+  };
+  return { prepare: prep } as unknown as ConstructorParameters<typeof CargoTruckRepository>[0];
+}
+
+describe('CargoTruckRepository', () => {
+  let repo: CargoTruckRepository;
+  beforeEach(() => { repo = new CargoTruckRepository(makeDb() as never); });
+
+  it('creates a profile with seeded status', async () => {
+    const p = await repo.createProfile({ workspaceId: 'ws1', tenantId: 't1', companyName: 'Northern Haulage' });
+    expect(p.status).toBe('seeded');
+    expect(p.companyName).toBe('Northern Haulage');
+  });
+
+  it('creates profile with FRSC operator licence', async () => {
+    const p = await repo.createProfile({ workspaceId: 'ws2', tenantId: 't1', companyName: 'FRSC Haulers', frscOperatorLicence: 'FRSC-OP-001' });
+    expect(p.frscOperatorLicence).toBe('FRSC-OP-001');
+  });
+
+  it('finds profile by ID scoped to tenant', async () => {
+    const p = await repo.createProfile({ workspaceId: 'ws3', tenantId: 't2', companyName: 'Abuja Haulage' });
+    const found = await repo.findProfileById(p.id, 't2');
+    expect(found!.tenantId).toBe('t2');
+  });
+
+  it('finds profile by workspace', async () => {
+    await repo.createProfile({ workspaceId: 'ws4', tenantId: 't3', companyName: 'PH Haulage' });
+    const found = await repo.findProfileByWorkspace('ws4', 't3');
+    expect(found!.workspaceId).toBe('ws4');
+  });
+
+  it('returns null for unknown profile', async () => {
+    expect(await repo.findProfileById('none', 't1')).toBeNull();
+  });
+
+  it('transitions profile status', async () => {
+    const p = await repo.createProfile({ workspaceId: 'ws5', tenantId: 't1', companyName: 'Transition Co' });
+    const t = await repo.transitionStatus(p.id, 't1', 'claimed');
+    expect(t!.status).toBe('claimed');
+  });
+
+  it('creates a truck with tonnage', async () => {
+    const p = await repo.createProfile({ workspaceId: 'ws6', tenantId: 't1', companyName: 'Truck Co' });
+    const truck = await repo.createTruck({ profileId: p.id, tenantId: 't1', plate: 'KN001XY', tonnageKg: 10000 });
+    expect(truck.plate).toBe('KN001XY');
+    expect(truck.tonnageKg).toBe(10000);
+    expect(truck.status).toBe('available');
+  });
+
+  it('rejects truck with float tonnageKg (P9)', async () => {
+    const p = await repo.createProfile({ workspaceId: 'ws7', tenantId: 't1', companyName: 'Float Tons' });
+    await expect(repo.createTruck({ profileId: p.id, tenantId: 't1', plate: 'BAD001', tonnageKg: 10.5 })).rejects.toThrow('P9');
+  });
+
+  it('creates a trip with valid kobo and kg values', async () => {
+    const p = await repo.createProfile({ workspaceId: 'ws8', tenantId: 't1', companyName: 'Trip Co' });
+    const truck = await repo.createTruck({ profileId: p.id, tenantId: 't1', plate: 'LG999XB', tonnageKg: 5000 });
+    const trip = await repo.createTrip({ truckId: truck.id, profileId: p.id, tenantId: 't1', cargoWeightKg: 4500, hireRateKobo: 15000000, origin: 'Lagos', destination: 'Kano' });
+    expect(trip.status).toBe('loading');
+    expect(trip.hireRateKobo).toBe(15000000);
+  });
+
+  it('rejects trip with float hireRateKobo (P9)', async () => {
+    const p = await repo.createProfile({ workspaceId: 'ws9', tenantId: 't1', companyName: 'Float Rate' });
+    const truck = await repo.createTruck({ profileId: p.id, tenantId: 't1', plate: 'BAD002', tonnageKg: 5000 });
+    await expect(repo.createTrip({ truckId: truck.id, profileId: p.id, tenantId: 't1', cargoWeightKg: 100, hireRateKobo: 15000.5 })).rejects.toThrow('P9');
+  });
+
+  it('creates truck expense with valid amountKobo', async () => {
+    const p = await repo.createProfile({ workspaceId: 'ws10', tenantId: 't1', companyName: 'Expense Co' });
+    const truck = await repo.createTruck({ profileId: p.id, tenantId: 't1', plate: 'EX001', tonnageKg: 2000 });
+    const exp = await repo.createExpense({ truckId: truck.id, tenantId: 't1', amountKobo: 500000, expenseType: 'fuel' });
+    expect(exp.amountKobo).toBe(500000);
+    expect(exp.expenseType).toBe('fuel');
+  });
+
+  it('rejects expense with float amountKobo (P9)', async () => {
+    await expect(repo.createExpense({ truckId: 't1', tenantId: 't1', amountKobo: 500.5 })).rejects.toThrow('P9');
+  });
+
+  it('updates trip status', async () => {
+    const p = await repo.createProfile({ workspaceId: 'ws11', tenantId: 't1', companyName: 'Update Trip' });
+    const truck = await repo.createTruck({ profileId: p.id, tenantId: 't1', plate: 'UP001', tonnageKg: 1000 });
+    const trip = await repo.createTrip({ truckId: truck.id, profileId: p.id, tenantId: 't1', cargoWeightKg: 500, hireRateKobo: 5000000 });
+    const updated = await repo.updateTripStatus(trip.id, 't1', 'in_transit');
+    expect(updated!.status).toBe('in_transit');
+  });
+
+  it('FSM: valid transition claimed → frsc_verified', () => {
+    expect(isValidCargoTruckTransition('claimed', 'frsc_verified')).toBe(true);
+  });
+
+  it('FSM: invalid transition seeded → active', () => {
+    expect(isValidCargoTruckTransition('seeded', 'active')).toBe(false);
+  });
+
+  it('guardSeedToClaimed: blocks KYC 0', () => {
+    expect(guardSeedToClaimed({ kycTier: 0 }).allowed).toBe(false);
+  });
+
+  it('guardClaimedToFrscVerified: blocks without licence', () => {
+    expect(guardClaimedToFrscVerified({ frscOperatorLicence: null, kycTier: 2 }).allowed).toBe(false);
+  });
+
+  it('guardClaimedToFrscVerified: allows with licence at KYC 2', () => {
+    expect(guardClaimedToFrscVerified({ frscOperatorLicence: 'FRSC-001', kycTier: 2 }).allowed).toBe(true);
+  });
+});
