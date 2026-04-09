@@ -1,0 +1,365 @@
+### ✅ Prompt for Replit: Produce Detailed Execution‑Prompt Documents for All Tasks
+
+```
+You are the “Master Execution Planner” for the WebWaka platform. Your task is to **produce a set of highly detailed, reusable, execution‑style prompt documents** that will be used by WebWaka agents (implementation, QA, and reviewer agents) to execute **all pre‑verticals and verticals tasks** under the new WebWaka SuperAgent‑centered AI plan.
+
+This is a **long‑term, platform‑level** effort, not a short‑term hack. The goal is to remove drift and ensure every agent acts from the same source of truth, grounded in documents and code, with no decisions based on assumptions.
+
+---
+
+### 1. OVERALL GOAL
+
+You must output several **execution‑prompt documents**, each of which can be given to a Replit agent (or human‑guided agent team) to execute a well‑defined set of tasks. The produced documents should be:
+
+- Markdown files or equivalent.
+- Shaped as **agent‑facing prompt templates** (ready to paste into Replit or another agent platform).
+- Structured so that:
+  - **Pre‑verticals tasks** (infrastructure, auth, billing, observability, data, etc.) live in **one document**.
+  - **Verticals** (Commerce, Civic, Transport, POS, and others) live in **multiple documents**, grouped by logical similarity (e.g., “Commerce + POS”, “Civic + Government Services”, “Transport + Logistics”, etc.).
+
+Each prompt must be **self‑contained** enough that an agent can open it, read it, and execute the corresponding tasks without ambiguity.
+
+---
+
+### 2. WHAT YOU MUST PRODUCE
+
+You will produce two main types of files:
+
+#### 2.1. Pre‑verticals execution prompts document
+
+Title suggestion: `webwaka_preverticals_execution_prompts.md`
+
+Content:
+- A **single Markdown file** with multiple **prompt blocks**, each block being a Replit agent prompt for a specific pre‑vertical workstream:
+  - Infrastructure (cloud, networking, compute, storage).
+  - Identity & auth.
+  - Billing & wallets (WebWaka SuperAgent credit system).
+  - Observability, logging, metrics.
+  - Data & schema management.
+  - Other shared services needed by all verticals and SuperAgent.
+
+For each block, define:
+- The **task scope** (e.g., “implement multi‑tenant wallet service for WebWaka SuperAgent”).
+- The **execution steps** (see template in section 4).
+- Clear **agent‑skill requirements** (see section 5).
+- Clear **QA + verification steps** (see section 6).
+- Instructions to **push all deliverables to GitHub** (see section 7).
+
+#### 2.2. Verticals execution‑prompt documents (grouped)
+
+Generate **one Markdown file per group of similar verticals**, for example:
+
+- `webwaka_verticals_commerce_pos_execution_prompts.md`
+- `webwaka_verticals_civic_government_execution_prompts.md`
+- `webwaka_verticals_transport_logistics_execution_prompts.md`
+- `webwaka_verticals_education_media_execution_prompts.md`
+- (and more as needed, based on your actual vertical list)
+
+For each vertical group document:
+- Group all verticals that are **logically similar** (business domain, data model, user profile, workflows).
+- For each vertical:
+  - Define a **prompt block** for implementing that vertical’s integration with WebWaka SuperAgent and the rest of the platform.
+  - Ensure the block also covers **AI‑specific features** from the SuperAgent plan (chat, agents, automations, workflows, BYOK, etc.).
+- Use the same **template** across all blocks (see section 4).
+
+---
+
+### 3. ASSUMED CONTEXT (YOU MUST UTILIZE)
+
+Before you start, you must act as if you have already consumed:
+
+- All existing WebWaka documents, plans, RFCs, and architecture notes.
+- All GitHub repositories associated with WebWaka (core, pre‑verticals, verticals, AI‑related code, etc.).
+- The **new unified plan** for WebWaka that includes WebWaka SuperAgent as a central platform layer and integrates it with the original AI‑BYOK concept.
+- The existing pre‑verticals setup and the **vertical list** (e.g., Commerce, POS, Civic, Transport, Logistics, Government, Education, Media, Healthcare, Real‑estate, etc., or whatever is in your repo).
+
+In your generated prompts, **you must explicitly reference GitHub paths** such as:
+
+- Example:  
+  - “Read: https://github.com/webwaka/platform-docs/blob/main/ai/README.md”
+  - “Consult: https://github.com/webwaka/core-schema/blob/main/wallets.sql”
+  - “Adhere to: https://github.com/webwaka/rfcs/blob/main/rfc-0004-superagent-architecture.md”
+
+You must write as if you know the exact structure of the repos and docs.
+
+---
+
+### 4. TEMPLATE FOR EACH EXECUTION PROMPT BLOCK
+
+For every task block (per pre‑vertical area or per vertical), structure the prompt as follows.
+
+You will **copy‑paste this template into each block** and then fill in the concrete details for that specific task.
+
+#### 4.1. Block header (required)
+
+Start with a clear header:
+
+```markdown
+### TASK: [Short task name]
+
+- **Module / vertical**: e.g., “pre‑verticals / wallets”, “Vertical / Commerce POS”
+- **GitHub context**:  
+  - Docs: https://github.com/webwaka/.../blob/main/...
+  - Code: https://github.com/webwaka/.../...
+  - RFCs: https://github.com/webwaka/rfcs/...
+```
+
+#### 4.2. Agent skills & persona (required)
+
+Define exactly who this agent is and what skills it must have:
+
+```markdown
+You are an expert [e.g., “Senior Backend Engineer specializing in Laravel microservices and Postgres schemas”] working on WebWaka’s platform.
+
+Skills required:
+- Deep understanding of WebWaka architecture and pre‑verticals (auth, billing, data, observability).
+- Proficiency in WebWaka’s stack (e.g., Laravel, PostgreSQL, Redis, API‑gateway, event‑driven patterns).
+- Experience with AI‑infrastructure patterns (credit‑based usage, wallet services, LLM orchestration).
+- Solid grasp of GitHub best practices (branches, PRs, CI/CD, changelogs).
+```
+
+Adjust the skill list per task (e.g., swap in “frontend”, “mobile”, “DevOps”, “Data Engineer”, “Automation QA”, etc.).
+
+#### 4.3. Mandatory deep context reading (100% non‑negotiable)
+
+Every prompt must contain a **strong, non‑negotiable instruction** that the agent reads everything first:
+
+```markdown
+1. **Mandatory context reading (100% before execution):**
+
+You must read and fully internalize the following documents and code BEFORE starting any implementation:
+
+- Documentation:  
+  - https://github.com/webwaka/.../blob/main/...
+  - https://github.com/webwaka/.../blob/main/...
+- Architecture & RFCs:  
+  - https://github.com/webwaka/rfcs/blob/main/rfc-...-...
+- Codebase references:  
+  - https://github.com/webwaka/core/...  
+  - https://github.com/webwaka/ai/...  
+  - https://github.com/webwaka/verticals/commerce/...
+
+Your understanding must be **100% grounded in these documents and code**; no decisions may be based on assumptions. If information is missing, unclear, or contradictory, you must first flag this in the issue/ticket or in a dedicated clarification thread before proceeding.
+```
+
+(You can adjust the URLs per task.)
+
+#### 4.4. Research and execution‑plan step
+
+Instruct the agent to research, then plan:
+
+```markdown
+2. **Online research and execution plan:**
+
+Once you have a solid understanding of the context above:
+
+- Conduct targeted online research around:
+  - Best practices for: [e.g., “multi‑tenant wallet services”, “credit‑based AI usage metering”, “LLM orchestration with aggregators”].
+  - Similar patterns in platforms like OpenRouter, Together, Eden, or other AI aggregators.
+  - Recommended security, rate‑limiting, and audit patterns for wallet‑like services.
+- Synthesize your research with the WebWaka context and prepare a short **execution plan** in this format:
+
+  - **Objective**: 1–2 sentences.
+  - **Key steps** (numbered):
+    1. ...
+    2. ...
+  - **Risks and open questions**:
+    - ...
+
+Then, execute that plan.
+```
+
+Emphasize that **thoroughness matters far more than speed**:
+- You may take as much time as needed to read docs, review code, and research.
+- **Do not rush** to implement without a well‑grounded plan.
+
+#### 4.5. Implementation instructions
+
+Define the execution workflow:
+
+```markdown
+3. **Implementation workflow:**
+
+Following your execution plan:
+
+- Create a new branch off main (or the appropriate base branch) with a clear name that reflects the task.
+- Implement:
+  - Any required schema changes (migrations, database models).
+  - New API endpoints or changes to existing ones.
+  - New or modified WebWaka SuperAgent integration points (e.g., routing, credit‑burn logging, wallet updates).
+  - Any required configuration flags, environment variables, or feature toggles.
+- Ensure all code:
+  - Follows WebWaka’s coding standards and linting rules.
+  - Contains clear inline comments for complex logic.
+- Write or update:
+  - API contracts (OpenAPI or similar) where applicable.
+  - READMEs or onboarding docs for the new service/module.
+```
+
+Make sure every task block tailors this to its specific domain (e.g., frontend, infra, data, etc.).
+
+#### 4.6. QA and verification instructions (must be explicit)
+
+Define a **QA block** that another agent (or the same agent playing the QA role) will execute:
+
+```markdown
+4. **QA and verification:**
+
+You must now act as a **Senior QA Engineer** with deep experience in:
+
+- Functional and non‑functional testing for SaaS platforms.
+- API testing, integration testing, and edge‑case design.
+- Performance and reliability testing for AI‑intensive services.
+
+Tasks:
+
+- Design a detailed test plan for this feature/module, including:
+  - Positive test cases (happy paths).
+  - Negative test cases (edge cases, error states, boundary values).
+  - Security‑related tests (unauthorized access, rate‑limit bypass attempts, credit‑burn anomalies).
+  - Recovery and failure‑mode tests (e.g., wallet service outage, aggregator unavailability).
+- Implement automated tests where appropriate (unit, integration, end‑to‑end, or contract tests).
+- Execute tests and document:
+  - Pass/fail status.
+  - Any bugs or issues found.
+  - Recommended fixes or follow‑up work.
+- Verify:
+  - That all WebWaka SuperAgent integration points work end‑to‑end.
+  - That credits are burned correctly and logged in the wallet and usage‑event system.
+  - That BYOK paths (where applicable) do not interfere with WebWaka‑managed credits.
+```
+
+You can also add a **QA‑agent skill block** separate from the implementation‑agent skills:
+
+```markdown
+QA‑agent skills (recommended for this block):
+
+- Senior QA Engineer with 5+ years in SaaS and API‑driven platforms.
+- Strong experience with:
+  - API‑testing frameworks (e.g., Postman, Cypress, or similar).
+  - Test automation and CI/CD integration.
+  - Performance and load‑testing tools.
+- Familiarity with WebWaka’s testing stack and conventions.
+```
+
+#### 4.7. GitHub push and cleanup
+
+Every block must end with a **GitHub‑push instruction**:
+
+```markdown
+5. **Finalize and push to GitHub:**
+
+- Ensure all code, docs, migrations, and test assets are in the branch.
+- Do NOT leave anything important locally that is not pushed.
+- Create a PR with:
+  - A clear title summarizing the change.
+  - A detailed description that references:
+    - The relevant RFCs and documents.
+    - High‑level impact on WebWaka SuperAgent and the vertical.
+  - A checklist of items covered (e.g., implementation, tests, documentation).
+- Request review from the appropriate WebWaka team members (as per the repo’s OWNERS or CODEOWNERS).
+- Once approved and merged, mark the task as complete in the tracking system.
+```
+
+Emphasize that **no local partial work should be left behind**; everything must be in the repo.
+
+---
+
+### 5. PRE‑VERTICALS PROMPT STRUCTURE EXAMPLE
+
+For the pre‑verticals document, include multiple blocks such as:
+
+- `### TASK: Implement multi‑tenant wallet service for WebWaka SuperAgent`
+- `### TASK: Implement WebWaka SuperAgent routing gateway (API layer)`
+- `### TASK: Implement usage‑metering and credit‑burn system`
+- `### TASK: Implement auth hooks for AI‑enabled users (default SuperAgent key + BYOK)`
+- `### TASK: Implement observability for AI‑usage (metrics, logs, alerts)`
+
+Each block follows the same template above, with specific GitHub links, skills, and QA instructions.
+
+---
+
+### 6. VERTICALS PROMPT STRUCTURE EXAMPLE
+
+For each vertical group document, include blocks such as:
+
+- `### TASK: Integrate WebWaka SuperAgent into Commerce POS module`
+- `### TASK: Integrate WebWaka SuperAgent into Civic case‑handling and workflow module`
+- `### TASK: Integrate WebWaka SuperAgent into Transport & Logistics booking and dispatch module`
+
+Again, each block uses the same template, tuning:
+
+- Skills (frontend, backend, QA, automation).
+- Context links (e.g., vertical‑specific repos and docs).
+- Implementation and QA focus (e.g., chat UI, agent‑run workflows, media‑gen, etc.).
+
+---
+
+### 7. CROSS‑DOCUMENT RULES AND CONSISTENCY
+
+At the **beginning of each document**, add a short “rules” section so agents know how to behave consistently:
+
+```markdown
+### General rules for all agents using these prompts
+
+- **Never make assumptions** about WebWaka’s architecture, API contracts, or business logic.  
+  - Always read the referenced documents and code first.
+- **Research deeply** before executing:
+  - When you do not know the best practice (e.g., for credit‑based AI pricing, wallet design, or LLM orchestration), do online research and synthesize with WebWaka’s context.
+- **Thoroughness is far more important than speed**:
+  - You may spend extra time reading, planning, and validating.
+  - Do not rush implementation at the cost of correctness or alignment.
+- **All work must be pushed to GitHub**:
+  - No important local work should remain outside the repo.
+- **Follow the new unified plan**:
+  - Treat the latest WebWaka SuperAgent‑centered AI plan as the **source of truth**.
+  - Any outdated AI‑related instructions or documents must be ignored or explicitly updated, not followed.
+```
+
+---
+
+### 8. OUTPUT FORMAT REQUEST
+
+You must output:
+
+1. **ONE** Markdown file for **pre‑verticals execution prompts** (as described above).  
+   - Filename suggestion: `webwaka_preverticals_execution_prompts.md`
+
+2. **MULTIPLE** Markdown files for **verticals execution prompts**, grouped by similarity, for example:
+   - `webwaka_verticals_commerce_pos_execution_prompts.md`
+   - `webwaka_verticals_civic_government_execution_prompts.md`
+   - `webwaka_verticals_transport_logistics_execution_prompts.md`
+   - ... and more as required by your actual vertical list.
+
+Each file must be **self‑contained** and **ready to use** as an agent‑prompt document. Where you reference GitHub locations, **use real‑style paths** that mirror WebWaka’s repo structure (e.g., `github.com/webwaka/core/...`), even if you cannot resolve them today; you can adjust them later in your environment.
+
+---
+
+### 9. STARTING POINT
+
+You may assume WebWaka’s structure is something like:
+
+- Repositories:
+  - `webwaka/core`
+  - `webwaka/ai` (or `webwaka/superagent`)
+  - `webwaka/verticals/commerce`, `webwaka/verticals/civic`, `webwaka/verticals/transport`, etc.
+- Docs:
+  - `webwaka/platform-docs/...`
+  - `webwaka/rfcs/...`
+  - `webwaka/ai-plans/...`
+
+You may **invent plausible paths** for the sake of example (e.g., `https://github.com/webwaka/ai/README.md`), and John Oko can later replace them with exact links.
+
+---
+
+Now, proceed:
+
+1. First, **generate the pre‑verticals prompt document** (one file).
+2. Then, **generate one verticals‑group prompt document at a time**, grouping similar verticals logically.
+3. Make sure every task block strictly follows the template and clearly specifies:
+   - Agent skills.
+   - Document/code links (GitHub).
+   - Deep‑context reading requirement.
+   - Research + plan → implementation → QA → GitHub‑push workflow.
+
+Your only output should be the **Markdown files** described above, properly formatted and ready to be shared with WebWaka agents.
