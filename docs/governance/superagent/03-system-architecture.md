@@ -9,6 +9,14 @@
 
 ---
 
+> **3-in-1 Platform Position Statement:**  
+> WebWaka SuperAgent is the **cross-cutting intelligence layer** — it is NOT a fourth platform pillar.  
+> SuperAgent enhances Pillar 1 (Ops), Pillar 2 (Branding), and Pillar 3 (Marketplace) but does not constitute an independent product surface.  
+> All AI capabilities are exposed through the UI of one of the three pillars, and are gated by subscription tier and NDPR consent.  
+> See `docs/governance/3in1-platform-architecture.md` for the full pillar map.
+
+---
+
 ## ADL-010: SuperAgent Aggregator-Only Platform Architecture
 
 **Context:** The original M8-AI plan assumed WebWaka would maintain direct API relationships with OpenAI, Anthropic, and Google as "platform keys". WebWaka SuperAgent changes this: WebWaka becomes an AI service provider, sourcing all platform-side AI exclusively from aggregators (OpenRouter, Together, Groq, Eden AI). No direct vendor contracts are required or permitted for platform-level traffic.

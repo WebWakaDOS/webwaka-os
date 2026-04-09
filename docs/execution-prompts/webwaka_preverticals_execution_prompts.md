@@ -4,8 +4,28 @@
 **Scope:** Pre-vertical infrastructure — SuperAgent core, AI routing, wallets, auth, metering, observability  
 **Repo:** https://github.com/WebWakaDOS/webwaka-os  
 **Branch base:** `main`  
-**Status:** Ready for agent execution — Phase 1 + Phase 2 SuperAgent implementation  
-**Supersedes:** All scattered M8-AI phase plan fragments. This document is the single operational source of truth for pre-vertical agent tasks.
+**Status:** ⛔ SUPERSEDED — DO NOT USE FOR EXECUTION  
+**Superseded by:** `docs/execution-prompts/webwaka_preverticals_unified_implementation_plan.md`
+
+---
+
+> ## ⛔ SUPERSESSION NOTICE
+>
+> **This document has been superseded as of 2026-04-09.**
+>
+> The unified pre-verticals implementation plan replaces this document in full:
+> **`docs/execution-prompts/webwaka_preverticals_unified_implementation_plan.md`**
+>
+> This document (SA-only plan) was **missing** the following critical work:
+> - Phase 0: 3-in-1 alignment foundation (5 tasks — PV-0.1 through PV-0.5)
+> - Phase 1: Pillar 2 app scaffolding — `apps/brand-runtime/` (PV-1.1)
+> - Phase 1: Pillar 3 app scaffolding — `apps/public-discovery/` (PV-1.2)
+> - Phase 1: White-label theming wiring (PV-1.3)
+>
+> It also omitted pillar labels on all SA task blocks and lacked the migration number registry.
+>
+> **Any agent reading this document must stop here and switch to the unified plan.**  
+> This document is retained for historical reference only.
 
 ---
 

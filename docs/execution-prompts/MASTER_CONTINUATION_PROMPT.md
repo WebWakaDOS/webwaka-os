@@ -96,11 +96,12 @@ After successfully pushing each set to GitHub:
 You are NOT allowed to generate content for any vertical without having read this foundation.**
 
 ### Architecture and governance
-- `docs/governance/verticals-master-plan.md` — category counts, P1/P2/P3 framework, milestone allocation
+- `docs/governance/3in1-platform-architecture.md` — **READ FIRST** — canonical pillar map; every vertical must declare its primary_pillars; SuperAgent is NOT a fourth pillar
+- `docs/governance/verticals-master-plan.md` — category counts, P1/P2/P3 framework, milestone allocation, pillar classification per vertical
 - `docs/governance/verticals-dependency-dag.md` — dependency ordering between verticals
 - `docs/governance/platform-invariants.md` — P2 (no duplication), P9 (integer kobo), P10 (NDPR), P12 (USSD exclusion), P13 (no raw PII to AI), T3 (tenant isolation), T4 (typed errors)
 - `docs/governance/entitlement-model.md` — plan tiers, `requireKYCTier()`, `aiRights` gate
-- `docs/governance/ai-integration-framework.md` — how verticals wire to SuperAgent
+- `docs/governance/ai-integration-framework.md` — how verticals wire to SuperAgent (cross-cutting AI, not a pillar)
 - `docs/governance/ai-capability-matrix.md` — which AI capabilities are available per tier
 - `docs/governance/ai-provider-routing.md` — the 5-level key resolution chain
 
@@ -140,8 +141,10 @@ Every task block you generate must follow this exact structure. Do not omit any 
 - **Module / vertical:** `packages/verticals` + vertical slug `[slug]`
 - **Priority:** [P1-Original | P2-Top100 | P3-Specialist] — [brief justification]
 - **Milestone target:** [M8b | M8c | M8d | M8e | M9 | M10 | M11 | M12]
+- **Primary pillars:** [e.g. Pillar 1 (Ops) + Pillar 2 (Branding) + Pillar 3 (Marketplace) — from verticals-master-plan.md and 3in1-platform-architecture.md]
 - **GitHub context:**
   - Verticals master plan: https://github.com/WebWakaDOS/webwaka-os/blob/main/docs/governance/verticals-master-plan.md
+  - 3-in-1 platform architecture: https://github.com/WebWakaDOS/webwaka-os/blob/main/docs/governance/3in1-platform-architecture.md
   - Verticals FSM engine: https://github.com/WebWakaDOS/webwaka-os/blob/main/packages/verticals/src/
   - Verticals seed: https://github.com/WebWakaDOS/webwaka-os/blob/main/infra/db/seeds/0004_verticals-master.csv
   - Platform invariants: https://github.com/WebWakaDOS/webwaka-os/blob/main/docs/governance/platform-invariants.md
@@ -287,8 +290,10 @@ PR description must reference:
 PR checklist:
 - [ ] Vertical registered in FSM via `packages/verticals/src/`
 - [ ] Migration created and numbered correctly (no gap, no collision)
+- [ ] `primary_pillars` field set correctly in `VerticalRegistration` (matches 3in1-platform-architecture.md)
+- [ ] PR labeled with correct `3in1:pillar-N` GitHub label(s)
 - [ ] All routes protected by correct KYC tier guard
-- [ ] AI routes use SuperAgent burn engine
+- [ ] AI routes use SuperAgent burn engine (SuperAgent is cross-cutting, not a pillar)
 - [ ] Cross-tenant isolation enforced on all D1 queries
 - [ ] Tests ≥ 15, all passing
 - [ ] Zero typecheck errors (`pnpm -r typecheck`)

@@ -55,25 +55,47 @@ WebWaka OS is built once and reused infinitely. Verticals are the sector-specifi
 
 These 17 verticals are explicitly designed into the platform DNA. All must reach production before M10.
 
-| # | Slug | Display Name | Entity Type | Target Milestone | Key Dependency |
-|---|---|---|---|---|---|
-| 1 | `politician` | Individual Politician | individual | M8b | politics tables, community |
-| 2 | `political-party` | Political Party | organization | M8b | politics tables, community |
-| 3 | `motor-park` | Motor Park / Bus Terminal | place | M8c | FRSC, geography |
-| 4 | `mass-transit` | City Bus / Mass Transit | organization | M8c | FRSC, route licensing |
-| 5 | `rideshare` | Carpooling / Ride-Hailing | organization | M8c | FRSC, offerings.route |
-| 6 | `haulage` | Haulage / Logistics | organization | M8c | FRSC, CAC |
-| 7 | `church` | Church / Faith Community | organization | M8d | IT-reg, community_spaces |
-| 8 | `ngo` | NGO / Non-Profit | organization | M8d | IT-reg, community_spaces |
-| 9 | `cooperative` | Cooperative Society | organization | M8d | CAC, membership_tiers |
-| 10 | `pos-business` | POS Business Management System | organization | M8b | CAC, inventory schema |
-| 11 | `market` | Market / Trading Hub | place | M8e | geography, multi-vendor |
-| 12 | `professional` | Professional (Lawyer/Doctor) | individual | M8e | license bodies, social |
-| 13 | `school` | School / Educational Inst. | organization | M8e | CAC, community_courses |
-| 14 | `clinic` | Clinic / Healthcare Facility | organization | M8e | CAC, license verification |
-| 15 | `creator` | Creator / Influencer | individual | M8e | social, community, payments |
-| 16 | `sole-trader` | Sole Trader / Artisan | individual | M8e | WhatsApp catalog, social |
-| 17 | `tech-hub` | Tech Hub / Innovation Centre | place | M8e | geography, community |
+**Primary Pillar Key:**
+- **[1]** = Operations-Management (POS) — `apps/api` + workspace back-office
+- **[2]** = Branding / Website / Portal — `apps/brand-runtime` (branded site or storefront)
+- **[3]** = Listing / Multi-Vendor Marketplace — `apps/public-discovery` (directory, claim-first)
+- **[AI]** = SuperAgent AI features relevant to this vertical (cross-cutting, NOT a 4th pillar)
+
+| # | Slug | Display Name | Entity Type | Primary Pillars | Target Milestone | Key Dependency |
+|---|---|---|---|---|---|---|
+| 1 | `politician` | Individual Politician | individual | 1, 2, 3 | M8b | politics tables, community |
+| 2 | `political-party` | Political Party | organization | 1, 2, 3 | M8b | politics tables, community |
+| 3 | `motor-park` | Motor Park / Bus Terminal | place | 1, 3 | M8c | FRSC, geography |
+| 4 | `mass-transit` | City Bus / Mass Transit | organization | 1, 3 | M8c | FRSC, route licensing |
+| 5 | `rideshare` | Carpooling / Ride-Hailing | organization | 1, 2, 3 | M8c | FRSC, offerings.route |
+| 6 | `haulage` | Haulage / Logistics | organization | 1, 2, 3 | M8c | FRSC, CAC |
+| 7 | `church` | Church / Faith Community | organization | 1, 2, 3 | M8d | IT-reg, community_spaces |
+| 8 | `ngo` | NGO / Non-Profit | organization | 1, 2, 3 | M8d | IT-reg, community_spaces |
+| 9 | `cooperative` | Cooperative Society | organization | 1, 3 | M8d | CAC, membership_tiers |
+| 10 | `pos-business` | POS Business Management System | organization | 1, 2 | M8b | CAC, inventory schema |
+| 11 | `market` | Market / Trading Hub | place | 1, 3 | M8e | geography, multi-vendor |
+| 12 | `professional` | Professional (Lawyer/Doctor) | individual | 1, 2, 3 | M8e | license bodies, social |
+| 13 | `school` | School / Educational Inst. | organization | 1, 2, 3 | M8e | CAC, community_courses |
+| 14 | `clinic` | Clinic / Healthcare Facility | organization | 1, 2, 3 | M8e | CAC, license verification |
+| 15 | `creator` | Creator / Influencer | individual | 1, 2, 3 | M8e | social, community, payments |
+| 16 | `sole-trader` | Sole Trader / Artisan | individual | 1, 2 | M8e | WhatsApp catalog, social |
+| 17 | `tech-hub` | Tech Hub / Innovation Centre | place | 1, 2, 3 | M8e | geography, community |
+
+---
+
+## 3-in-1 Pillar Classification for All 160 Verticals
+
+All verticals default to serving **Pillars 1 and 3** (ops + marketplace/discovery). The full classification is stored in the `primary_pillars` column of the `verticals` D1 table (migration 0037). Below are the classification rules:
+
+| Pillar combination | `primary_pillars` value | Vertical examples |
+|---|---|---|
+| Ops + Marketplace | `["ops","marketplace"]` | Motor Park, Mass Transit, Cooperative, NURTW, Farm, Savings Group, Polling Unit |
+| Ops + Branding | `["ops","branding"]` | POS Business, Sole Trader, Hire Purchase |
+| Ops + Marketplace + Branding | `["ops","marketplace","branding"]` | Politician, Party, Church, NGO, Creator, Professional, School, Clinic, Rideshare, Haulage, Tech Hub, Restaurant, Hotel, Pharmacy |
+
+SuperAgent AI capabilities are not represented in `primary_pillars` — they are entitlement-gated and apply across all combinations. See `docs/governance/3in1-platform-architecture.md` for the complete reference.
+
+> **Implementation gate:** `apps/brand-runtime/` (Pillar 2) and `apps/public-discovery/` (Pillar 3) must be scaffolded (PV-1.1, PV-1.2) before M8b begins vertical activation for any Pillar 2 or Pillar 3 dependent vertical.
 
 ---
 

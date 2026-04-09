@@ -7,6 +7,14 @@
 
 ---
 
+> **3-in-1 Platform Position Statement:**  
+> WebWaka SuperAgent is the **cross-cutting intelligence layer** — it is NOT a fourth platform pillar.  
+> SuperAgent enhances Pillar 1 (Ops), Pillar 2 (Branding), and Pillar 3 (Marketplace) but does not constitute an independent product surface.  
+> All AI capabilities are exposed through the UI of one of the three pillars.  
+> See `docs/governance/3in1-platform-architecture.md` for the full pillar map.
+
+---
+
 ## How to Use This Document
 
 1. Before beginning any AI implementation task, check this document
