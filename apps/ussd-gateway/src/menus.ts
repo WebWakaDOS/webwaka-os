@@ -54,10 +54,10 @@ Enter amount in Naira:`;
 /**
  * Send money — confirm
  */
-export function sendMoneyConfirm(recipient: string, amountNaira: string): string {
+export function sendMoneyConfirm(recipient: string, amountDisplay: string): string {
   return `CON Confirm Transfer
 To: ${recipient}
-Amount: \u20A6${amountNaira}
+Amount: \u20A6${amountDisplay}
 1. Confirm
 2. Cancel`;
 }

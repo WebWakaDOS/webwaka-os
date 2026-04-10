@@ -43,7 +43,7 @@ interface BillingRow {
   id: string;
   workspace_id: string;
   paystack_ref: string | null;
-  amount_naira: number;
+  amount_kobo: number;
   status: string;
   metadata: string;
   created_at: string;
@@ -103,7 +103,7 @@ app.get('/billing', async (c) => {
   const db = c.env.DB as unknown as D1Like;
   const rows = await db
     .prepare(
-      `SELECT id, workspace_id, paystack_ref, amount_naira, status, metadata,
+      `SELECT id, workspace_id, paystack_ref, amount_kobo, status, metadata,
               datetime(created_at,'unixepoch') AS created_at
        FROM billing_history
        WHERE workspace_id = ?
@@ -117,7 +117,7 @@ app.get('/billing', async (c) => {
     id: r.id,
     workspaceId: r.workspace_id,
     paystackRef: r.paystack_ref,
-    amountKobo: r.amount_naira,
+    amountKobo: r.amount_kobo,
     status: r.status,
     metadata: (() => { try { return JSON.parse(r.metadata) as Record<string, unknown>; } catch { return {}; } })(),
     createdAt: r.created_at,

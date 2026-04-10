@@ -304,7 +304,7 @@ describe('GET /workspaces/:id/billing', () => {
         id: 'bil_001',
         workspace_id: 'wsp_001',
         paystack_ref: 'ref_abc',
-        amount_naira: 500000,
+        amount_kobo: 500000,
         status: 'success',
         metadata: '{"plan":"starter"}',
         created_at: '2026-04-07 12:00:00',

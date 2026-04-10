@@ -262,7 +262,7 @@ airtimeRoutes.post('/topup', async (c) => {
 
   // Step 2: Call Termii Airtime API. If this fails, we refund the deduction.
   // T4: division is presentation-only; kobo remains the stored unit.
-  const amountNaira = amountKobo / 100;
+  const termiiAmountNaira = amountKobo / 100; // T4: display conversion only — Termii API requires naira units
   const termiiRes = await fetch(TERMII_AIRTIME_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -271,7 +271,7 @@ airtimeRoutes.post('/topup', async (c) => {
       ported_number: true,
       network,
       phone,
-      amount: amountNaira,
+      amount: termiiAmountNaira,
     }),
   });
 
