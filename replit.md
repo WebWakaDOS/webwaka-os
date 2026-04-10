@@ -4,7 +4,7 @@
 
 WebWaka OS is a multi-tenant, multi-vertical, white-label SaaS platform operating system for Africa, starting with Nigeria. It follows a governance-driven monorepo architecture with "Offline First," "Mobile First," and "Nigeria First" as core principles.
 
-**Current Milestone: Financial+Place+Media+Institutional Extended (M9–M12) — 13 verticals COMPLETE**
+**Current Milestone: Negotiable Pricing System — cross-vertical capability COMPLETE (API wired, CRON configured)**
 
 ## Milestone Status
 
@@ -40,6 +40,7 @@ WebWaka OS is a multi-tenant, multi-vertical, white-label SaaS platform operatin
 | **Health Extended — 6 verticals** | ✅ DONE — dental-clinic(M9, ≥22 tests, MDCN gate, P13) + sports-academy(M10, ≥20 tests, permit gate, P13) + vet-clinic(M10, ≥20 tests, VCNB gate, P13) + community-health(M12, ≥20 tests, NPHCDA gate, USSD-safe, P12/P13) + elderly-care(M12, ≥20 tests, FMHSW gate, diaspora KYC3, P13) + rehab-centre(M12, ≥25 tests, NDLEA gate, L3 HITL ALL AI, P13 most-sensitive) — migrations 0111–0116 — types/repos/index/tests/routes/aggregator all complete |
 | **Prof+Creator Extended — 11 verticals** | ✅ DONE — accounting-firm + event-planner + law-firm(L3 HITL ALL AI) + funeral-home(L3 HITL ALL AI) + pr-firm + tax-consultant(L3 HITL ALL AI) + wedding-planner + music-studio(COSON, integer hours/bpm) + photography-studio + recording-label(royalty_split_bps INTEGER) + talent-agency(commission_bps INTEGER, fee arithmetic) — migrations 0128–0140 — all complete |
 | **Financial+Place+Media+Institutional Extended — 13 verticals** | ✅ DONE — Financial: airtime-reseller(CBN 30M daily cap, L2, NCC) + bureau-de-change(FX kobo/cent no-floats, L2, CBN Tier3) + hire-purchase(outstanding decrement, L2, Tier3) + mobile-money-agent(float daily cap, L2, Tier3); Place: event-hall(double-booking prevention, L2) + water-treatment(ph×100/ppm×10/NTU×10 scaled ints, L2, NAFDAC) + community-hall(3-state FSM, L1) + events-centre(section conflict check, L2); Media: advertising-agency(APCON, impressions INTEGER, CPM kobo, L2) + newspaper-dist(NPC, print_run copies INTEGER, L2) + podcast-studio(L3 HITL broadcast scheduling; L2 sponsorship); Institutional: government-agency(BPP, L3 HITL ALL AI, Tier3, vendor P13) + polling-unit(INEC, L3 HITL ALL AI, NO voter PII absolute) — migrations 0141–0153 — types/repos/index/tests/routes/aggregator/index.ts all complete |
+| **Negotiable Pricing System (cross-vertical capability)** | ✅ COMPLETE — 5 D1 migrations (0181–0185: vendor_pricing_policies, listing_price_overrides, negotiation_sessions, negotiation_offers, negotiation_audit_log) + @webwaka/negotiation package (types, guardrails, repository, engine, price-lock) + 14-endpoint API router at `/api/v1/negotiation` + CRON expiry job (every 15 min) wired into Worker scheduled export — all money INTEGER kobo, all discounts INTEGER bps, 12 blocked verticals hard-gated in engine, min_price_kobo never serialised in responses |
 
 ## Platform Test Totals
 

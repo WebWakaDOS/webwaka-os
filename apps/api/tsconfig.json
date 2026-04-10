@@ -81,7 +81,8 @@
       "@webwaka/verticals-spare-parts":          ["../../packages/verticals-spare-parts/src/index.ts"],
       "@webwaka/verticals-tyre-shop":            ["../../packages/verticals-tyre-shop/src/index.ts"],
       "@webwaka/verticals-used-car-dealer":      ["../../packages/verticals-used-car-dealer/src/index.ts"],
-      "@webwaka/verticals-water-vendor":         ["../../packages/verticals-water-vendor/src/index.ts"]
+      "@webwaka/verticals-water-vendor":         ["../../packages/verticals-water-vendor/src/index.ts"],
+      "@webwaka/negotiation":                    ["../../packages/negotiation/src/index.ts"]
     },
     "rootDir": "../..",
     "outDir": "dist",

@@ -176,6 +176,8 @@ import healthExtendedRoutes from './routes/verticals-health-extended.js';
 import profCreatorExtendedRoutes from './routes/verticals-prof-creator-extended.js';
 import financialPlaceMediaInstitutionalRoutes from './routes/verticals-financial-place-media-institutional-extended.js';
 import { setJExtendedRouter } from './routes/verticals-set-j-extended.js';
+import { negotiationRouter } from './routes/negotiation.js';
+import { runNegotiationExpiry } from './jobs/negotiation-expiry.js';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -533,6 +535,23 @@ app.use('/api/v1/verticals/*', authMiddleware);
 app.route('/api/v1/verticals', setJExtendedRouter);
 
 // ---------------------------------------------------------------------------
+// Negotiable Pricing — platform-wide pricing capability (additive, not disruptive)
+// Negotiation is opt-in by seller. Fixed pricing is the default and unchanged.
+// Blocked verticals: pharmacy_chain, food_vendor, bakery, petrol_station,
+//   internet_cafe, govt_school, orphanage, okada_keke, laundry, laundry_service,
+//   beauty_salon, optician (hard gate in engine layer, not just route layer).
+// P9: All monetary values INTEGER kobo. Discounts INTEGER bps. No floats.
+// T3: tenant_id from auth context only — never from request body.
+// SECURITY: min_price_kobo is never serialised into any API response.
+// Migrations: 0181 vendor_pricing_policies, 0182 listing_price_overrides,
+//             0183 negotiation_sessions, 0184 negotiation_offers,
+//             0185 negotiation_audit_log
+// ---------------------------------------------------------------------------
+
+app.use('/api/v1/negotiation/*', authMiddleware);
+app.route('/api/v1/negotiation', negotiationRouter);
+
+// ---------------------------------------------------------------------------
 // M7c: Social routes — most require auth; /social/profile/:handle is public
 // P14 — assert DM_MASTER_KEY is present at startup before routes are wired.
 // ---------------------------------------------------------------------------
@@ -575,5 +594,15 @@ app.notFound((c) => {
   return c.json({ error: `Route not found: ${c.req.method} ${c.req.path}` }, 404);
 });
 
+// ---------------------------------------------------------------------------
 // Cloudflare Workers entry point
-export default app;
+// Exports both fetch handler (HTTP) and scheduled handler (CRON).
+// ---------------------------------------------------------------------------
+
+export default {
+  fetch: app.fetch.bind(app),
+
+  async scheduled(_event: ScheduledEvent, env: Env, _ctx: ExecutionContext): Promise<void> {
+    await runNegotiationExpiry(env);
+  },
+};

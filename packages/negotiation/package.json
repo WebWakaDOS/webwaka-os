@@ -1,0 +1,26 @@
+{
+  "name": "@webwaka/negotiation",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Negotiable pricing engine — vendor policy, listing overrides, offer FSM, guardrails, audit log. Platform-wide, vertical-agnostic.",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "lint": "eslint src --ext .ts",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@webwaka/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241205.0",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
+  }
+}

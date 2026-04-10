@@ -7,6 +7,16 @@ compatibility_flags = ["nodejs_compat"]
 # wrangler d1 migrations apply webwaka-main --remote
 # 0008_init_search_index.sql    — search_entries table + search_fts FTS5 virtual table
 # 0009_init_discovery_events.sql — discovery_events audit log table
+# 0181_negotiation_vendor_policies.sql    — vendor_pricing_policies
+# 0182_negotiation_listing_overrides.sql  — listing_price_overrides
+# 0183_negotiation_sessions.sql           — negotiation_sessions
+# 0184_negotiation_offers.sql             — negotiation_offers
+# 0185_negotiation_audit_log.sql          — negotiation_audit_log
+
+# Negotiation expiry CRON — runs every 15 minutes
+# Expires open sessions past their expiry time; cleans up abandoned accepted sessions.
+[[triggers]]
+crons = ["*/15 * * * *"]
 
 [vars]
 ENVIRONMENT = "development"
