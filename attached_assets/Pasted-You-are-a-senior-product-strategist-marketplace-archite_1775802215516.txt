@@ -1,0 +1,96 @@
+You are a senior product strategist, marketplace architect, and systems analyst.
+
+Your task is to thoroughly review the current WebWaka platform architecture, product flows, data model, and vertical structure, then do deep research on negotiable pricing models, seller-opt-in bargaining, dynamic pricing, fixed pricing, and marketplace pricing strategies.
+
+Context:
+WebWaka is a multi-vertical platform serving both single-vendor and multi-vendor marketplace use cases across commerce, services, transport, logistics, bookings, and other buying/selling scenarios. In the Nigerian market, negotiation is a common expectation, but fixed pricing must remain available and functional. We want to introduce an opt-in negotiation mode that sellers can enable selectively, without forcing it on all listings or all verticals.
+
+Primary objectives:
+1. Audit the current platform and identify where pricing is currently defined, stored, displayed, negotiated, or fixed.
+2. Research best practices for negotiated pricing, seller-controlled opt-in bargaining, fixed price preservation, dynamic pricing, and hybrid pricing models.
+3. Recommend how WebWaka should implement negotiation as a first-class, cross-platform capability.
+4. Design how this should work in:
+   - Single-vendor marketplaces.
+   - Multi-vendor marketplaces.
+   - Service listings.
+   - Transport/logistics bookings.
+   - Bulk orders and B2B orders.
+5. Ensure fixed pricing remains a first-class option and is never degraded.
+6. Propose product, UX, data model, API, business rules, permissions, and workflow changes.
+7. Suggest analytics and governance needed to protect seller margins, reduce abuse, and maintain trust.
+
+Key product requirements:
+- Negotiation must be seller opt-in only.
+- A buyer should only see negotiable offers where the seller has enabled negotiation.
+- Fixed-price listings must continue to work normally.
+- Negotiation may be enabled per listing, per category, per vendor, per store, per service, or per transaction, depending on the vertical.
+- The system must support guardrails such as minimum price, maximum discount, counteroffer limits, expiry time, auto-accept rules, and buyer eligibility rules.
+- The platform should support both manual negotiation and assisted/automated negotiation.
+- The feature should work across all verticals where it makes sense, without forcing it on verticals where it does not.
+- The design should support Nigerian market realities such as inflation, fuel price volatility, transportation cost changes, exchange-rate fluctuations, and bulk-buy discount expectations.
+
+What to deliver:
+A. Current-state review
+- Identify current pricing structures, checkout flows, marketplace flows, vendor rules, and relevant modules.
+- Highlight gaps, risks, and opportunities.
+
+B. Deep research findings
+- Summarize relevant patterns from marketplace platforms, e-commerce, B2B commerce, transport apps, and negotiation-based pricing systems.
+- Distinguish fixed pricing, negotiated pricing, dynamic pricing, and hybrid models.
+
+C. Recommended product strategy
+- Decide whether negotiation should be:
+  - Listing-level opt-in.
+  - Category-level default with overrides.
+  - Vendor-level default with listing overrides.
+  - Hybrid of all of the above.
+- Recommend the best strategy and explain why.
+
+D. UX and workflow design
+- Describe buyer and seller journeys.
+- Explain how the negotiation badge, filters, offer flow, counteroffer flow, and acceptance flow should work.
+- Show how fixed-price and negotiable items coexist in search, catalog, cart, checkout, and order management.
+
+E. Architecture and data model
+- Propose tables/entities such as pricing_mode, negotiable_offer, counteroffer, price_rules, price_guardrails, offer_expiry, negotiation_session, and audit_log.
+- Explain how this should integrate into the existing platform architecture with minimal disruption.
+- Propose APIs, events, or services if needed.
+
+F. Vertical-specific rules
+- Recommend how this should work differently for:
+  - Goods marketplaces.
+  - Service marketplaces.
+  - Transport/logistics.
+  - Single-vendor commerce.
+  - Multi-vendor aggregation marketplaces.
+- Identify where negotiation should be disabled or restricted.
+
+G. Risk management
+- Identify abuse cases, fairness issues, fraud risks, UX confusion, and pricing conflicts.
+- Recommend governance, moderation, and logging controls.
+
+H. Implementation roadmap
+- Provide a phased rollout plan:
+  - MVP.
+  - Pilot verticals.
+  - Platform-wide expansion.
+  - Automation and AI enhancements.
+- Include priorities, dependencies, and sequencing.
+
+Output format:
+1. Executive summary.
+2. Current-state assessment.
+3. Research-backed recommendations.
+4. Proposed system design.
+5. Vertical-by-vertical application.
+6. Risks and mitigations.
+7. MVP roadmap.
+8. Open questions and assumptions.
+
+Important:
+- Be practical, implementation-oriented, and specific.
+- Do not overfit to one vertical.
+- Keep fixed pricing fully supported.
+- Make negotiation opt-in and seller-controlled.
+- If you find better alternatives than negotiation in some verticals, say so clearly.
+- Tie all recommendations back to WebWaka’s architecture and Nigerian market realities.
