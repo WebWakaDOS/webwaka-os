@@ -4,7 +4,7 @@
 
 WebWaka OS is a multi-tenant, multi-vertical, white-label SaaS platform operating system for Africa, starting with Nigeria. It follows a governance-driven monorepo architecture with "Offline First," "Mobile First," and "Nigeria First" as core principles.
 
-**Current Milestone: Health Extended (M9–M12) — 6 verticals COMPLETE**
+**Current Milestone: Financial+Place+Media+Institutional Extended (M9–M12) — 13 verticals COMPLETE**
 
 ## Milestone Status
 
@@ -38,6 +38,8 @@ WebWaka OS is a multi-tenant, multi-vertical, white-label SaaS platform operatin
 | **Commerce P3 (Set C) — 15 verticals** | ✅ DONE — artisanal-mining(23) + borehole-driller(20) + building-materials(20) + car-wash(26) + cleaning-company(20) + electrical-fittings(19) + generator-dealer(24) + hair-salon(19) + petrol-station(22) + phone-repair-shop(19) + shoemaker(20) + spare-parts(22) + tyre-shop(20) + used-car-dealer(19) + water-vendor(20) — migrations 0078-0092 — auth middleware fix applied — SHA `bc0cd06` |
 | **Civic Extended — 10 verticals** | ✅ DONE — mosque(≥15) + youth-org(≥15) + womens-assoc(≥15) + waste-mgmt(≥15) + book-club(≥15) + professional-assoc(≥15) + sports-club(≥15) + campaign-office(≥15, L3 HITL, INEC caps) + constituency-office(≥15, L3 HITL) + ward-rep(≥15, L3 HITL) — migrations 0101–0110 — types/repos/index/tests/routes/aggregator all complete |
 | **Health Extended — 6 verticals** | ✅ DONE — dental-clinic(M9, ≥22 tests, MDCN gate, P13) + sports-academy(M10, ≥20 tests, permit gate, P13) + vet-clinic(M10, ≥20 tests, VCNB gate, P13) + community-health(M12, ≥20 tests, NPHCDA gate, USSD-safe, P12/P13) + elderly-care(M12, ≥20 tests, FMHSW gate, diaspora KYC3, P13) + rehab-centre(M12, ≥25 tests, NDLEA gate, L3 HITL ALL AI, P13 most-sensitive) — migrations 0111–0116 — types/repos/index/tests/routes/aggregator all complete |
+| **Prof+Creator Extended — 11 verticals** | ✅ DONE — accounting-firm + event-planner + law-firm(L3 HITL ALL AI) + funeral-home(L3 HITL ALL AI) + pr-firm + tax-consultant(L3 HITL ALL AI) + wedding-planner + music-studio(COSON, integer hours/bpm) + photography-studio + recording-label(royalty_split_bps INTEGER) + talent-agency(commission_bps INTEGER, fee arithmetic) — migrations 0128–0140 — all complete |
+| **Financial+Place+Media+Institutional Extended — 13 verticals** | ✅ DONE — Financial: airtime-reseller(CBN 30M daily cap, L2, NCC) + bureau-de-change(FX kobo/cent no-floats, L2, CBN Tier3) + hire-purchase(outstanding decrement, L2, Tier3) + mobile-money-agent(float daily cap, L2, Tier3); Place: event-hall(double-booking prevention, L2) + water-treatment(ph×100/ppm×10/NTU×10 scaled ints, L2, NAFDAC) + community-hall(3-state FSM, L1) + events-centre(section conflict check, L2); Media: advertising-agency(APCON, impressions INTEGER, CPM kobo, L2) + newspaper-dist(NPC, print_run copies INTEGER, L2) + podcast-studio(L3 HITL broadcast scheduling; L2 sponsorship); Institutional: government-agency(BPP, L3 HITL ALL AI, Tier3, vendor P13) + polling-unit(INEC, L3 HITL ALL AI, NO voter PII absolute) — migrations 0141–0153 — types/repos/index/tests/routes/aggregator/index.ts all complete |
 
 ## Platform Test Totals
 

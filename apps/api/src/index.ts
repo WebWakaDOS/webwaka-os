@@ -82,6 +82,23 @@
  *   recording-label (M12, royalty_split_bps INTEGER, kobo arithmetic),
  *   talent-agency (M12, commission_bps INTEGER, fee arithmetic)
  *
+ * Financial Extended — 4 verticals (auth required, M12) — mounted at /api/v1/:slug/*
+ *   airtime-reseller (CBN daily cap 30M kobo, L2 AI), bureau-de-change (FX kobo/cent no-float, L2 AI, Tier3),
+ *   hire-purchase (outstanding_kobo decrement, L2 AI, Tier3), mobile-money-agent (CBN daily cap, L2 AI, Tier3)
+ *
+ * Place Extended — 4 verticals (auth required, M10/M11/M12) — mounted at /api/v1/:slug/*
+ *   event-hall (double-booking, L2 AI), water-treatment (scaled ints ph×100/ppm×10/NTU×10, L2 AI),
+ *   community-hall (3-state FSM, L1 AI), events-centre (section conflict, L2 AI)
+ *
+ * Media Extended — 3 verticals (auth required, M9/M12) — mounted at /api/v1/:slug/*
+ *   advertising-agency (APCON, impressions INTEGER, CPM kobo, L2 AI),
+ *   newspaper-dist (NPC, print_run INTEGER copies, L2 AI),
+ *   podcast-studio (L3 HITL broadcast scheduling; L2 sponsorship revenue)
+ *
+ * Institutional Extended — 2 verticals (auth required, M11/M12) — mounted at /api/v1/:slug/*
+ *   government-agency (BPP, L3 HITL ALL AI, Tier3 KYC, vendor/procurement P13),
+ *   polling-unit (INEC, L3 HITL ALL AI, NO voter PII — absolute)
+ *
  * Platform Invariants enforced:
  *   T3 — tenant_id on all DB queries (via auth middleware context)
  *   T4 — kobo integers enforced by repository layer
@@ -141,6 +158,7 @@ import { transportExtendedRoutes } from './routes/verticals-transport-extended.j
 import { civicExtendedRoutes } from './routes/verticals-civic-extended.js';
 import healthExtendedRoutes from './routes/verticals-health-extended.js';
 import profCreatorExtendedRoutes from './routes/verticals-prof-creator-extended.js';
+import financialPlaceMediaInstitutionalRoutes from './routes/verticals-financial-place-media-institutional-extended.js';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -459,6 +477,31 @@ app.use('/api/v1/photography-studio/*', authMiddleware);
 app.use('/api/v1/recording-label/*', authMiddleware);
 app.use('/api/v1/talent-agency/*', authMiddleware);
 app.route('/api/v1', profCreatorExtendedRoutes);
+
+// ---------------------------------------------------------------------------
+// M12/M11/M10/M9: Financial + Place + Media + Institutional Extended — 13 verticals
+//   Financial: airtime-reseller, bureau-de-change, hire-purchase, mobile-money-agent
+//   Place:     event-hall, water-treatment, community-hall, events-centre
+//   Media:     advertising-agency, newspaper-dist, podcast-studio
+//   Institutional: government-agency, polling-unit
+// P9/T3/P12/P13 enforced; CBN daily caps; FX integer rates; scaled water integers
+// L3 HITL mandatory: government-agency (all AI), polling-unit (all AI),
+//   podcast-studio (BROADCAST_SCHEDULING only); L2 for others; L1 community-hall
+// ---------------------------------------------------------------------------
+app.use('/api/v1/airtime-reseller/*', authMiddleware);
+app.use('/api/v1/bureau-de-change/*', authMiddleware);
+app.use('/api/v1/hire-purchase/*', authMiddleware);
+app.use('/api/v1/mobile-money-agent/*', authMiddleware);
+app.use('/api/v1/event-hall/*', authMiddleware);
+app.use('/api/v1/water-treatment/*', authMiddleware);
+app.use('/api/v1/community-hall/*', authMiddleware);
+app.use('/api/v1/events-centre/*', authMiddleware);
+app.use('/api/v1/advertising-agency/*', authMiddleware);
+app.use('/api/v1/newspaper-dist/*', authMiddleware);
+app.use('/api/v1/podcast-studio/*', authMiddleware);
+app.use('/api/v1/government-agency/*', authMiddleware);
+app.use('/api/v1/polling-unit/*', authMiddleware);
+app.route('/api/v1', financialPlaceMediaInstitutionalRoutes);
 
 // ---------------------------------------------------------------------------
 // M7c: Social routes — most require auth; /social/profile/:handle is public
