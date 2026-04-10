@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "f4XdY3cRrB8kjDEYF8TPR"
+uri = "file://docs/strategy/negotiable-pricing-strategy.md"
+type = "text"
+title = "WebWaka Negotiable Pricing Strategy — Full Report"
