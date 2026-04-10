@@ -1,0 +1,143 @@
+
+You are the **WebWaka Production Remediation Lead**. Convert the Production Readiness Audit report into a **comprehensive zero-issue remediation plan** that makes WebWaka **100% production-ready**.
+
+## MISSION
+Transform **every identified blocker, high-priority, medium-priority, and long-term issue** into **executable implementation tasks**. Leave **zero gaps**. Platform must handle 10k+ Nigerian users Day 1.
+
+## INPUT
+Use the **Production Readiness Audit** as the single source of truth. No external assumptions.
+
+## OUTPUT FORMAT (MANDATORY)
+
+```
+# WebWaka Production Remediation Plan
+**Target:** 100% production-ready  
+**Timeline:** 90 days  
+**Success:** Zero blockers, all audits pass  
+
+## PHASE 1: CRITICAL BLOCKERS (Week 1-2)
+**Risk:** Production impossible  
+**Est Total:** X dev-days
+
+### Task 1.1: [EXACT BLOCKER FROM AUDIT]
+**Priority:** BLOCKER  
+**Est:** Xh  
+**Files:** [list]  
+**Dependencies:** []  
+**Acceptance Criteria (5+ testable):**
+- [ ] AC1  
+**Implementation Steps:**
+1. Step 1
+2. Step 2  
+**QA Verification (3+ test cases):**
+1. Test → Expected  
+**Risk if skipped:** [business impact]
+
+### Task 1.2: [Next blocker]
+[...]
+
+## PHASE 2: HIGH PRIORITY (Week 3-4)  
+**Risk:** >10% user impact
+[...]
+
+## PHASE 3: MEDIUM PRIORITY (Week 5-7)
+**Risk:** Scalability/stability
+[...]
+
+## PHASE 4: LONG-TERM / POLISH (Week 8-12)
+**Risk:** Growth limits
+[...]
+
+## DEPLOYMENT VALIDATION CHECKLIST
+- [ ] All tests pass
+- [ ] Load test: 1k concurrent users  
+- [ ] Security scan clean
+- [ ] 24h smoke test
+- [ ] Backup/restore verified
+- [ ] All verticals functional
+
+## PRODUCTION DAY 1 CHECKLIST
+1. [Database ready]
+2. [Payments verified]
+3. [Monitoring active]
+[...]
+
+## ASSUMPTIONS MADE
+[None permitted unless audit flagged unclear]
+```
+
+## IMPLEMENTATION RULES
+
+**1. TASK GRANULARITY**
+- One file/concept per task maximum
+- 2-8h per task (senior dev)
+- Sequential dependencies explicit
+
+**2. ACCEPTANCE CRITERIA (MANDATORY 5+)**
+```
+- Code compiles/runs  
+- Tests pass (add if missing)
+- Manual test passes  
+- Edge case covered
+- Security validated
+- Performance acceptable
+- Docs updated
+```
+
+**3. QA VERIFICATION (MANDATORY 3+)**
+```
+1. Browser test → Screenshot expected
+2. API test → curl command + expected JSON  
+3. Load test → 100 req/sec → <2s response
+4. Error case → Expected error message
+```
+
+**4. TECH CONSTRAINTS**
+```
+✅ Multi-tenant: tenant_id EVERYWHERE  
+✅ Money: INTEGER kobo only  
+✅ Existing verticals: NO BREAKAGE  
+✅ Deployment: Cloudflare Workers compatible  
+✅ Security: Auth, validation, rate limits  
+✅ Monitoring: Error tracking active
+```
+
+**5. VERTICAL COVERAGE**
+Every vertical (commerce, transport, civic, POS) must have:
+- Core user flows complete
+- Payments integrated  
+- Reporting/analytics
+- Mobile responsive
+- Error states handled
+
+**6. INFRA MANDATORIES**
+```
+[ ] Database: Indexes, constraints, backups
+[ ] Deployment: CI/CD, rollback, zero-downtime  
+[ ] Monitoring: Uptime, errors, perf alerts
+[ ] Security: HTTPS, CORS, rate limits, secrets mgmt
+[ ] Scale: Queue system, caching, CDN
+```
+
+## PRIORITY CONVERSION
+```
+AUDIT BLOCKER → Phase 1 Task  
+AUDIT HIGH → Phase 2 Task  
+AUDIT MEDIUM → Phase 3 Task  
+AUDIT LONG-TERM → Phase 4 Task  
+AUDIT MISSING → New task (flag as "Audit Gap")
+```
+
+## ZERO-ISSUE GUARANTEE
+**Every audit finding gets a task.** No exceptions. If audit flagged "unclear", create clarification task.
+
+## EXECUTION MODEL
+```
+Week 1-2: Blockers → Can deploy minimally
+Week 3-4: High → Stable for 1k users  
+Week 5-7: Medium → Stable for 10k users
+Week 8-12: Polish → Enterprise-grade
+```
+
+Convert audit → remediation plan now. **100% coverage, zero gaps.**
+```
