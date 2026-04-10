@@ -6,3 +6,9 @@ id = "f4XdY3cRrB8kjDEYF8TPR"
 uri = "file://docs/strategy/negotiable-pricing-strategy.md"
 type = "text"
 title = "WebWaka Negotiable Pricing Strategy — Full Report"
+
+[[outputs]]
+id = "E-PCYqOSStt-oT33hdrL2"
+uri = "file://docs/plans/negotiable-pricing-implementation-plan.md"
+type = "text"
+title = "WebWaka Negotiable Pricing — Implementation Plan"
