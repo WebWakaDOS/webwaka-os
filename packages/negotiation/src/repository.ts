@@ -437,6 +437,18 @@ export class NegotiationRepository {
     return results.map((r) => r.id);
   }
 
+  /** Returns full expired sessions (with tenant_id) for CRON audit logging. */
+  async expiredSessions(since: number): Promise<NegotiationSession[]> {
+    const { results } = await this.db
+      .prepare(
+        `SELECT * FROM negotiation_sessions
+         WHERE status = 'expired' AND updated_at >= ?`,
+      )
+      .bind(since)
+      .all<NegotiationSession>();
+    return results;
+  }
+
   async abandonedAcceptedSessions(cutoffUnix: number): Promise<NegotiationSession[]> {
     const { results } = await this.db
       .prepare(

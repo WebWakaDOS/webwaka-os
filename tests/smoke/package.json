@@ -1,0 +1,12 @@
+{
+  "name": "smoke",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "smoke:staging": "tsx api-health.smoke.ts",
+    "smoke:production": "tsx api-health.smoke.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2"
+  }
+}

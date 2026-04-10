@@ -35,7 +35,7 @@ interface JobRow {
 }
 interface SupplyRow {
   id: string; workspace_id: string; tenant_id: string; supply_name: string;
-  unit: string; quantity_in_stock: number; unit_cost_kobo: number; created_at: number;
+  unit: string; quantity_in_stock_x1000: number; unit_cost_kobo: number; created_at: number;
 }
 
 const r2p = (r: ProfileRow): CleaningServiceProfile => ({
@@ -53,7 +53,7 @@ const r2job = (r: JobRow): CleaningJob => ({
 });
 const r2sup = (r: SupplyRow): CleaningSupply => ({
   id: r.id, workspaceId: r.workspace_id, tenantId: r.tenant_id,
-  supplyName: r.supply_name, unit: r.unit, quantityInStock: r.quantity_in_stock,
+  supplyName: r.supply_name, unit: r.unit, quantityInStockX1000: r.quantity_in_stock_x1000,
   unitCostKobo: r.unit_cost_kobo, createdAt: r.created_at,
 });
 
@@ -133,10 +133,10 @@ export class CleaningServiceRepository {
     const id = input.id ?? crypto.randomUUID();
     if (!Number.isInteger(input.unitCostKobo) || input.unitCostKobo < 0) throw new Error('[P9] unit_cost_kobo must be non-negative integer');
     await this.db.prepare(
-      `INSERT INTO cleaning_supplies (id, workspace_id, tenant_id, supply_name, unit, quantity_in_stock, unit_cost_kobo, created_at)
+      `INSERT INTO cleaning_supplies (id, workspace_id, tenant_id, supply_name, unit, quantity_in_stock_x1000, unit_cost_kobo, created_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, unixepoch())`,
     ).bind(id, input.workspaceId, input.tenantId, input.supplyName, input.unit,
-           input.quantityInStock, input.unitCostKobo).run();
+           input.quantityInStockX1000, input.unitCostKobo).run();
     const s = await this.findSupplyById(id, input.tenantId);
     if (!s) throw new Error('[cleaning-service] Failed to create supply');
     return s;

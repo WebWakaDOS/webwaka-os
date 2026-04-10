@@ -2,47 +2,81 @@
 # USSD Gateway Worker — Africa's Talking USSD integration
 # Shortcode: *384# (pending NCC registration)
 # See docs/enhancements/m7/offline-sync.md for USSD feature map
+#
+# OPS-003: compatibility_date updated from 2024-09-23 → 2024-12-05
+# to match all other Workers and prevent API surface divergence.
 
 name = "webwaka-ussd-gateway"
 main = "src/index.ts"
-compatibility_date = "2024-09-23"
+compatibility_date = "2024-12-05"
 compatibility_flags = ["nodejs_compat"]
 
-# Environments
+[vars]
+ENVIRONMENT = "development"
+
+# Local dev KV placeholders
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "local-dev-placeholder"
+
+[[kv_namespaces]]
+binding = "USSD_SESSION_KV"
+id = "local-dev-placeholder"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "webwaka-main"
+database_id = "local-dev-placeholder"
+
+# ---------------------------------------------------------------------------
+# Staging
+# ---------------------------------------------------------------------------
 [env.staging]
 name = "webwaka-ussd-gateway-staging"
-vars = { ENVIRONMENT = "staging" }
+
+[env.staging.vars]
+ENVIRONMENT = "staging"
 
 [[env.staging.d1_databases]]
 binding = "DB"
-database_name = "webwaka-staging"
-database_id = ""  # Set in CI from CLOUDFLARE_D1_STAGING_ID secret
+database_name = "webwaka-os-staging"
+database_id = "cfa62668-bbd0-4cf2-996a-53da76bab948"
 
-[env.production]
-name = "webwaka-ussd-gateway-production"
-vars = { ENVIRONMENT = "production" }
-
-[[env.production.d1_databases]]
-binding = "DB"
-database_name = "webwaka-production"
-database_id = ""  # Set in CI from CLOUDFLARE_D1_PRODUCTION_ID secret
-
-# KV Namespaces
-[[kv_namespaces]]
+[[env.staging.kv_namespaces]]
 binding = "RATE_LIMIT_KV"
-id = ""  # Set per environment
+id = "608eacac3eb941a68c716b14e84b4d10"
 
-# USSD session state (3-minute TTL handled in code)
-[[kv_namespaces]]
+[[env.staging.kv_namespaces]]
 binding = "USSD_SESSION_KV"
-id = ""  # Set per environment
+id = "2d2b2b32beb94df989a7e3520cc3962a"
 
-# Routes — Africa's Talking sends POST to /ussd
-[env.staging.routes]
+[[env.staging.routes]]
 pattern = "api-staging.webwaka.ng/ussd"
 zone_name = "webwaka.ng"
 
-[env.production.routes]
+# ---------------------------------------------------------------------------
+# Production
+# ---------------------------------------------------------------------------
+[env.production]
+name = "webwaka-ussd-gateway-production"
+
+[env.production.vars]
+ENVIRONMENT = "production"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "webwaka-os-production"
+database_id = "de1d0935-31ed-4a33-a0fd-0122d7a4fe43"
+
+[[env.production.kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "af260e847d1e400e94cf13f6ae3214eb"
+
+[[env.production.kv_namespaces]]
+binding = "USSD_SESSION_KV"
+id = "c3f90b3b6b634983b1778964b0a92ed0"
+
+[[env.production.routes]]
 pattern = "api.webwaka.ng/ussd"
 zone_name = "webwaka.ng"
 

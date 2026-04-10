@@ -12,9 +12,12 @@
  *   GET  /community/:id/events          — list events (no auth)
  *   POST /community/events/:id/rsvp     — rsvp to event (auth required)
  *
- * T3 — tenant_id from X-Tenant-Id header on all queries.
+ * T3 — tenant_id from JWT claim (c.get('auth').tenantId) on all auth routes.
+ *      Header-based tenant resolution only for public (no-auth) routes.
  * P10 — 403 if no NDPR consent for join.
  * P15 — moderation runs before post insert.
+ *
+ * SEC-001 fix: removed tenant impersonation via X-Tenant-Id on auth routes.
  */
 
 import { Hono } from 'hono';
@@ -48,7 +51,9 @@ interface D1Like {
   };
 }
 
-function getTenantId(c: { req: { header(name: string): string | undefined } }): string | null {
+// Public routes only — sourcing tenant from a forgeable header is safe here
+// because no authenticated user data is written or scoped.
+function getTenantIdFromHeader(c: { req: { header(name: string): string | undefined } }): string | null {
   return c.req.header('X-Tenant-Id') ?? null;
 }
 
@@ -59,9 +64,9 @@ export const communityRoutes = new Hono<AppEnv>();
 // to prevent Hono matching /channels/... as slug="channels"
 // ---------------------------------------------------------------------------
 
-// GET /community/channels/:id/posts
+// GET /community/channels/:id/posts — no auth (public, header-sourced tenant OK)
 communityRoutes.get('/channels/:id/posts', async (c) => {
-  const tenantId = getTenantId(c);
+  const tenantId = getTenantIdFromHeader(c);
   if (!tenantId) return c.json({ error: 'X-Tenant-Id header required' }, 400);
 
   const { id } = c.req.param();
@@ -73,12 +78,11 @@ communityRoutes.get('/channels/:id/posts', async (c) => {
   return c.json({ posts });
 });
 
-// POST /community/channels/:id/posts
+// POST /community/channels/:id/posts — auth required (T3: tenant from JWT)
 communityRoutes.post('/channels/:id/posts', async (c) => {
-  const tenantId = getTenantId(c);
-  if (!tenantId) return c.json({ error: 'X-Tenant-Id header required' }, 400);
+  const auth = c.get('auth') as { tenantId: string; userId: string };
+  const tenantId = auth.tenantId;
 
-  const auth = c.get('auth');
   const body = await c.req.json().catch(() => null);
   const schema = z.object({ content: z.string().min(1, 'content must not be empty') });
   const parsed = schema.safeParse(body);
@@ -103,9 +107,9 @@ communityRoutes.post('/channels/:id/posts', async (c) => {
   }
 });
 
-// GET /community/lessons/:id
+// GET /community/lessons/:id — no auth (public, P6 offline-cacheable)
 communityRoutes.get('/lessons/:id', async (c) => {
-  const tenantId = getTenantId(c);
+  const tenantId = getTenantIdFromHeader(c);
   if (!tenantId) return c.json({ error: 'X-Tenant-Id header required' }, 400);
 
   const { id } = c.req.param();
@@ -119,12 +123,11 @@ communityRoutes.get('/lessons/:id', async (c) => {
   return c.json({ lesson });
 });
 
-// POST /community/lessons/:id/progress
+// POST /community/lessons/:id/progress — auth required (T3: tenant from JWT)
 communityRoutes.post('/lessons/:id/progress', async (c) => {
-  const tenantId = getTenantId(c);
-  if (!tenantId) return c.json({ error: 'X-Tenant-Id header required' }, 400);
+  const auth = c.get('auth') as { tenantId: string; userId: string };
+  const tenantId = auth.tenantId;
 
-  const auth = c.get('auth');
   const body = await c.req.json().catch(() => null);
   const schema = z.object({ progressPct: z.number().int().min(0).max(100) });
   const parsed = schema.safeParse(body);
@@ -144,12 +147,11 @@ communityRoutes.post('/lessons/:id/progress', async (c) => {
   return c.json({ progress });
 });
 
-// POST /community/events/:id/rsvp
+// POST /community/events/:id/rsvp — auth required (T3: tenant from JWT)
 communityRoutes.post('/events/:id/rsvp', async (c) => {
-  const tenantId = getTenantId(c);
-  if (!tenantId) return c.json({ error: 'X-Tenant-Id header required' }, 400);
+  const auth = c.get('auth') as { tenantId: string; userId: string };
+  const tenantId = auth.tenantId;
 
-  const auth = c.get('auth');
   const { id } = c.req.param();
   const db = c.env.DB as unknown as D1Like;
 
@@ -165,9 +167,9 @@ communityRoutes.post('/events/:id/rsvp', async (c) => {
   }
 });
 
-// GET /community/:id/channels
+// GET /community/:id/channels — no auth (public, header-sourced tenant OK)
 communityRoutes.get('/:id/channels', async (c) => {
-  const tenantId = getTenantId(c);
+  const tenantId = getTenantIdFromHeader(c);
   if (!tenantId) return c.json({ error: 'X-Tenant-Id header required' }, 400);
 
   const { id } = c.req.param();
@@ -177,9 +179,9 @@ communityRoutes.get('/:id/channels', async (c) => {
   return c.json({ channels });
 });
 
-// GET /community/:id/courses
+// GET /community/:id/courses — no auth (public, header-sourced tenant OK)
 communityRoutes.get('/:id/courses', async (c) => {
-  const tenantId = getTenantId(c);
+  const tenantId = getTenantIdFromHeader(c);
   if (!tenantId) return c.json({ error: 'X-Tenant-Id header required' }, 400);
 
   const { id } = c.req.param();
@@ -189,9 +191,9 @@ communityRoutes.get('/:id/courses', async (c) => {
   return c.json({ modules });
 });
 
-// GET /community/:id/events
+// GET /community/:id/events — no auth (public, header-sourced tenant OK)
 communityRoutes.get('/:id/events', async (c) => {
-  const tenantId = getTenantId(c);
+  const tenantId = getTenantIdFromHeader(c);
   if (!tenantId) return c.json({ error: 'X-Tenant-Id header required' }, 400);
 
   const { id } = c.req.param();
@@ -201,12 +203,11 @@ communityRoutes.get('/:id/events', async (c) => {
   return c.json({ events });
 });
 
-// POST /community/join
+// POST /community/join — auth required (T3: tenant from JWT)
 communityRoutes.post('/join', async (c) => {
-  const tenantId = getTenantId(c);
-  if (!tenantId) return c.json({ error: 'X-Tenant-Id header required' }, 400);
+  const auth = c.get('auth') as { tenantId: string; userId: string };
+  const tenantId = auth.tenantId;
 
-  const auth = c.get('auth');
   const body = await c.req.json().catch(() => null);
   const schema = z.object({
     communityId: z.string().min(1),
@@ -236,9 +237,9 @@ communityRoutes.post('/join', async (c) => {
   }
 });
 
-// GET /community/:slug — MUST be last (catch-all)
+// GET /community/:slug — MUST be last (catch-all, no auth, header-sourced tenant OK)
 communityRoutes.get('/:slug', async (c) => {
-  const tenantId = getTenantId(c);
+  const tenantId = getTenantIdFromHeader(c);
   if (!tenantId) return c.json({ error: 'X-Tenant-Id header required' }, 400);
 
   const { slug } = c.req.param();

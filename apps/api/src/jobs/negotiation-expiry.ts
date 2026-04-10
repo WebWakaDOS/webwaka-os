@@ -6,6 +6,9 @@
 // Also cleans up accepted sessions with no payment after 24 hours.
 // Idempotent: re-running has no adverse effect.
 // Errors are caught and logged — handler never crashes the Worker.
+//
+// OPS-004 fix: audit entries now use session.tenant_id (the real tenant),
+// not the hardcoded 'system' string which violated T3.
 
 import { NegotiationRepository } from '@webwaka/negotiation';
 import type { Env } from '../env.js';
@@ -20,12 +23,13 @@ export async function runNegotiationExpiry(env: Env): Promise<void> {
 
     if (expiredCount > 0) {
       const recentCutoff = now - 60;
-      const expiredIds = await repo.expiredSessionIds(recentCutoff);
-      for (const sessionId of expiredIds) {
+      // OPS-004: fetch full sessions (with tenant_id) instead of bare IDs
+      const expiredSessions = await repo.expiredSessions(recentCutoff);
+      for (const session of expiredSessions) {
         try {
           await repo.writeAuditEntry({
-            tenant_id: 'system',
-            session_id: sessionId,
+            tenant_id: session.tenant_id, // T3: use real tenant from session, not 'system'
+            session_id: session.id,
             event_type: 'expired',
             actor_type: 'system',
             actor_ref_id: 'system',

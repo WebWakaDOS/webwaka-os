@@ -1,10 +1,11 @@
 /**
  * Auth routes.
  *
- * POST /auth/login   — authenticate with email + password, returns JWT
- * POST /auth/refresh — refresh an expiring JWT (auth required)
- * GET  /auth/me      — return the caller's AuthContext (auth required)
- * POST /auth/verify  — validate a JWT and return its decoded payload
+ * POST   /auth/login   — authenticate with email + password, returns JWT
+ * POST   /auth/refresh — refresh an expiring JWT (auth required)
+ * GET    /auth/me      — return the caller's AuthContext (auth required)
+ * POST   /auth/verify  — validate a JWT and return its decoded payload
+ * DELETE /auth/me      — NDPR Article 3.1(9) Right to Erasure (auth required)
  */
 
 import { Hono } from 'hono';
@@ -113,6 +114,56 @@ authRoutes.get('/me', (c) => {
     return c.json({ error: 'Not authenticated.' }, 401);
   }
   return c.json({ data: auth });
+});
+
+// DELETE /auth/me — NDPR Article 3.1(9) Right to Erasure (auth required)
+// Anonymises PII in users table — does NOT delete the row (preserves FK integrity).
+// T3: tenant_id sourced from JWT claim (auth.tenantId), not from header.
+authRoutes.delete('/me', async (c) => {
+  const auth = c.get('auth');
+  if (!auth) {
+    return c.json({ error: 'Not authenticated.' }, 401);
+  }
+
+  const db = c.env.DB;
+  const anonRef = `deleted_${crypto.randomUUID()}`;
+
+  // Anonymise user PII (preserve row for FK integrity)
+  await db
+    .prepare(
+      `UPDATE users SET
+         email         = ?,
+         full_name     = 'Deleted User',
+         phone         = NULL,
+         password_hash = NULL,
+         updated_at    = unixepoch()
+       WHERE id = ? AND tenant_id = ?`,
+    )
+    .bind(`${anonRef}@deleted.invalid`, auth.userId, auth.tenantId)
+    .run();
+
+  // Purge contact channels (phone numbers, OTP codes)
+  await db
+    .prepare(
+      `DELETE FROM contact_channels WHERE user_id = ?`,
+    )
+    .bind(auth.userId)
+    .run();
+
+  // Invalidate all active sessions (best-effort — ignore if table not yet created)
+  try {
+    await db.prepare(`DELETE FROM sessions WHERE user_id = ?`).bind(auth.userId).run();
+  } catch {
+    // sessions table may not exist — safe to ignore
+  }
+
+  return c.json(
+    {
+      message: 'Your personal data has been erased in compliance with NDPR Article 3.1(9).',
+      erasedAt: new Date().toISOString(),
+    },
+    200,
+  );
 });
 
 // POST /auth/verify — validate a JWT token and return its decoded payload (no secret in response)

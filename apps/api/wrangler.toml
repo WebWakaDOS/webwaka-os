@@ -3,19 +3,7 @@ main = "src/index.ts"
 compatibility_date = "2024-12-05"
 compatibility_flags = ["nodejs_compat"]
 
-# Pending migrations (apply before next deploy):
-# wrangler d1 migrations apply webwaka-main --remote
-# 0008_init_search_index.sql    — search_entries table + search_fts FTS5 virtual table
-# 0009_init_discovery_events.sql — discovery_events audit log table
-# 0181_negotiation_vendor_policies.sql    — vendor_pricing_policies
-# 0182_negotiation_listing_overrides.sql  — listing_price_overrides
-# 0183_negotiation_sessions.sql           — negotiation_sessions
-# 0184_negotiation_offers.sql             — negotiation_offers
-# 0185_negotiation_audit_log.sql          — negotiation_audit_log
-# 0186_ministry_members.sql               — ministry_members table
-
 # Negotiation expiry CRON — runs every 15 minutes
-# Expires open sessions past their expiry time; cleans up abandoned accepted sessions.
 [[triggers]]
 crons = ["*/15 * * * *"]
 
@@ -39,49 +27,62 @@ binding = "RATE_LIMIT_KV"
 id = "local-dev-placeholder"
 
 # ---------------------------------------------------------------------------
-# Staging — D1 ID from milestone-tracker.md; KV IDs: run `wrangler kv namespace list`
+# Staging
 # ---------------------------------------------------------------------------
 [env.staging]
 name = "webwaka-api-staging"
 
 [env.staging.vars]
 ENVIRONMENT = "staging"
+APP_BASE_URL = "https://api-staging.webwaka.ng"
 
 [[env.staging.d1_databases]]
 binding = "DB"
-database_name = "webwaka-main"
-database_id = "cfa62668"
+database_name = "webwaka-os-staging"
+database_id = "cfa62668-bbd0-4cf2-996a-53da76bab948"
+migrations_dir = "../../infra/db/migrations"
 
-# Staging KV IDs — retrieve exact IDs from Cloudflare Dashboard or:
-#   wrangler kv namespace list --env staging
 [[env.staging.kv_namespaces]]
 binding = "GEOGRAPHY_CACHE"
-id = "STAGING_GEOGRAPHY_CACHE_KV_NAMESPACE_ID"
+id = "01df2e1e329d446ebfd1577b93554ede"
 
 [[env.staging.kv_namespaces]]
 binding = "RATE_LIMIT_KV"
-id = "STAGING_RATE_LIMIT_KV_NAMESPACE_ID"
+id = "608eacac3eb941a68c716b14e84b4d10"
 
 # ---------------------------------------------------------------------------
-# Production — D1 ID from milestone-tracker.md; KV IDs: run `wrangler kv namespace list`
+# Production
 # ---------------------------------------------------------------------------
 [env.production]
 name = "webwaka-api-production"
 
 [env.production.vars]
 ENVIRONMENT = "production"
+APP_BASE_URL = "https://api.webwaka.ng"
 
 [[env.production.d1_databases]]
 binding = "DB"
-database_name = "webwaka-main"
-database_id = "de1d0935"
+database_name = "webwaka-os-production"
+database_id = "de1d0935-31ed-4a33-a0fd-0122d7a4fe43"
+migrations_dir = "../../infra/db/migrations"
 
-# Production KV IDs — retrieve exact IDs from Cloudflare Dashboard or:
-#   wrangler kv namespace list --env production
 [[env.production.kv_namespaces]]
 binding = "GEOGRAPHY_CACHE"
-id = "PROD_GEOGRAPHY_CACHE_KV_NAMESPACE_ID"
+id = "b447c8dd14e3432baaeb8bf13d8fd736"
 
 [[env.production.kv_namespaces]]
 binding = "RATE_LIMIT_KV"
-id = "PROD_RATE_LIMIT_KV_NAMESPACE_ID"
+id = "af260e847d1e400e94cf13f6ae3214eb"
+
+# Secrets (set via: wrangler secret put SECRET_NAME)
+# Required:
+#   JWT_SECRET
+#   PAYSTACK_SECRET_KEY
+#   PREMBLY_API_KEY
+#   TERMII_API_KEY
+#   WHATSAPP_ACCESS_TOKEN
+#   WHATSAPP_PHONE_NUMBER_ID
+#   TELEGRAM_BOT_TOKEN
+#   LOG_PII_SALT
+#   DM_MASTER_KEY
+#   PRICE_LOCK_SECRET

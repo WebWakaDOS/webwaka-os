@@ -54,7 +54,7 @@ export async function syncPaymentToSubscription(
   await db
     .prepare(
       `INSERT OR IGNORE INTO billing_history
-         (id, workspace_id, paystack_ref, amount_naira, status, metadata, created_at)
+         (id, workspace_id, paystack_ref, amount_kobo, status, metadata, created_at)
        VALUES (?, ?, ?, ?, 'success', ?, unixepoch())`,
     )
     .bind(
@@ -93,7 +93,7 @@ export async function recordFailedPayment(
   await db
     .prepare(
       `INSERT OR IGNORE INTO billing_history
-         (id, workspace_id, paystack_ref, amount_naira, status, metadata, created_at)
+         (id, workspace_id, paystack_ref, amount_kobo, status, metadata, created_at)
        VALUES (?, ?, ?, ?, 'failed', '{}', unixepoch())`,
     )
     .bind(billingId, workspaceId, paystackRef, amountKobo)

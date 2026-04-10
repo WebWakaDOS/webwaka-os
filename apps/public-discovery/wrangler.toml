@@ -15,40 +15,48 @@ ENVIRONMENT = "development"
 [[d1_databases]]
 binding = "DB"
 database_name = "webwaka-main"
-database_id = "placeholder-replace-with-actual-id"
+database_id = "local-dev-placeholder"
 
 # KV — geography and listing cache (TTL 60 s)
 [[kv_namespaces]]
 binding = "DISCOVERY_CACHE"
-id = "placeholder-replace-with-actual-id"
+id = "local-dev-placeholder"
 
+# ---------------------------------------------------------------------------
+# Staging
+# ---------------------------------------------------------------------------
 [env.staging]
 name = "webwaka-public-discovery-staging"
+
 [env.staging.vars]
 ENVIRONMENT = "staging"
 
 [[env.staging.d1_databases]]
 binding = "DB"
-database_name = "webwaka-staging"
-database_id = ""
+database_name = "webwaka-os-staging"
+database_id = "cfa62668-bbd0-4cf2-996a-53da76bab948"
 
 [[env.staging.kv_namespaces]]
 binding = "DISCOVERY_CACHE"
-id = ""
+id = "ed8e7381f64e43ca97834bc7ace0f711"
 
+# ---------------------------------------------------------------------------
+# Production
+# ---------------------------------------------------------------------------
 [env.production]
 name = "webwaka-public-discovery-production"
+
 [env.production.vars]
 ENVIRONMENT = "production"
 
 [[env.production.d1_databases]]
 binding = "DB"
-database_name = "webwaka-production"
-database_id = ""
+database_name = "webwaka-os-production"
+database_id = "de1d0935-31ed-4a33-a0fd-0122d7a4fe43"
 
 [[env.production.kv_namespaces]]
 binding = "DISCOVERY_CACHE"
-id = ""
+id = "dffe6346937f4fc78fbb3ea521f89d02"
 
 # Secrets (set via: wrangler secret put SECRET_NAME)
 # Required:

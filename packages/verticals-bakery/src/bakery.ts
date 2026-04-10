@@ -41,8 +41,8 @@ interface OrderRow {
 }
 interface IngredientRow {
   id: string; workspace_id: string; tenant_id: string; ingredient_name: string;
-  unit: string; quantity_in_stock: number; unit_cost_kobo: number;
-  reorder_level: number; created_at: number;
+  unit: string; quantity_in_stock_x1000: number; unit_cost_kobo: number;
+  reorder_level_x1000: number; created_at: number;
 }
 
 const r2p = (r: ProfileRow): BakeryProfile => ({
@@ -68,8 +68,8 @@ const r2ord = (r: OrderRow): BakeryOrder => ({
 const r2ing = (r: IngredientRow): BakeryIngredient => ({
   id: r.id, workspaceId: r.workspace_id, tenantId: r.tenant_id,
   ingredientName: r.ingredient_name, unit: r.unit,
-  quantityInStock: r.quantity_in_stock, unitCostKobo: r.unit_cost_kobo,
-  reorderLevel: r.reorder_level, createdAt: r.created_at,
+  quantityInStockX1000: r.quantity_in_stock_x1000, unitCostKobo: r.unit_cost_kobo,
+  reorderLevelX1000: r.reorder_level_x1000, createdAt: r.created_at,
 });
 
 export class BakeryRepository {
@@ -176,10 +176,10 @@ export class BakeryRepository {
     const id = input.id ?? crypto.randomUUID();
     if (!Number.isInteger(input.unitCostKobo) || input.unitCostKobo < 0) throw new Error('[P9] unit_cost_kobo must be non-negative integer');
     await this.db.prepare(
-      `INSERT INTO bakery_ingredients (id, workspace_id, tenant_id, ingredient_name, unit, quantity_in_stock, unit_cost_kobo, reorder_level, created_at)
+      `INSERT INTO bakery_ingredients (id, workspace_id, tenant_id, ingredient_name, unit, quantity_in_stock_x1000, unit_cost_kobo, reorder_level_x1000, created_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, unixepoch())`,
     ).bind(id, input.workspaceId, input.tenantId, input.ingredientName, input.unit,
-           input.quantityInStock, input.unitCostKobo, input.reorderLevel ?? 1).run();
+           input.quantityInStockX1000, input.unitCostKobo, input.reorderLevelX1000 ?? 1).run();
     const i = await this.findIngredientById(id, input.tenantId);
     if (!i) throw new Error('[bakery] Failed to create ingredient');
     return i;
@@ -192,7 +192,7 @@ export class BakeryRepository {
 
   async listLowStockIngredients(workspaceId: string, tenantId: string): Promise<BakeryIngredient[]> {
     const { results } = await this.db.prepare(
-      `SELECT * FROM bakery_ingredients WHERE workspace_id = ? AND tenant_id = ? AND quantity_in_stock <= reorder_level ORDER BY quantity_in_stock ASC`,
+      `SELECT * FROM bakery_ingredients WHERE workspace_id = ? AND tenant_id = ? AND quantity_in_stock_x1000 <= reorder_level_x1000 ORDER BY quantity_in_stock_x1000 ASC`,
     ).bind(workspaceId, tenantId).all<IngredientRow>();
     return (results ?? []).map(r2ing);
   }

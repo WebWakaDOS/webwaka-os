@@ -15,40 +15,48 @@ ENVIRONMENT = "development"
 [[d1_databases]]
 binding = "DB"
 database_name = "webwaka-main"
-database_id = "placeholder-replace-with-actual-id"
+database_id = "local-dev-placeholder"
 
 # KV — theme token cache (TTL 300 s)
 [[kv_namespaces]]
 binding = "THEME_CACHE"
-id = "placeholder-replace-with-actual-id"
+id = "local-dev-placeholder"
 
+# ---------------------------------------------------------------------------
+# Staging
+# ---------------------------------------------------------------------------
 [env.staging]
 name = "webwaka-brand-runtime-staging"
+
 [env.staging.vars]
 ENVIRONMENT = "staging"
 
 [[env.staging.d1_databases]]
 binding = "DB"
-database_name = "webwaka-staging"
-database_id = ""
+database_name = "webwaka-os-staging"
+database_id = "cfa62668-bbd0-4cf2-996a-53da76bab948"
 
 [[env.staging.kv_namespaces]]
 binding = "THEME_CACHE"
-id = ""
+id = "bd24f563762d4ebb889f09cc711a6796"
 
+# ---------------------------------------------------------------------------
+# Production
+# ---------------------------------------------------------------------------
 [env.production]
 name = "webwaka-brand-runtime-production"
+
 [env.production.vars]
 ENVIRONMENT = "production"
 
 [[env.production.d1_databases]]
 binding = "DB"
-database_name = "webwaka-production"
-database_id = ""
+database_name = "webwaka-os-production"
+database_id = "de1d0935-31ed-4a33-a0fd-0122d7a4fe43"
 
 [[env.production.kv_namespaces]]
 binding = "THEME_CACHE"
-id = ""
+id = "323d03bf6f5f4caaa28c80830f4af892"
 
 # Secrets (set via: wrangler secret put SECRET_NAME)
 # Required:

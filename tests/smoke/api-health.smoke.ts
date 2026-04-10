@@ -11,7 +11,11 @@
 
 const BASE = process.env['BASE_URL'] ?? 'http://localhost:8787';
 const TENANT = process.env['SMOKE_TENANT_ID'] ?? 'tenant_smoke_001';
-const API_KEY = process.env['SMOKE_API_KEY'] ?? 'smoke-key-not-set';
+const API_KEY = process.env['SMOKE_API_KEY'];
+if (!API_KEY) {
+  console.error('[smoke] FATAL: SMOKE_API_KEY environment variable is not set. Exiting.');
+  process.exit(1);
+}
 
 let passed = 0;
 let failed = 0;

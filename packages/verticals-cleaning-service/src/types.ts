@@ -89,7 +89,7 @@ export interface CleaningSupply {
   tenantId: string;       // T3
   supplyName: string;
   unit: string;
-  quantityInStock: number;
+  quantityInStockX1000: number; // P9 — stored ×1000, divide by 1000 for display
   unitCostKobo: number;   // P9
   createdAt: number;
 }
@@ -100,7 +100,7 @@ export interface CreateCleaningSupplyInput {
   tenantId: string;
   supplyName: string;
   unit: string;
-  quantityInStock: number;
+  quantityInStockX1000: number; // P9 — stored ×1000, divide by 1000 for display
   unitCostKobo: number;
 }
 

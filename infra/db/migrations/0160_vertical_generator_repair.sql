@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS generator_repair_profiles (
 CREATE INDEX IF NOT EXISTS idx_generator_repair_profiles_tenant ON generator_repair_profiles(tenant_id);
 CREATE INDEX IF NOT EXISTS idx_generator_repair_profiles_workspace ON generator_repair_profiles(workspace_id);
 
-CREATE TABLE IF NOT EXISTS repair_jobs (
+CREATE TABLE IF NOT EXISTS generator_repair_jobs (
   id                TEXT    PRIMARY KEY,
   profile_id        TEXT    NOT NULL,
   tenant_id         TEXT    NOT NULL,
@@ -38,10 +38,10 @@ CREATE TABLE IF NOT EXISTS repair_jobs (
   created_at        INTEGER NOT NULL,
   updated_at        INTEGER NOT NULL
 );
-CREATE INDEX IF NOT EXISTS idx_repair_jobs_tenant ON repair_jobs(tenant_id);
-CREATE INDEX IF NOT EXISTS idx_repair_jobs_profile ON repair_jobs(profile_id);
+CREATE INDEX IF NOT EXISTS idx_generator_repair_jobs_tenant ON generator_repair_jobs(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_generator_repair_jobs_profile ON generator_repair_jobs(profile_id);
 
-CREATE TABLE IF NOT EXISTS repair_parts (
+CREATE TABLE IF NOT EXISTS generator_repair_parts (
   id                TEXT    PRIMARY KEY,
   profile_id        TEXT    NOT NULL,
   tenant_id         TEXT    NOT NULL,
@@ -53,4 +53,4 @@ CREATE TABLE IF NOT EXISTS repair_parts (
   created_at        INTEGER NOT NULL,
   updated_at        INTEGER NOT NULL
 );
-CREATE INDEX IF NOT EXISTS idx_repair_parts_tenant ON repair_parts(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_generator_repair_parts_tenant ON generator_repair_parts(tenant_id);

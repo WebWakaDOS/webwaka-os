@@ -11,10 +11,14 @@
  *   POST /social/dm/threads             — create DM thread (auth required)
  *   POST /social/dm/threads/:id/messages — send DM (auth required, P14)
  *   GET  /social/stories                — get active stories (auth required)
+ *   POST /social/stories                — create story (auth required)
  *
- * T3 — tenant_id from X-Tenant-Id header on all queries.
+ * T3 — tenant_id from JWT claim (c.get('auth').tenantId) on all auth routes.
+ *      Header-based tenant resolution only for public (no-auth) routes.
  * P14 — assertDMMasterKey called before DM send.
  * P15 — moderation runs before post insert.
+ *
+ * SEC-001 fix: removed tenant impersonation via X-Tenant-Id on auth routes.
  */
 
 import { Hono } from 'hono';
@@ -49,18 +53,20 @@ interface D1Like {
   };
 }
 
-function getTenantId(c: { req: { header(name: string): string | undefined } }): string | null {
+// Public routes only — sourcing tenant from a forgeable header is safe here
+// because no authenticated user data is written or scoped.
+function getTenantIdFromHeader(c: { req: { header(name: string): string | undefined } }): string | null {
   return c.req.header('X-Tenant-Id') ?? null;
 }
 
 export const socialRoutes = new Hono<AppEnv>();
 
 // ---------------------------------------------------------------------------
-// GET /social/profile/:handle — no auth
+// GET /social/profile/:handle — no auth (public, header-sourced tenant OK)
 // ---------------------------------------------------------------------------
 
 socialRoutes.get('/profile/:handle', async (c) => {
-  const tenantId = getTenantId(c);
+  const tenantId = getTenantIdFromHeader(c);
   if (!tenantId) return c.json({ error: 'X-Tenant-Id header required' }, 400);
 
   const { handle } = c.req.param();
@@ -73,14 +79,13 @@ socialRoutes.get('/profile/:handle', async (c) => {
 });
 
 // ---------------------------------------------------------------------------
-// POST /social/profile/setup — auth required
+// POST /social/profile/setup — auth required (T3: tenant from JWT)
 // ---------------------------------------------------------------------------
 
 socialRoutes.post('/profile/setup', async (c) => {
-  const tenantId = getTenantId(c);
-  if (!tenantId) return c.json({ error: 'X-Tenant-Id header required' }, 400);
+  const auth = c.get('auth') as { tenantId: string; userId: string };
+  const tenantId = auth.tenantId;
 
-  const auth = c.get('auth');
   const body = await c.req.json().catch(() => null);
   const schema = z.object({
     handle: z.string().regex(/^[a-z0-9_]{2,30}$/, 'Invalid handle format'),
@@ -115,14 +120,13 @@ socialRoutes.post('/profile/setup', async (c) => {
 });
 
 // ---------------------------------------------------------------------------
-// POST /social/follow/:id — auth required
+// POST /social/follow/:id — auth required (T3: tenant from JWT)
 // ---------------------------------------------------------------------------
 
 socialRoutes.post('/follow/:id', async (c) => {
-  const tenantId = getTenantId(c);
-  if (!tenantId) return c.json({ error: 'X-Tenant-Id header required' }, 400);
+  const auth = c.get('auth') as { tenantId: string; userId: string };
+  const tenantId = auth.tenantId;
 
-  const auth = c.get('auth');
   const { id: followeeId } = c.req.param();
   const db = c.env.DB as unknown as D1Like;
 
@@ -141,14 +145,13 @@ socialRoutes.post('/follow/:id', async (c) => {
 });
 
 // ---------------------------------------------------------------------------
-// GET /social/feed — auth required
+// GET /social/feed — auth required (T3: tenant from JWT)
 // ---------------------------------------------------------------------------
 
 socialRoutes.get('/feed', async (c) => {
-  const tenantId = getTenantId(c);
-  if (!tenantId) return c.json({ error: 'X-Tenant-Id header required' }, 400);
+  const auth = c.get('auth') as { tenantId: string; userId: string };
+  const tenantId = auth.tenantId;
 
-  const auth = c.get('auth');
   const limit = parseInt(c.req.query('limit') ?? '20', 10);
   const offset = parseInt(c.req.query('offset') ?? '0', 10);
   const db = c.env.DB as unknown as D1Like;
@@ -158,14 +161,13 @@ socialRoutes.get('/feed', async (c) => {
 });
 
 // ---------------------------------------------------------------------------
-// POST /social/posts — auth required
+// POST /social/posts — auth required (T3: tenant from JWT)
 // ---------------------------------------------------------------------------
 
 socialRoutes.post('/posts', async (c) => {
-  const tenantId = getTenantId(c);
-  if (!tenantId) return c.json({ error: 'X-Tenant-Id header required' }, 400);
+  const auth = c.get('auth') as { tenantId: string; userId: string };
+  const tenantId = auth.tenantId;
 
-  const auth = c.get('auth');
   const body = await c.req.json().catch(() => null);
   const schema = z.object({
     content: z.string().min(1, 'content must not be empty'),
@@ -188,14 +190,13 @@ socialRoutes.post('/posts', async (c) => {
 });
 
 // ---------------------------------------------------------------------------
-// POST /social/posts/:id/react — auth required
+// POST /social/posts/:id/react — auth required (T3: tenant from JWT)
 // ---------------------------------------------------------------------------
 
 socialRoutes.post('/posts/:id/react', async (c) => {
-  const tenantId = getTenantId(c);
-  if (!tenantId) return c.json({ error: 'X-Tenant-Id header required' }, 400);
+  const auth = c.get('auth') as { tenantId: string; userId: string };
+  const tenantId = auth.tenantId;
 
-  const auth = c.get('auth');
   const body = await c.req.json().catch(() => null);
   const schema = z.object({
     type: z.enum(['like', 'love', 'laugh', 'wow', 'sad', 'angry']),
@@ -218,14 +219,13 @@ socialRoutes.post('/posts/:id/react', async (c) => {
 });
 
 // ---------------------------------------------------------------------------
-// GET /social/dm/threads — auth required
+// GET /social/dm/threads — auth required (T3: tenant from JWT)
 // ---------------------------------------------------------------------------
 
 socialRoutes.get('/dm/threads', async (c) => {
-  const tenantId = getTenantId(c);
-  if (!tenantId) return c.json({ error: 'X-Tenant-Id header required' }, 400);
+  const auth = c.get('auth') as { tenantId: string; userId: string };
+  const tenantId = auth.tenantId;
 
-  const auth = c.get('auth');
   const db = c.env.DB as unknown as D1Like;
 
   const threads = await getDMThreads(db, auth.userId, tenantId);
@@ -233,14 +233,13 @@ socialRoutes.get('/dm/threads', async (c) => {
 });
 
 // ---------------------------------------------------------------------------
-// POST /social/dm/threads — auth required
+// POST /social/dm/threads — auth required (T3: tenant from JWT)
 // ---------------------------------------------------------------------------
 
 socialRoutes.post('/dm/threads', async (c) => {
-  const tenantId = getTenantId(c);
-  if (!tenantId) return c.json({ error: 'X-Tenant-Id header required' }, 400);
+  const auth = c.get('auth') as { tenantId: string; userId: string };
+  const tenantId = auth.tenantId;
 
-  const auth = c.get('auth');
   const body = await c.req.json().catch(() => null);
   const schema = z.object({
     participantIds: z.array(z.string()).min(1, 'At least 1 other participant required'),
@@ -266,17 +265,16 @@ socialRoutes.post('/dm/threads', async (c) => {
 });
 
 // ---------------------------------------------------------------------------
-// POST /social/dm/threads/:id/messages — auth required (P14)
+// POST /social/dm/threads/:id/messages — auth required (P14, T3: tenant from JWT)
 // ---------------------------------------------------------------------------
 
 socialRoutes.post('/dm/threads/:id/messages', async (c) => {
-  const tenantId = getTenantId(c);
-  if (!tenantId) return c.json({ error: 'X-Tenant-Id header required' }, 400);
+  const auth = c.get('auth') as { tenantId: string; userId: string };
+  const tenantId = auth.tenantId;
 
   const masterKey = c.env.DM_MASTER_KEY;
   assertDMMasterKey(masterKey);
 
-  const auth = c.get('auth');
   const body = await c.req.json().catch(() => null);
   const schema = z.object({ content: z.string().min(1) });
   const parsed = schema.safeParse(body);
@@ -298,12 +296,12 @@ socialRoutes.post('/dm/threads/:id/messages', async (c) => {
 });
 
 // ---------------------------------------------------------------------------
-// GET /social/stories — auth required
+// GET /social/stories — auth required (T3: tenant from JWT)
 // ---------------------------------------------------------------------------
 
 socialRoutes.get('/stories', async (c) => {
-  const tenantId = getTenantId(c);
-  if (!tenantId) return c.json({ error: 'X-Tenant-Id header required' }, 400);
+  const auth = c.get('auth') as { tenantId: string; userId: string };
+  const tenantId = auth.tenantId;
 
   const db = c.env.DB as unknown as D1Like;
   const stories = await getActiveStories(db, tenantId);

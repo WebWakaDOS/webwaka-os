@@ -123,7 +123,7 @@ cleaningServiceRoutes.post('/:id/supplies', async (c) => {
   }
   const repo = new CleaningServiceRepository(c.env.DB);
   try {
-    const supply = await repo.createSupply({ workspaceId: id, tenantId: auth.tenantId, supplyName: body.supply_name, unit: body.unit, quantityInStock: body.quantity_in_stock, unitCostKobo: body.unit_cost_kobo });
+    const supply = await repo.createSupply({ workspaceId: id, tenantId: auth.tenantId, supplyName: body.supply_name, unit: body.unit, quantityInStockX1000: body.quantity_in_stock, unitCostKobo: body.unit_cost_kobo });
     return c.json({ supply }, 201);
   } catch (err) {
     if (err instanceof Error && err.message.includes('[P9]')) return c.json({ error: err.message }, 422);

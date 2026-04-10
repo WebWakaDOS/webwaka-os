@@ -36,7 +36,8 @@ jobs:
           if [ -d "infra/db/migrations" ] && ls infra/db/migrations/*.sql 1>/dev/null 2>&1; then
             npx wrangler d1 migrations apply webwaka-os-production \
               --env production \
-              --migrations-dir infra/db/migrations
+              --remote \
+              --config apps/api/wrangler.toml
           else
             echo "No migrations found at infra/db/migrations — skipping"
           fi
@@ -47,7 +48,7 @@ jobs:
   # ── Deploy apps ────────────────────────────────────────────────────────────
   deploy-api-production:
     name: Deploy API (Production)
-    needs: migrate-production
+    needs: [migrate-production, ci]
     runs-on: ubuntu-latest
     environment: production
     steps:

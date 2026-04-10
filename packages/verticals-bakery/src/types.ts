@@ -115,9 +115,9 @@ export interface BakeryIngredient {
   tenantId: string;       // T3
   ingredientName: string;
   unit: string;
-  quantityInStock: number;
+  quantityInStockX1000: number; // P9 — stored ×1000, divide by 1000 for display
   unitCostKobo: number;   // P9
-  reorderLevel: number;
+  reorderLevelX1000: number; // P9 — stored ×1000
   createdAt: number;
 }
 
@@ -127,9 +127,9 @@ export interface CreateBakeryIngredientInput {
   tenantId: string;
   ingredientName: string;
   unit: string;
-  quantityInStock: number;
+  quantityInStockX1000: number; // P9 — stored ×1000, divide by 1000 for display
   unitCostKobo: number;
-  reorderLevel?: number | undefined;
+  reorderLevelX1000?: number | undefined;
 }
 
 // ---------------------------------------------------------------------------
