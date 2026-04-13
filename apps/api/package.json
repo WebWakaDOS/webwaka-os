@@ -25,7 +25,7 @@
     "@webwaka/geography": "workspace:*",
     "@webwaka/entitlements": "workspace:*",
     "@webwaka/relationships": "workspace:*",
-    "zod": "^3.22.4",
+    "zod": "^4.3.6",
     "@webwaka/pos": "workspace:*",
     "@webwaka/community": "workspace:*",
     "@webwaka/social": "workspace:*",
