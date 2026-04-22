@@ -16,7 +16,7 @@ jobs:
     name: Verify @webwaka/core is pinned correctly
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Check for disallowed reference types
         run: |
