@@ -23,7 +23,7 @@
     "@webwaka/types": "workspace:*",
     "@webwaka/entities": "workspace:*",
     "@webwaka/entitlements": "workspace:*",
-    "zod": "^3.22.4"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241205.0",
